@@ -13,12 +13,12 @@
     },
     "DesiredCapacity": {
       "Type": "Number",
-      "Default" : "1",
+      "Default" : "3",
       "Description": "Number of instances to launch in your ECS cluster"
     },
     "MaxSize": {
       "Type": "Number",
-      "Default" : "1",
+      "Default" : "4",
       "Description": "Maximum number of instances that can be launched in your ECS cluster"
     },
     "InstanceType" : {
@@ -67,14 +67,10 @@
           {
             "Name": "exhibitor",
             "Cpu": "10",
-            "EntryPoint": ["java", "-jar", "exhibitor-1.0-jar-with-dependencies.jar", "-c", "s3", "--s3config", { "Ref": "S3Bucket" }],
+            "Command": ["-c", "s3", "--s3region", { "Ref" : "AWS::Region" }, "--s3config", { "Fn::Join": [":", [{ "Ref": "S3Bucket"}, "exhibitor"]]}],
             "Essential": "true",
-            "Image":"netflixoss/exhibitor:1.5.2",
-            "Memory":"512",
-            "MountPoints": [{
-              "ContainerPath": "/opt/app/grid/products/exhibitor2/bin",
-              "SourceVolume": "zk-exhibitor-data"
-            }],
+            "Image":"hybox/docker-exhibitor:latest",
+            "Memory":"400",
             "PortMappings": [
               { "HostPort": 2181, "ContainerPort": 2181 },
               { "HostPort": 2888, "ContainerPort": 2888 },
@@ -82,9 +78,6 @@
               { "HostPort": 8080, "ContainerPort": 8080 }
             ]
           }
-        ],
-        "Volumes": [
-          { "Name": "zk-exhibitor-data" }
         ]
       }
     },
@@ -114,7 +107,7 @@
       "Properties" : {
         "VPCZoneIdentifier" : { "Ref" : "SubnetID" },
         "LaunchConfigurationName" : { "Ref" : "ContainerInstances" },
-        "MinSize" : "1",
+        "MinSize" : "3",
         "MaxSize" : { "Ref" : "MaxSize" },
         "DesiredCapacity" : { "Ref" : "DesiredCapacity" }
       },
@@ -125,7 +118,7 @@
       },
       "UpdatePolicy": {
         "AutoScalingRollingUpdate": {
-          "MinInstancesInService": "1",
+          "MinInstancesInService": "2",
           "MaxBatchSize": "1",
           "PauseTime" : "PT5M",
           "WaitOnResourceSignals": "true"
@@ -203,7 +196,7 @@
       "DependsOn": ["ECSAutoScalingGroup"],
       "Properties" : {
         "Cluster": {"Ref": "ECSCluster"},
-        "DesiredCount": "1",
+        "DesiredCount": "3",
         "LoadBalancers": [
           {
             "ContainerName": "exhibitor",
