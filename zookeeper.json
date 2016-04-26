@@ -67,11 +67,12 @@
           {
             "Name": "exhibitor",
             "Cpu": "10",
+            "EntryPoint": ["java", "-jar", "exhibitor-1.0-jar-with-dependencies.jar", "-c", "s3", "--s3config", { "Ref": "S3Bucket" }],
             "Essential": "true",
             "Image":"netflixoss/exhibitor:1.5.2",
             "Memory":"512",
             "MountPoints": [{
-              "ContainerPath": "/exhibitor-data",
+              "ContainerPath": "/opt/app/grid/products/exhibitor2/bin",
               "SourceVolume": "zk-exhibitor-data"
             }],
             "PortMappings": [
@@ -86,7 +87,10 @@
           { "Name": "zk-exhibitor-data" }
         ]
       }
-    },    
+    },
+    "S3Bucket": {
+      "Type": "AWS::S3::Bucket"
+    },
     "EcsElasticLoadBalancer" : {
       "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties" : {
@@ -287,6 +291,33 @@
                     "ecs:Poll"
                   ],
                   "Resource": "*"
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "exhibitor-s3",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "s3:AbortMultipartUpload",
+                    "s3:DeleteObject",
+                    "s3:GetBucketAcl",
+                    "s3:GetBucketPolicy",
+                    "s3:GetObject",
+                    "s3:GetObjectAcl",
+                    "s3:ListBucket",
+                    "s3:ListBucketMultipartUploads",
+                    "s3:ListMultipartUploadParts",
+                    "s3:PutObject",
+                    "s3:PutObjectAcl"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    { "Fn::Join": ["", ["arn:aws:s3:::", { "Ref": "S3Bucket"}, "/*"]]},
+                    { "Fn::Join": ["", ["arn:aws:s3:::", { "Ref": "S3Bucket"}]]}
+                  ]
                 }
               ]
             }
