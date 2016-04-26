@@ -69,7 +69,7 @@
             "Cpu": "10",
             "Command": ["-c", "s3", "--s3region", { "Ref" : "AWS::Region" }, "--s3config", { "Fn::Join": [":", [{ "Ref": "S3Bucket"}, "exhibitor"]]}],
             "Essential": "true",
-            "Image":"hybox/docker-exhibitor:latest",
+            "Image":"hybox/exhibitor:latest",
             "Memory":"400",
             "PortMappings": [
               { "HostPort": 2181, "ContainerPort": 2181 },
