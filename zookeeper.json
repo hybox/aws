@@ -18,7 +18,7 @@
     },
     "MaxSize": {
       "Type": "Number",
-      "Default" : "2",
+      "Default" : "1",
       "Description": "Maximum number of instances that can be launched in your ECS cluster"
     },
     "InstanceType" : {
@@ -65,15 +65,25 @@
       "Properties" : {
         "ContainerDefinitions" : [
           {
-            "Name": "zookeeper",
+            "Name": "exhibitor",
             "Cpu": "10",
             "Essential": "true",
-            "Image":"jplock/zookeeper:latest",
-            "Memory":"300",
+            "Image":"netflixoss/exhibitor:1.5.2",
+            "Memory":"512",
+            "MountPoints": [{
+              "ContainerPath": "/exhibitor-data",
+              "SourceVolume": "zk-exhibitor-data"
+            }],
             "PortMappings": [
-              { "HostPort": 2181, "ContainerPort": 2181 }
+              { "HostPort": 2181, "ContainerPort": 2181 },
+              { "HostPort": 2888, "ContainerPort": 2888 },
+              { "HostPort": 3888, "ContainerPort": 3888 },
+              { "HostPort": 8080, "ContainerPort": 8080 }
             ]
           }
+        ],
+        "Volumes": [
+          { "Name": "zk-exhibitor-data" }
         ]
       }
     },    
@@ -82,19 +92,19 @@
       "Properties" : {
         "Subnets" : { "Ref" : "SubnetID" },
         "Listeners" : [ {
-          "LoadBalancerPort" : "2181",
-          "InstancePort" : "2181",
-          "Protocol" : "TCP"
+          "LoadBalancerPort" : "80",
+          "InstancePort" : "8080",
+          "Protocol" : "HTTP"
         } ],
         "HealthCheck" : {
-          "Target" : "TCP:2181",
+          "Target" : "HTTP:8080/exhibitor/v1/cluster/state",
           "HealthyThreshold" : "2",
           "UnhealthyThreshold" : "10",
           "Interval" : "30",
           "Timeout" : "5"
         }
       }
-    },    
+    },
     "ECSAutoScalingGroup" : {
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
       "Properties" : {
@@ -106,14 +116,14 @@
       },
       "CreationPolicy" : {
         "ResourceSignal" : {
-          "Timeout" : "PT10M"
+          "Timeout" : "PT5M"
         }
       },
       "UpdatePolicy": {
         "AutoScalingRollingUpdate": {
           "MinInstancesInService": "1",
           "MaxBatchSize": "1",
-          "PauseTime" : "PT10M",
+          "PauseTime" : "PT5M",
           "WaitOnResourceSignals": "true"
         }
       }
@@ -192,8 +202,8 @@
         "DesiredCount": "1",
         "LoadBalancers": [
           {
-            "ContainerName": "zookeeper",
-            "ContainerPort": "2181",
+            "ContainerName": "exhibitor",
+            "ContainerPort": "8080",
             "LoadBalancerName" : { "Ref" : "EcsElasticLoadBalancer" }
           }
         ],
@@ -312,13 +322,14 @@
          "Fn::Join": [
            "",
            [
+            "http://",
              {
                "Fn::GetAtt": [
                  "EcsElasticLoadBalancer",
                  "DNSName"
                ]
              },
-             ":2181"
+            "/exhibitor/v1/ui/index.html"
            ]
          ]
        }
