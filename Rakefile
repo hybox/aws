@@ -1,7 +1,8 @@
 require 'jsonlint/rake_task'
 JsonLint::RakeTask.new do |t|
   t.paths = %w(
-    **/*.json
+    stacks/**/*.json
+    params/**/*.json
   )
 end
 
