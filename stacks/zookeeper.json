@@ -86,6 +86,7 @@
     "EcsElasticLoadBalancer" : {
       "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties" : {
+        "Scheme" : "internal",
         "Subnets" : { "Ref" : "SubnetID" },
         "Listeners" : [ {
           "LoadBalancerPort" : "80",
@@ -182,6 +183,7 @@
         }
       },
       "Properties": {
+        "AssociatePublicIpAddress": false,
         "ImageId" : { "Fn::FindInMap" : [ "AWSRegionToAMI", { "Ref" : "AWS::Region" }, "AMIID" ] },
         "InstanceType"   : { "Ref" : "InstanceType" },
         "IamInstanceProfile": { "Ref": "EC2InstanceProfile" },
