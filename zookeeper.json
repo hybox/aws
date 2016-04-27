@@ -59,7 +59,7 @@
   "Resources" : {
     "ECSCluster": {
       "Type": "AWS::ECS::Cluster"
-    },    
+    },
     "taskdefinition": {
       "Type": "AWS::ECS::TaskDefinition",
       "Properties" : {
@@ -102,6 +102,23 @@
         }
       }
     },
+    "ECSRecordSet" : {
+      "Type" : "AWS::Route53::RecordSetGroup",
+      "Properties" : {
+        "HostedZoneName" : "vpc.hydrainabox.org.",
+        "Comment" : "Alias targeted to zookeeper LoadBalancer.",
+        "RecordSets" : [
+          {
+            "Name" : "zookeeper.vpc.hydrainabox.org.",
+            "Type" : "A",
+            "AliasTarget" : {
+                "HostedZoneId" : { "Fn::GetAtt" : ["EcsElasticLoadBalancer", "CanonicalHostedZoneNameID"] },
+                "DNSName" : { "Fn::GetAtt" : ["EcsElasticLoadBalancer","DNSName"] }
+            }
+          }
+        ]
+      }
+    },
     "ECSAutoScalingGroup" : {
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
       "Properties" : {
@@ -124,19 +141,19 @@
           "WaitOnResourceSignals": "true"
         }
       }
-    },    
+    },
     "ContainerInstances": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Metadata" : {
         "AWS::CloudFormation::Init" : {
           "config" : {
-          
+
             "commands" : {
               "01_add_instance_to_cluster" : {
                 "command" : { "Fn::Join": [ "", [ "#!/bin/bash\n", "echo ECS_CLUSTER=", { "Ref": "ECSCluster" }, " >> /etc/ecs/ecs.config" ] ] }
               }
             },
-            
+
             "files" : {
               "/etc/cfn/cfn-hup.conf" : {
                 "content" : { "Fn::Join" : ["", [
@@ -190,7 +207,7 @@
              "         --region ", { "Ref" : "AWS::Region" }, "\n"
         ]]}}
       }
-    },    
+    },
     "service": {
       "Type": "AWS::ECS::Service",
       "DependsOn": ["ECSAutoScalingGroup"],
@@ -207,7 +224,7 @@
         "Role" : {"Ref":"ECSServiceRole"},
         "TaskDefinition" : {"Ref":"taskdefinition"}
       }
-    },    
+    },
     "ECSServiceRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -248,7 +265,7 @@
           }
         ]
       }
-    },    
+    },
     "EC2Role": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -317,7 +334,7 @@
           }
         ]
       }
-    },    
+    },
     "EC2InstanceProfile": {
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
@@ -330,7 +347,7 @@
       }
     }
   },
-  
+
   "Outputs" : {
     "ecsservice" : {
       "Value" : { "Ref" : "service" }
