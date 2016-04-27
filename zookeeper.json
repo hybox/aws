@@ -18,7 +18,7 @@
     },
     "MaxSize": {
       "Type": "Number",
-      "Default" : "4",
+      "Default" : "6",
       "Description": "Maximum number of instances that can be launched in your ECS cluster"
     },
     "InstanceType" : {
