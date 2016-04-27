@@ -1,0 +1,73 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Resources" : {
+    "S3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "hybox-deployment-artifacts",
+        "AccessControl": "PublicRead"
+      }
+    },
+    "S3User": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "s3:*",
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:aws:s3:::",
+                        {
+                          "Ref": "S3Bucket"
+                        },
+                        "/*"
+                      ]
+                    ]
+                  }
+                }
+              ]
+            },
+            "PolicyName": "S3Access"
+          }
+        ]
+      }
+    },
+    "S3AccessKey" : {   
+      "Type": "AWS::IAM::AccessKey",
+      "Properties": {
+        "UserName": { "Ref" : "S3User" }
+      }
+    }
+  },
+  "Outputs": {
+    "IAMUser": {
+      "Description": "IAM User",
+      "Value": {
+        "Ref": "S3User"
+      }
+    },
+    "AccessKeyId": {
+      "Description": "IAM Access Key for User",
+      "Value": {
+        "Ref": "S3AccessKey"
+      }
+    },
+    "SecretAccessKey": {
+      "Description": "IAM Secret Access Key for User",
+      "Value": { "Fn::GetAtt" : ["S3AccessKey", "SecretAccessKey"] }
+    },
+    "BucketName": {
+      "Description": "Name of newly created customer S3 bucket",
+      "Value": {
+        "Ref": "S3Bucket"
+      }
+    }
+  }
+}
