@@ -3,12 +3,10 @@
   "Parameters" : {
     "KeyName": {
       "Type": "AWS::EC2::KeyPair::KeyName",
-      "Default": "zookeeper",
       "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
     },
     "SubnetID": {
       "Type": "List<AWS::EC2::Subnet::Id>",
-      "Default": "subnet-4eb52273,subnet-14a3553e,subnet-7d2cd625,subnet-ed0aaa9b",
       "Description": "List of an existing subnet IDs to use for the load balancer and auto scaling group"
     },
     "DesiredCapacity": {
@@ -32,14 +30,15 @@
 "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge"],
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
-    "SSHLocation" : {
-      "Description" : " The IP address range that can be used to SSH to the EC2 instances",
-      "Type": "String",
-      "MinLength": "9",
-      "MaxLength": "18",
-      "Default": "0.0.0.0/0",
-      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
-      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+    "DockerImage" : {
+      "Description" : "Docker image to run",
+      "Type" : "String",
+      "Default" : "hybox/exhibitor:latest"
+    },
+    "HostedZoneName" : {
+      "Description" : "Route53 zone to create an alias in",
+      "Type" : "String",
+      "Default" : "vpc.hydrainabox.org."
     }
   },
 
@@ -65,11 +64,11 @@
       "Properties" : {
         "ContainerDefinitions" : [
           {
-            "Name": "exhibitor",
+            "Name": { "Ref" : "AWS::StackName" },
             "Cpu": "10",
-            "Command": ["-c", "s3", "--s3region", { "Ref" : "AWS::Region" }, "--s3config", { "Fn::Join": [":", [{ "Ref": "S3Bucket"}, "exhibitor"]]}],
+            "Command": ["-c", "s3", "--s3region", { "Ref" : "AWS::Region" }, "--s3config", { "Fn::Join": [":", [{ "Ref": "S3Bucket"}, { "Ref" : "AWS::StackName" }]]}],
             "Essential": "true",
-            "Image":"hybox/exhibitor:latest",
+            "Image": { "Ref" : "DockerImage" },
             "Memory":"400",
             "PortMappings": [
               { "HostPort": 2181, "ContainerPort": 2181 },
@@ -103,20 +102,15 @@
       }
     },
     "ECSRecordSet" : {
-      "Type" : "AWS::Route53::RecordSetGroup",
+      "Type" : "AWS::Route53::RecordSet",
       "Properties" : {
-        "HostedZoneName" : "vpc.hydrainabox.org.",
-        "Comment" : "Alias targeted to zookeeper LoadBalancer.",
-        "RecordSets" : [
-          {
-            "Name" : "zookeeper.vpc.hydrainabox.org.",
-            "Type" : "A",
-            "AliasTarget" : {
-                "HostedZoneId" : { "Fn::GetAtt" : ["EcsElasticLoadBalancer", "CanonicalHostedZoneNameID"] },
-                "DNSName" : { "Fn::GetAtt" : ["EcsElasticLoadBalancer","DNSName"] }
-            }
-          }
-        ]
+        "Name" : { "Fn::Join": [ ".", [ { "Ref" : "AWS::StackName"}, { "Ref": "HostedZoneName" } ] ] },
+        "HostedZoneName" : { "Ref" : "HostedZoneName"},
+        "Type" : "A",
+        "AliasTarget" : {
+            "HostedZoneId" : { "Fn::GetAtt" : ["EcsElasticLoadBalancer", "CanonicalHostedZoneNameID"] },
+            "DNSName" : { "Fn::GetAtt" : ["EcsElasticLoadBalancer","DNSName"] }
+        }
       }
     },
     "ECSAutoScalingGroup" : {
@@ -216,7 +210,7 @@
         "DesiredCount": "3",
         "LoadBalancers": [
           {
-            "ContainerName": "exhibitor",
+            "ContainerName": { "Ref" : "AWS::StackName" },
             "ContainerPort": "8080",
             "LoadBalancerName" : { "Ref" : "EcsElasticLoadBalancer" }
           }
@@ -349,27 +343,37 @@
   },
 
   "Outputs" : {
-    "ecsservice" : {
-      "Value" : { "Ref" : "service" }
-    },
-    "ecscluster" : {
-      "Value" : { "Ref" : "ECSCluster" }
-    },
-    "taskdef" : {
-      "Value" : { "Ref" : "taskdefinition" }
-    },
-    "loadbalancer" : {
+    "url" : {
       "Value": {
          "Fn::Join": [
            "",
            [
             "http://",
-             {
-               "Fn::GetAtt": [
-                 "EcsElasticLoadBalancer",
-                 "DNSName"
-               ]
-             },
+             { "Ref" : "ECSRecordSet" },
+            "/exhibitor/"
+           ]
+         ]
+       }
+    },
+    "getCluster" : {
+      "Value": {
+         "Fn::Join": [
+           "",
+           [
+            "http://",
+             { "Ref" : "ECSRecordSet" },
+            "/exhibitor/v1/cluster/list"
+           ]
+         ]
+       }
+    },
+    "ui" : {
+      "Value": {
+         "Fn::Join": [
+           "",
+           [
+            "http://",
+             { "Ref" : "ECSRecordSet" },
             "/exhibitor/v1/ui/index.html"
            ]
          ]
