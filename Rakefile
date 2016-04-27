@@ -6,4 +6,8 @@ JsonLint::RakeTask.new do |t|
   )
 end
 
-task default: :jsonlint
+task :copy_artifacts do
+  `mkdir build; cp -R stacks build; cp -R params build`
+end
+
+task default: [:jsonlint, :copy_artifacts]

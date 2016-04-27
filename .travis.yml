@@ -1,3 +1,16 @@
 language: ruby
 cache: bundler
 sudo: false
+
+notifications:
+ email: false
+
+deploy:
+  provider: s3
+  access_key_id: AKIAIXRFZTKDWZXG6EZA
+  secret_access_key:
+    secure: Je/V5eF6lbRsgPq8x0VTXtrJDLgq2QJfM2sm1XHpgzcwucBhKoGVRimpkyTX/yWfwcSSyN95jYKAvdzIWda0WviY4/Qf6UU16NeJGkMvH5deA61LWUTzvSYShpnE2T8ztdzuNEeSa3TKb3NHSv4ALOLEcrb5RsxMXzppfURSFHEML9EQn1Uy1KJI0JjgmzEIseM8/kdQNvOcJF+5AgQ2RNDK08QZFA19SRrJBhhWsF86QgvaP1iyhkoH2/pRJDExfy8a8I6GChn2zA6ehvDJehoUmVYiVohBtPPkY18ADY5RF+xtLa/H7a3301XBzlALY+eozq2n35ehVq73VjReKLi/1uj+UF5txMB7Uq3NM7J6rCXGOnjzD+Y3JMCPILVgTDOS2JsQmZQ1xuwYcfRYAbss8PoVQgf+fjADUDiX7hXdlBdcKq9l6TsEUoyA3a0cmOU3h31vPLaew5K27oOMVtWbD/QZdzDTMkiE7G2Km9ZbAOE9Dc3pyCLGnJVnl54RHRq0oZXN4wBMGtzImufk9uI6oBsI4wSvEr74waK65pz1Dhc8fPEyBJaIUXuvJQ097bYl5ChEpQOldasFPZRseJcnuQxs4oxCG9xfS+/g+HBRJhSTvdaJAFc7X+YLf7V1CynWIIxzNRaYXIbaJ/13RTpatI8+xERMZD1CVvSzg9s=
+  bucket: hybox-deployment-artifacts
+  region: us-east-1
+  skip_cleanup: true
+  local_dir: build
