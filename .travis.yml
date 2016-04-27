@@ -2,6 +2,9 @@ language: ruby
 cache: bundler
 sudo: false
 
+notifications:
+ email: false
+
 deploy:
   provider: s3
   access_key_id: AKIAIXRFZTKDWZXG6EZA
