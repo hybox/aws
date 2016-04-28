@@ -1,0 +1,10 @@
+[
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "zookeeper"
+  },
+  {
+    "ParameterKey": "HostedZoneName",
+    "ParameterValue": "vpc.hydrainabox.org."
+  }
+]
