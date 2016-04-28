@@ -37,8 +37,7 @@
     },
     "HostedZoneName" : {
       "Description" : "Route53 zone to create an alias in",
-      "Type" : "String",
-      "Default" : "vpc.hydrainabox.org."
+      "Type" : "String"
     }
   },
 
