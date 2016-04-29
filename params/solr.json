@@ -10,5 +10,9 @@
   {
     "ParameterKey": "HostedZoneName",
     "ParameterValue": "vpc.hydrainabox.org."
+  },
+  {
+    "ParameterKey": "ZookeeperHosts",
+    "ParameterValue": "1.2.3.4:2181,5.6.7.8:2181,9.8.7.6:2181"
   }
 ]
