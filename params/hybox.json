@@ -1,11 +1,11 @@
 [
   {
     "ParameterKey": "KeyName",
-    "ParameterValue": "zookeeper"
+    "ParameterValue": "hybox"
   },
   {
     "ParameterKey": "HostedZoneName",
-    "ParameterValue": "vpc.hydrainabox.org."
+    "ParameterValue": "hydrainabox.org."
   },
   {
     "ParameterKey": "SecretKeyBase",
@@ -22,5 +22,21 @@
   {
     "ParameterKey": "ZookeeperHosts",
     "ParameterValue": "zk.vpc.hydrainabox.org:2181"
+  },
+  {
+    "ParameterKey": "RedisHost",
+    "ParameterValue": "red-re-donyvytt1t4y.z8eryy.0001.use1.cache.amazonaws.com"
+  },
+  {
+    "ParameterKey": "RDSUsername",
+    "ParameterValue": "ebroot"
+  },
+  {
+    "ParameterKey": "RDSPassword",
+    "ParameterValue": "adminadmin"
+  },
+  {
+    "ParameterKey": "RDSHostname",
+    "ParameterValue": "pd1xy7tdyq5zmc7.ctq01obrgcgr.us-east-1.rds.amazonaws.com"
   }
 ]
