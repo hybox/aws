@@ -1,0 +1,26 @@
+[
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "zookeeper"
+  },
+  {
+    "ParameterKey": "HostedZoneName",
+    "ParameterValue": "vpc.hydrainabox.org."
+  },
+  {
+    "ParameterKey": "SecretKeyBase",
+    "ParameterValue": "test"
+  },
+  {
+    "ParameterKey": "FedoraUrl",
+    "ParameterValue": "http://fcrepo.vpc.hydrainabox.org/rest/"
+  },
+  {
+    "ParameterKey": "SolrUrl",
+    "ParameterValue": "http://solr.vpc.hydrainabox.org/solr/"
+  },
+  {
+    "ParameterKey": "ZookeeperHosts",
+    "ParameterValue": "zk.vpc.hydrainabox.org:2181"
+  }
+]

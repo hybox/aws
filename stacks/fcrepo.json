@@ -1,0 +1,191 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Parameters" : {
+    "KeyName": {
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
+    },
+    "S3Bucket": {
+      "Type": "String",
+      "Description": "S3 bucket with the Fcrepo war",
+      "Default": "hybox-deployment-artifacts" 
+    },
+    "S3Key": {
+      "Type": "String",
+      "Description": "S3 key to the Fcrepo war",
+      "Default": "fcrepo-webapp-4.5.0.war"
+    },
+    "MinSize": {
+      "Type": "Number",
+      "Default" : "1",
+      "Description": "Minimum number of instances"
+    },
+    "MaxSize": {
+      "Type": "Number",
+      "Default" : "2",
+      "Description": "Maximum number of instances"
+    },
+    "SecurityGroups": {
+      "Type": "List<AWS::EC2::SecurityGroup::GroupName>",
+      "Description": "A list of security group names, such as my-sg-ab.",
+      "Default": "default"
+    },
+    "HostedZoneName" : {
+      "Description" : "Route53 zone to create an alias in",
+      "Type" : "String"
+    }
+  },
+  "Resources" : {
+    "FcrepoApplication" : {
+      "Type" : "AWS::ElasticBeanstalk::Application",
+      "Properties" : {
+        "ApplicationName" : "FcrepoApplication",
+        "Description" : "Fcrepo service"
+      }
+    },
+    "FcrepoApplicationVersion" : {
+      "Type" : "AWS::ElasticBeanstalk::ApplicationVersion",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "FcrepoApplication" },
+        "Description" : "Fcrepo service version",
+        "SourceBundle" : {
+          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3Key" : { "Ref" : "S3Key" }
+        }
+      }
+    },
+    "FcrepoConfigurationTemplate" : {
+      "Type" : "AWS::ElasticBeanstalk::ConfigurationTemplate",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "FcrepoApplication"},
+        "Description" : "Fcrepo configuration template",
+        "OptionSettings" : [
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "InstanceType",
+            "Value" : "t2.large"
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "EC2KeyName",
+            "Value" : { "Ref" : "KeyName" }
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "SecurityGroups",
+            "Value" : { "Fn::Join": ["", { "Ref" : "SecurityGroups" }] }
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "IamInstanceProfile",
+            "Value" : { "Ref" : "EC2InstanceProfile" }
+          },
+          {
+            "Namespace": "aws:autoscaling:asg",
+            "OptionName": "MinSize",
+            "Value": { "Ref" : "MinSize" }
+          },
+          {
+            "Namespace": "aws:autoscaling:asg",
+            "OptionName": "MaxSize",
+            "Value": { "Ref" : "MaxSize" }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:environment",
+            "OptionName": "EnvironmentType",
+            "Value": "SingleInstance"
+          }
+        ],
+        "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.0 running Tomcat 8 Java 8"
+      }
+    },
+    "FcrepoEnvironment": {
+      "Type": "AWS::ElasticBeanstalk::Environment",
+      "Properties": {
+        "ApplicationName": { "Ref": "FcrepoApplication" },
+        "Description": "Fcrepo Environment",
+        "TemplateName": { "Ref": "FcrepoConfigurationTemplate" },
+        "VersionLabel": { "Ref": "FcrepoApplicationVersion" }
+      }
+    },
+    "EC2Role": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "aws-elasticbeanstalk-ec2-role",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:Get*",
+                    "s3:List*",
+                    "s3:PutObject"
+                  ],
+                  "Resource": [
+                    "arn:aws:s3:::elasticbeanstalk-*",
+                    "arn:aws:s3:::elasticbeanstalk-*/*"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "EC2InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "EC2Role"
+          }
+        ]
+      }
+    },
+    "EBRecordSet" : {
+      "Type" : "AWS::Route53::RecordSet",
+      "Properties" : {
+        "Name" : { "Fn::Join": [ ".", [ { "Ref" : "AWS::StackName"}, { "Ref": "HostedZoneName" } ] ] },
+        "HostedZoneName" : { "Ref" : "HostedZoneName"},
+        "Type" : "CNAME",
+        "TTL": "900",
+        "ResourceRecords" : [{ "Fn::GetAtt" : ["FcrepoEnvironment", "EndpointURL"] }]
+      }
+    }
+  },
+  "Outputs": {
+    "URL": {
+      "Description": "URL of the AWS Elastic Beanstalk Environment",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "http://",
+            { "Ref" : "EBRecordSet" },
+            "/rest/"
+          ]
+        ]
+      }
+    }
+  }
+}

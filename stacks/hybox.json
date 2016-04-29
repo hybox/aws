@@ -1,0 +1,270 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Parameters" : {
+    "KeyName": {
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
+    },
+    "S3Bucket": {
+      "Type": "String",
+      "Description": "S3 bucket with the hybox zip",
+      "Default": "hybox-deployment-artifacts" 
+    },
+    "S3Key": {
+      "Type": "String",
+      "Description": "S3 key to the hybox zip",
+      "Default": "hybox.zip"
+    },
+    "MinSize": {
+      "Type": "Number",
+      "Default" : "1",
+      "Description": "Minimum number of instances"
+    },
+    "MaxSize": {
+      "Type": "Number",
+      "Default" : "2",
+      "Description": "Maximum number of instances"
+    },
+    "SecurityGroups": {
+      "Type": "List<AWS::EC2::SecurityGroup::GroupName>",
+      "Description": "A list of security group names, such as my-sg-ab.",
+      "Default": "default"
+    },
+    "HostedZoneName" : {
+      "Description" : "Route53 zone to create an alias in",
+      "Type" : "String"
+    },
+    "SecretKeyBase" : {
+      "Description" : "Secret key for Rails",
+      "Type" : "String"
+    },
+    "FcrepoUrl" : {
+      "Description" : "URL to Fcrepo",
+      "Type" : "String"
+    },
+    "SolrUrl" : {
+      "Description" : "URL to Solr",
+      "Type" : "String"
+    },
+    "ZookeeperHosts": {
+      "Type": "String",
+      "Description": "A list of zookeeper host IP + ports",
+      "Default": "127.0.0.1:2181"
+    }
+  },
+  "Resources" : {
+    "HyboxApplication" : {
+      "Type" : "AWS::ElasticBeanstalk::Application",
+      "Properties" : {
+        "ApplicationName" : "HyboxApplication",
+        "Description" : "Hybox service"
+      }
+    },
+    "HyboxApplicationVersion" : {
+      "Type" : "AWS::ElasticBeanstalk::ApplicationVersion",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "HyboxApplication" },
+        "Description" : "Hybox service version",
+        "SourceBundle" : {
+          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3Key" : { "Ref" : "S3Key" }
+        }
+      }
+    },
+    "HyboxConfigurationTemplate" : {
+      "Type" : "AWS::ElasticBeanstalk::ConfigurationTemplate",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "HyboxApplication"},
+        "Description" : "Hybox configuration template",
+        "OptionSettings" : [
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "InstanceType",
+            "Value" : "t2.large"
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "EC2KeyName",
+            "Value" : { "Ref" : "KeyName" }
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "SecurityGroups",
+            "Value" : { "Fn::Join": ["", { "Ref" : "SecurityGroups" }] }
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "IamInstanceProfile",
+            "Value" : { "Ref" : "EC2InstanceProfile" }
+          },
+          {
+            "Namespace": "aws:autoscaling:asg",
+            "OptionName": "MinSize",
+            "Value": { "Ref" : "MinSize" }
+          },
+          {
+            "Namespace": "aws:autoscaling:asg",
+            "OptionName": "MaxSize",
+            "Value": { "Ref" : "MaxSize" }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:environment",
+            "OptionName": "EnvironmentType",
+            "Value": "SingleInstance"
+          }
+        ],
+        "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.0 running Tomcat 8 Java 8"
+      }
+    },
+    "HyboxEnvironment": {
+      "Type": "AWS::ElasticBeanstalk::Environment",
+      "Properties": {
+        "ApplicationName": { "Ref": "HyboxApplication" },
+        "Description": "Hybox Environment",
+        "TemplateName": { "Ref": "HyboxConfigurationTemplate" },
+        "VersionLabel": { "Ref": "HyboxApplicationVersion" },
+        "OptionSettings" : [
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SECRET_KEY_BASE",
+            "Value": { "Ref" : "SecretKeyBase"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SOLR_URL",
+            "Value": { "Ref" : "SolrUrl"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "FEDORA_URL",
+            "Value": { "Ref" : "FedoraUrl"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "REDIS_HOST",
+            "Value": { "Fn::GetAtt" : ["RedisCluster", "RedisEndpoint.Address"] }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "REDIS_PORT",
+            "Value": { "Fn::GetAtt" : ["RedisCluster", "RedisEndpoint.Port"] }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "Settings.zookeeper.connection_str",
+            "Value": { "Ref" : "ZookeeperHosts"}
+          }
+        ]
+      }
+    },
+    "EC2Role": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "aws-elasticbeanstalk-ec2-role",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:Get*",
+                    "s3:List*",
+                    "s3:PutObject"
+                  ],
+                  "Resource": [
+                    "arn:aws:s3:::elasticbeanstalk-*",
+                    "arn:aws:s3:::elasticbeanstalk-*/*"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "EC2InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "EC2Role"
+          }
+        ]
+      }
+    },
+    "EBRecordSet" : {
+      "Type" : "AWS::Route53::RecordSet",
+      "Properties" : {
+        "Name" : { "Fn::Join": [ ".", [ { "Ref" : "AWS::StackName"}, { "Ref": "HostedZoneName" } ] ] },
+        "HostedZoneName" : { "Ref" : "HostedZoneName"},
+        "Type" : "CNAME",
+        "TTL": "900",
+        "ResourceRecords" : [{ "Fn::GetAtt" : ["HyboxEnvironment", "EndpointURL"] }]
+      }
+    },
+    "RedisCluster": {
+      "Type": "AWS::ElastiCache::CacheCluster",
+      "Properties": {
+        "CacheNodeType": {
+          "Ref": "ClusterNodeType"
+        },
+        "CacheSecurityGroupNames": [
+          {
+            "Ref": "RedisClusterSecurityGroup"
+          }
+        ],
+        "Engine": "redis",
+        "NumCacheNodes": "1"
+      }
+    },
+    "RedisClusterSecurityGroup": {
+      "Type": "AWS::ElastiCache::SecurityGroup",
+      "Properties": {
+        "Description": "Lock the cluster down"
+      }
+    },
+    "RedisClusterSecurityGroupIngress": {
+      "Type": "AWS::ElastiCache::SecurityGroupIngress",
+      "Properties": {
+        "CacheSecurityGroupName": {
+          "Ref": "RedisClusterSecurityGroup"
+        },
+        "EC2SecurityGroupName": "default"
+      }
+    }
+  },
+  "Outputs": {
+    "URL": {
+      "Description": "URL of the AWS Elastic Beanstalk Environment",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "http://",
+            { "Ref" : "EBRecordSet" },
+            "/rest/"
+          ]
+        ]
+      }
+    }
+  }
+}
