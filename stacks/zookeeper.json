@@ -86,11 +86,18 @@
       "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties" : {
         "Subnets" : { "Ref" : "SubnetID" },
-        "Listeners" : [ {
+        "Listeners" : [
+          {
           "LoadBalancerPort" : "80",
           "InstancePort" : "8080",
           "Protocol" : "HTTP"
-        } ],
+          },
+          {
+            "LoadBalancerPort" : "2181",
+            "InstancePort" : "2181",
+            "Protocol" : "TCP"
+          }
+        ],
         "HealthCheck" : {
           "Target" : "HTTP:8080/exhibitor/v1/cluster/state",
           "HealthyThreshold" : "2",
