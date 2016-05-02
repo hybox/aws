@@ -64,6 +64,10 @@
       "Value": {
         "Fn::GetAtt": [ "DBInstance", "Endpoint.Port" ]
       }
+    },
+    "DatabaseName" : {
+      "Description": "Name of the database",
+      "Value" : { "Ref" : "DatabaseName" }
     }
   }
 }
