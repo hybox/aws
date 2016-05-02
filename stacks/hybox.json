@@ -9,7 +9,7 @@
     "S3Bucket": {
       "Type": "String",
       "Description": "S3 bucket with the hybox zip",
-      "Default": "hybox-deployment-artifacts" 
+      "Default": "hybox-deployment-artifacts"
     },
     "S3Key": {
       "Type": "String",
@@ -39,8 +39,8 @@
       "Description" : "Secret key for Rails",
       "Type" : "String"
     },
-    "FcrepoUrl" : {
-      "Description" : "URL to Fcrepo",
+    "FedoraUrl" : {
+      "Description" : "URL to Fedora",
       "Type" : "String"
     },
     "SolrUrl" : {
@@ -51,6 +51,39 @@
       "Type": "String",
       "Description": "A list of zookeeper host IP + ports",
       "Default": "127.0.0.1:2181"
+    },
+    "RedisHost": {
+      "Type": "String",
+      "Description": "URL to Redis"
+    },
+    "RedisPort": {
+      "Type": "String",
+      "Description": "Redis Port",
+      "Default": "6379"
+    },
+    "RDSDatabaseName": {
+      "Type": "String",
+      "Description": "Database name",
+      "Default": "hybox"
+    },
+    "RDSUsername": {
+      "Type": "String",
+      "Description": "Username for Database",
+      "Default": "root"
+    },
+    "RDSPassword": {
+      "Type": "String",
+      "Description": "Password for Database",
+      "Default": "changeme"
+    },
+    "RDSHostname": {
+      "Type": "String",
+      "Description": "Hostname for RDS Database"
+    },
+    "RDSPort": {
+      "Type": "String",
+      "Description": "Database Port",
+      "Default": "5432"
     }
   },
   "Resources" : {
@@ -80,6 +113,11 @@
         "OptionSettings" : [
           {
             "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "ImageId",
+            "Value" : "ami-f329cd9e"
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
             "OptionName" : "InstanceType",
             "Value" : "t2.large"
           },
@@ -96,7 +134,7 @@
           {
             "Namespace" : "aws:autoscaling:launchconfiguration",
             "OptionName" : "IamInstanceProfile",
-            "Value" : { "Ref" : "EC2InstanceProfile" }
+            "Value" : {"Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] }
           },
           {
             "Namespace": "aws:autoscaling:asg",
@@ -114,7 +152,7 @@
             "Value": "SingleInstance"
           }
         ],
-        "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.0 running Tomcat 8 Java 8"
+        "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.0 running Ruby 2.3 (Puma)"
       }
     },
     "HyboxEnvironment": {
@@ -122,6 +160,7 @@
       "Properties": {
         "ApplicationName": { "Ref": "HyboxApplication" },
         "Description": "Hybox Environment",
+        "EnvironmentName": "HyBoxEBEnvironment",
         "TemplateName": { "Ref": "HyboxConfigurationTemplate" },
         "VersionLabel": { "Ref": "HyboxApplicationVersion" },
         "OptionSettings" : [
@@ -143,17 +182,42 @@
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "REDIS_HOST",
-            "Value": { "Fn::GetAtt" : ["RedisCluster", "RedisEndpoint.Address"] }
+            "Value": { "Ref" : "RedisHost"}
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "REDIS_PORT",
-            "Value": { "Fn::GetAtt" : ["RedisCluster", "RedisEndpoint.Port"] }
+            "Value": { "Ref" : "RedisPort"}
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "Settings.zookeeper.connection_str",
             "Value": { "Ref" : "ZookeeperHosts"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "RDS_DB_NAME",
+            "Value": { "Ref" : "RDSDatabaseName"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "RDS_USERNAME",
+            "Value": { "Ref" : "RDSUsername"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "RDS_PASSWORD",
+            "Value": { "Ref" : "RDSPassword"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "RDS_HOSTNAME",
+            "Value": { "Ref" : "RDSHostname"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "RDS_PORT",
+            "Value": { "Ref" : "RDSPort"}
           }
         ]
       }
@@ -220,36 +284,6 @@
         "TTL": "900",
         "ResourceRecords" : [{ "Fn::GetAtt" : ["HyboxEnvironment", "EndpointURL"] }]
       }
-    },
-    "RedisCluster": {
-      "Type": "AWS::ElastiCache::CacheCluster",
-      "Properties": {
-        "CacheNodeType": {
-          "Ref": "ClusterNodeType"
-        },
-        "CacheSecurityGroupNames": [
-          {
-            "Ref": "RedisClusterSecurityGroup"
-          }
-        ],
-        "Engine": "redis",
-        "NumCacheNodes": "1"
-      }
-    },
-    "RedisClusterSecurityGroup": {
-      "Type": "AWS::ElastiCache::SecurityGroup",
-      "Properties": {
-        "Description": "Lock the cluster down"
-      }
-    },
-    "RedisClusterSecurityGroupIngress": {
-      "Type": "AWS::ElastiCache::SecurityGroupIngress",
-      "Properties": {
-        "CacheSecurityGroupName": {
-          "Ref": "RedisClusterSecurityGroup"
-        },
-        "EC2SecurityGroupName": "default"
-      }
     }
   },
   "Outputs": {
@@ -260,8 +294,7 @@
           "",
           [
             "http://",
-            { "Ref" : "EBRecordSet" },
-            "/rest/"
+            { "Ref" : "EBRecordSet" }
           ]
         ]
       }

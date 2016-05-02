@@ -1,0 +1,47 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Resources": {
+    "RedisCluster": {
+      "Type": "AWS::ElastiCache::CacheCluster",
+      "Properties": {
+        "CacheNodeType": "cache.m1.small",
+        "CacheSecurityGroupNames": [
+          {
+            "Ref": "RedisClusterSecurityGroup"
+          }
+        ],
+        "Engine": "redis",
+        "NumCacheNodes": "1"
+      }
+    },
+    "RedisClusterSecurityGroup": {
+      "Type": "AWS::ElastiCache::SecurityGroup",
+      "Properties": {
+        "Description": "Lock the cluster down"
+      }
+    },
+    "RedisClusterSecurityGroupIngress": {
+      "Type": "AWS::ElastiCache::SecurityGroupIngress",
+      "Properties": {
+        "CacheSecurityGroupName": {
+          "Ref": "RedisClusterSecurityGroup"
+        },
+        "EC2SecurityGroupName": "default"
+      }
+    }
+  },
+  "Outputs": {
+    "EndpointAddress": {
+      "Description": "The Redis endpoint address",
+      "Value": {
+        "Fn::GetAtt": [ "RedisCluster", "RedisEndpoint.Address" ]
+      }
+    },
+    "EndpointPort": {
+      "Description": "The Redis endpoint port",
+      "Value": {
+        "Fn::GetAtt": [ "RedisCluster", "RedisEndpoint.Port" ]
+      }
+    }
+  }
+}
