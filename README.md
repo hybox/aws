@@ -1,5 +1,15 @@
 # aws
 
+## Full stack
+
+1. Create the travis stack and upload this repository into the bucket.
+
+2. Create the application stack
+
+```console
+$ aws --region us-east-1 cloudformation create-stack --stack-name hybox --template-body file://stacks/application.json --capabilities CAPABILITY_IAM --parameters file://params/application.json
+```
+
 ## Zookeeper
 
 ```console

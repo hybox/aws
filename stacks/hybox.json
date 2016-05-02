@@ -39,7 +39,7 @@
       "Description" : "Secret key for Rails",
       "Type" : "String"
     },
-    "FedoraUrl" : {
+    "FcrepoUrl" : {
       "Description" : "URL to Fedora",
       "Type" : "String"
     },
@@ -177,7 +177,7 @@
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "FEDORA_URL",
-            "Value": { "Ref" : "FedoraUrl"}
+            "Value": { "Ref" : "FcrepoUrl"}
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",

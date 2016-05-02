@@ -1,0 +1,42 @@
+[
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "hybox"
+  },
+  {
+    "ParameterKey": "S3Bucket",
+    "ParameterValue": "hybox-deployment-artifacts"
+  },
+  {
+    "ParameterKey": "SubnetID",
+    "ParameterValue": "subnet-4eb52273,subnet-14a3553e,subnet-7d2cd625,subnet-ed0aaa9b"
+  },
+  {
+    "ParameterKey": "SecurityGroups",
+    "ParameterValue": "default"
+  },
+  {
+    "ParameterKey": "PublicZoneName",
+    "ParameterValue": "hydrainabox.org."
+  },
+  {
+    "ParameterKey": "PrivateZoneName",
+    "ParameterValue": "vpc.hydrainabox.org."
+  },
+  {
+    "ParameterKey": "SecretKeyBase",
+    "ParameterValue": "test"
+  },
+  {
+    "ParameterKey": "ZookeeperHosts",
+    "ParameterValue": "zk.vpc.hydrainabox.org:2181"
+  },
+  {
+    "ParameterKey": "DatabaseUsername",
+    "ParameterValue": "root"
+  },
+  {
+    "ParameterKey": "DatabaseUserPassword",
+    "ParameterValue": "changeme"
+  }
+]
