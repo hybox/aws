@@ -183,6 +183,11 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__SOLR__URL",
+            "Value": { "Ref" : "SolrUrl"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "FEDORA_URL",
             "Value": { "Ref" : "FcrepoUrl"}
           },
@@ -198,7 +203,7 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
-            "OptionName": "Settings.zookeeper.connection_str",
+            "OptionName": "SETTINGS__ZOOKEEPER__CONNECTION_STR",
             "Value": { "Ref" : "ZookeeperHosts"}
           },
           {
