@@ -75,7 +75,7 @@
           "SecurityGroups" : { "Fn::Join" : [",", { "Ref" : "SecurityGroups" }] },
           "PrivateZoneName" : { "Ref" : "PrivateZoneName" }
         },
-        "TemplateURL" : { "Fn::Join" : ["/", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "stacks/fcrepo.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/stacks/fcrepo.json"]] }
       }
     },
     "solr" : {
@@ -88,13 +88,13 @@
           "SubnetID" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] },
           "ZookeeperHosts" : { "Ref" : "ZookeeperHosts" }
         },
-        "TemplateURL" : { "Fn::Join" : ["/", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "stacks/solr.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/stacks/solr.json"]] }
       }
     },
     "redis" : {
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
-        "TemplateURL" : { "Fn::Join" : ["/", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "stacks/redis.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/stacks/redis.json"]] }
       }
     },
     "database" : {
@@ -104,7 +104,7 @@
           "MasterUsername" : { "Ref" : "DatabaseUsername" },
           "MasterUserPassword" : { "Ref" : "DatabasePassword" }
         },
-        "TemplateURL" : { "Fn::Join" : ["/", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "stacks/postgres.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/stacks/postgres.json"]] }
       }
     },
     "hybox" : {
@@ -127,7 +127,7 @@
           "RDSUsername" : { "Ref" : "DatabaseUsername" },
           "RDSPassword" : { "Ref" : "DatabasePassword" }
         },
-        "TemplateURL" : { "Fn::Join" : ["/", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "stacks/hybox.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/stacks/hybox.json"]] }
       }
     }
   },
