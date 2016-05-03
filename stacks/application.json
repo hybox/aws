@@ -47,7 +47,24 @@
       "Type" : "String"
     }
   },
-  
+  "Metadata" : {
+    "AWS::CloudFormation::Interface" : {
+      "ParameterGroups" : [
+        {
+          "Label" : { "default" : "Deployment Artifacts" },
+          "Parameters" : [ "S3Bucket" ]
+        },
+        {
+          "Label" : { "default" : "Network Configuration" },
+          "Parameters" : [ "SubnetID", "SecurityGroups", "PublicZoneName", "PrivateZoneName" ]
+        },
+        {
+          "Label" : { "default":"Configuration" },
+          "Parameters" : [ "DatabaseUsername", "DatabasePassword", "ZookeeperHosts", "SecretKeyBase" ]
+        }
+      ]
+    }
+  },
   "Resources" : {
     "fcrepo" : {
       "Type" : "AWS::CloudFormation::Stack",
