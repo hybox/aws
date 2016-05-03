@@ -1,5 +1,6 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description": "AWS CloudFormation Template for Hydra-in-a-Box; Version 0.1",
 
   "Parameters" : {
     "KeyName": {
@@ -34,6 +35,7 @@
       "Default": "root"
     },
     "DatabasePassword": {
+      "NoEcho": "true",
       "Type": "String",
       "Description": "Password for the DB Root User"
     },
@@ -43,6 +45,7 @@
       "Default": "127.0.0.1:2181"
     },
     "SecretKeyBase" : {
+      "NoEcho": "true",
       "Description" : "Secret key for Rails",
       "Type" : "String"
     }

@@ -36,6 +36,7 @@
       "Type" : "String"
     },
     "SecretKeyBase" : {
+      "NoEcho": "true",
       "Description" : "Secret key for Rails",
       "Type" : "String"
     },
@@ -72,6 +73,7 @@
       "Default": "root"
     },
     "RDSPassword": {
+      "NoEcho": "true",
       "Type": "String",
       "Description": "Password for Database",
       "Default": "changeme"

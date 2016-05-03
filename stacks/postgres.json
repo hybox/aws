@@ -17,6 +17,7 @@
       "Description": "Instance size"
     },
     "MasterUserPassword": {
+      "NoEcho": "true",
       "Type": "String",
       "Description": "Password for the DB Root User"
     },
