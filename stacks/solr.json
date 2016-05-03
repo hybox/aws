@@ -98,9 +98,6 @@
         ]
       }
     },
-    "S3Bucket": {
-      "Type": "AWS::S3::Bucket"
-    },
     "EcsElasticLoadBalancer" : {
       "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties" : {
