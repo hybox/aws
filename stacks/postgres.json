@@ -20,7 +20,7 @@
       "Type": "String",
       "Description": "Password for the DB Root User"
     },
-    "EC2SecurityGroup": {
+    "SecurityGroups": {
       "Type": "List<AWS::EC2::SecurityGroup::GroupName>",
       "Description": "A list of security group names, such as my-sg-ab.",
       "Default": "default"
