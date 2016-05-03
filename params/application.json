@@ -36,7 +36,7 @@
     "ParameterValue": "root"
   },
   {
-    "ParameterKey": "DatabaseUserPassword",
+    "ParameterKey": "DatabasePassword",
     "ParameterValue": "changeme"
   }
 ]

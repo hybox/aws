@@ -33,7 +33,7 @@
       "Description": "Database Root Username",
       "Default": "root"
     },
-    "DatabaseUserPassword": {
+    "DatabasePassword": {
       "Type": "String",
       "Description": "Password for the DB Root User"
     },
@@ -74,7 +74,7 @@
         "TemplateURL" : { "Fn::Join" : ["/", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "stacks/solr.json"]] }
       }
     },
-    "cache" : {
+    "redis" : {
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "TemplateURL" : { "Fn::Join" : ["/", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "stacks/redis.json"]] }
@@ -85,7 +85,7 @@
       "Properties" : {
         "Parameters" : {
           "MasterUsername" : { "Ref" : "DatabaseUsername" },
-          "MasterPassword" : { "Ref" : "DatabasePassword" }
+          "MasterUserPassword" : { "Ref" : "DatabasePassword" }
         },
         "TemplateURL" : { "Fn::Join" : ["/", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "stacks/postgres.json"]] }
       }
@@ -103,7 +103,7 @@
           "SolrUrl" : { "Fn::GetAtt" : ["solr", "Outputs.URL"] },
           "ZookeeperHosts" : { "Ref" : "ZookeeperHosts" },
           "RedisHost" : { "Fn::GetAtt" : ["redis", "Outputs.EndpointAddress"] },
-          "RedisPost" : { "Fn::GetAtt" : ["redis", "Outputs.EndpointPort"] },
+          "RedisPort" : { "Fn::GetAtt" : ["redis", "Outputs.EndpointPort"] },
           "RDSDatabaseName" : { "Fn::GetAtt" : ["database", "Outputs.DatabaseName"] },
           "RDSHostname" : { "Fn::GetAtt" : ["database", "Outputs.EndpointAddress"] },
           "RDSPort" : { "Fn::GetAtt" : ["database", "Outputs.EndpointPort"] },
@@ -117,7 +117,7 @@
   "Outputs": {
     "URL" : {
       "Description" : "URL for the deployed application",
-      "Value" : { "Fn::GetAtt" : ["hybox", "Output.URL"] }
+      "Value" : { "Fn::GetAtt" : ["hybox", "Outputs.URL"] }
     }
   }
 }
