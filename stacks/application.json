@@ -70,9 +70,9 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
-          "KeyName" : { "Ref" : "KeyName" },
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
-          "SecurityGroups" : { "Ref" : "SecurityGroups" },
+          "SecurityGroups" : { "Fn::Join" : [",", { "Ref" : "SecurityGroups" }] },
           "PrivateZoneName" : { "Ref" : "PrivateZoneName" }
         },
         "TemplateURL" : { "Fn::Join" : ["/", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "stacks/fcrepo.json"]] }
@@ -82,10 +82,10 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
-          "KeyName" : { "Ref" : "KeyName" },
-          "SecurityGroups" : { "Ref" : "SecurityGroups" },
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
+          "SecurityGroups" : { "Fn::Join" : [",", { "Ref" : "SecurityGroups" }] },
           "PrivateZoneName" : { "Ref" : "PrivateZoneName" },
-          "SubnetID" : { "Ref" : "SubnetID" },
+          "SubnetID" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] },
           "ZookeeperHosts" : { "Ref" : "ZookeeperHosts" }
         },
         "TemplateURL" : { "Fn::Join" : ["/", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "stacks/solr.json"]] }
@@ -111,9 +111,9 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
-          "KeyName" : { "Ref" : "KeyName" },
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
-          "SecurityGroups" : { "Ref" : "SecurityGroups" },
+          "SecurityGroups" : { "Fn::Join" : [",", { "Ref" : "SecurityGroups" }] },
           "PrivateZoneName" : { "Ref" : "PublicZoneName" },
           "SecretKeyBase" : { "Ref" : "SecretKeyBase" },
           "FcrepoUrl" : { "Fn::GetAtt" : ["fcrepo", "Outputs.URL"] },
