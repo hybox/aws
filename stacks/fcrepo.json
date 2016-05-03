@@ -40,7 +40,6 @@
     "FcrepoApplication" : {
       "Type" : "AWS::ElasticBeanstalk::Application",
       "Properties" : {
-        "ApplicationName" : "FcrepoApplication",
         "Description" : "Fcrepo service"
       }
     },
