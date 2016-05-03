@@ -16,6 +16,11 @@
       "Type": "List<AWS::EC2::Subnet::Id>",
       "Description": "List of an existing subnet IDs to use for the load balancer and auto scaling group"
     },
+    "EBApplicationName": {
+      "Type": "String",
+      "Description": "Name of the ElasticBeanstalk environment",
+      "Default" : "HyboxApplication"
+    },
     "S3Bucket": {
       "Type": "String",
       "Description": "S3 bucket to the deployment artifacts",
@@ -114,6 +119,7 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
+          "EBApplicationName" : { "Ref" : "EBApplicationName" },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
           "SecurityGroups" : { "Fn::Join" : [",", { "Ref" : "SecurityGroups" }] },

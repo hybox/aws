@@ -2,6 +2,11 @@
   "AWSTemplateFormatVersion" : "2010-09-09",
 
   "Parameters" : {
+    "EBApplicationName": {
+      "Type": "String",
+      "Description": "Name of the ElasticBeanstalk environment",
+      "Default" : "HyboxApplication"
+    },
     "KeyName": {
       "Type": "AWS::EC2::KeyPair::KeyName",
       "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
@@ -92,7 +97,7 @@
     "HyboxApplication" : {
       "Type" : "AWS::ElasticBeanstalk::Application",
       "Properties" : {
-        "ApplicationName" : "HyboxApplication",
+        "ApplicationName" : { "Ref" : "EBApplicationName" },
         "Description" : "Hybox service"
       }
     },
