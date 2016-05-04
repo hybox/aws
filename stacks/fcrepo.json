@@ -93,7 +93,7 @@
           {
             "Namespace": "aws:elasticbeanstalk:environment",
             "OptionName": "EnvironmentType",
-            "Value": "SingleInstance"
+            "Value": "LoadBalanced"
           }
         ],
         "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.0 running Tomcat 8 Java 8"
