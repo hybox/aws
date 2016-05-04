@@ -39,10 +39,10 @@
         "DBName": { "Ref" : "DatabaseName" },
         "Engine": "postgres",
         "MasterUsername": { "Ref" : "MasterUsername" },
+        "MasterUserPassword": { "Ref" : "MasterUserPassword" },
         "DBInstanceClass": { "Ref" : "DBInstanceClass" },
         "DBSecurityGroups": [ { "Ref" : "DBSecurityGroup" } ],
-        "AllocatedStorage": { "Ref" : "AllocatedStorage" },
-        "MasterUserPassword": { "Ref" : "DBInstanceClass" }
+        "AllocatedStorage": { "Ref" : "AllocatedStorage" }
       }
     },
     "DBSecurityGroup": {
