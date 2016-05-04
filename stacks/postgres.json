@@ -9,7 +9,7 @@
     "MasterUsername": {
       "Type": "String",
       "Description": "Database Root Username",
-      "Default": "root"
+      "Default": "ebroot"
     },
     "DBInstanceClass": {
       "Type": "String",

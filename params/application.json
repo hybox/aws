@@ -33,7 +33,7 @@
   },
   {
     "ParameterKey": "DatabaseUsername",
-    "ParameterValue": "root"
+    "ParameterValue": "ebroot"
   },
   {
     "ParameterKey": "DatabasePassword",
