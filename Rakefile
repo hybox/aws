@@ -7,7 +7,11 @@ JsonLint::RakeTask.new do |t|
 end
 
 task :copy_artifacts do
-  `mkdir build; cp -R stacks build; cp -R params build`
+  if ENV['CI'] == 'true' && ENV['TRAVIS_PULL_REQUEST'] == 'false'
+    `mkdir -p build/#{ENV['TRAVIS_BRANCH']};
+     cp -R stacks build/#{ENV['TRAVIS_BRANCH']};
+     cp -R params build/#{ENV['TRAVIS_BRANCH']};`
+  end
 end
 
 task default: [:jsonlint, :copy_artifacts]
