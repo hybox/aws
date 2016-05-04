@@ -2,30 +2,20 @@
 
 ## Full stack
 
-1. Create the travis stack and upload this repository into the bucket.
+1. Create the travis stack (below) and upload this repository into the bucket.
 
-2. Create the application stack
-
-```console
-$ aws --region us-east-1 cloudformation create-stack --stack-name hybox --template-body file://stacks/application.json --capabilities CAPABILITY_IAM --parameters file://params/application.json
-```
-
-## Zookeeper
+2. Create the zookeeper stack
 
 ```console
 $ aws --region us-east-1 cloudformation create-stack --stack-name zookeeper --template-body file://stacks/zookeeper.json --capabilities CAPABILITY_IAM --parameters file://params/zookeeper.json
 ```
 
-## Solr
+Note the generated zookeeper hosts, and pass it through as the application stack `ZookeeperHosts` parameter.
+
+3. Create the application stack
 
 ```console
-$ aws --region us-east-1 cloudformation create-stack --stack-name solr --template-body file://stacks/solr.json --capabilities CAPABILITY_IAM --parameters file://params/solr.json
-```
-
-## Fedora
-
-```console
-$ aws --region us-east-1 cloudformation create-stack --stack-name fcrepo --template-body file://stacks/fcrepo.json --capabilities CAPABILITY_IAM --parameters file://params/fcrepo.json
+$ aws --region us-east-1 cloudformation create-stack --stack-name hybox --template-body file://stacks/application.json --capabilities CAPABILITY_IAM --parameters file://params/application.json
 ```
 
 ## Travis deployment integration
