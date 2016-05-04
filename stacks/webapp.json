@@ -121,7 +121,7 @@
           {
             "Namespace" : "aws:autoscaling:launchconfiguration",
             "OptionName" : "ImageId",
-            "Value" : "ami-f329cd9e"
+            "Value" : "ami-f38a6b9e"
           },
           {
             "Namespace" : "aws:autoscaling:launchconfiguration",
