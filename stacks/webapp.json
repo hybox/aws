@@ -40,6 +40,11 @@
       "Description" : "Route53 zone to create an alias in",
       "Type" : "String"
     },
+    "RailsEnv": {
+      "Type": "String",
+      "Description": "Rails Environment to run the application",
+      "Default": "production"
+    },
     "SecretKeyBase" : {
       "NoEcho": "true",
       "Description" : "Secret key for Rails",
@@ -171,6 +176,11 @@
         "TemplateName": { "Ref": "HyboxConfigurationTemplate" },
         "VersionLabel": { "Ref": "HyboxApplicationVersion" },
         "OptionSettings" : [
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "RAILS_ENV",
+            "Value": { "Ref" : "RailsEnv"}
+          },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SECRET_KEY_BASE",
