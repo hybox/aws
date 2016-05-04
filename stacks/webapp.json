@@ -167,7 +167,7 @@
       "Properties": {
         "ApplicationName": { "Ref": "HyboxApplication" },
         "Description": "Hybox Environment",
-        "EnvironmentName": { "Fn::Join": ["-", { "Ref" : "AWS::StackName"}, "webapp"]},
+        "EnvironmentName": { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "webapp"]] },
         "TemplateName": { "Ref": "HyboxConfigurationTemplate" },
         "VersionLabel": { "Ref": "HyboxApplicationVersion" },
         "OptionSettings" : [

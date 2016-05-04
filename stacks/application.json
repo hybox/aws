@@ -115,7 +115,7 @@
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/postgres.json"]] }
       }
     },
-    "hybox" : {
+    "webapp" : {
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
