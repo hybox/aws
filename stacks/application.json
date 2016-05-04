@@ -131,7 +131,7 @@
           "RDSUsername" : { "Ref" : "DatabaseUsername" },
           "RDSPassword" : { "Ref" : "DatabasePassword" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/stacks/hybox.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/stacks/webapp.json"]] }
       }
     }
   },
