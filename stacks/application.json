@@ -21,6 +21,10 @@
       "Description": "S3 bucket to the deployment artifacts",
       "Default": "hybox-deployment-artifacts" 
     },
+    "S3KeyPrefix" : {
+      "Description" : "S3 prefix to deployment artifacts",
+      "Type" : "master"
+    },
     "PrivateZoneName" : {
       "Description" : "Route53 zone to create an alias in",
       "Type" : "String"
@@ -78,7 +82,7 @@
           "SecurityGroups" : { "Fn::Join" : [",", { "Ref" : "SecurityGroups" }] },
           "HostedZoneName" : { "Ref" : "PrivateZoneName" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/stacks/fcrepo.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/fcrepo.json"]] }
       }
     },
     "solr" : {
@@ -90,13 +94,13 @@
           "SubnetID" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] },
           "ZookeeperHosts" : { "Ref" : "ZookeeperHosts" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/stacks/solr.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/solr.json"]] }
       }
     },
     "redis" : {
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/stacks/redis.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/redis.json"]] }
       }
     },
     "database" : {
@@ -107,7 +111,7 @@
           "MasterUsername" : { "Ref" : "DatabaseUsername" },
           "MasterUserPassword" : { "Ref" : "DatabasePassword" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/stacks/postgres.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/postgres.json"]] }
       }
     },
     "hybox" : {
@@ -131,7 +135,7 @@
           "RDSUsername" : { "Ref" : "DatabaseUsername" },
           "RDSPassword" : { "Ref" : "DatabasePassword" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/stacks/webapp.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/webapp.json"]] }
       }
     }
   },
