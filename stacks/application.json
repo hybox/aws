@@ -23,7 +23,8 @@
     },
     "S3KeyPrefix" : {
       "Description" : "S3 prefix to deployment artifacts",
-      "Type" : "master"
+      "Type" : "String",
+      "Default": "master"
     },
     "PrivateZoneName" : {
       "Description" : "Route53 zone to create an alias in",
