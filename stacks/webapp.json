@@ -167,7 +167,7 @@
       "Properties": {
         "ApplicationName": { "Ref": "HyboxApplication" },
         "Description": "Hybox Environment",
-        "EnvironmentName": { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "webapp"]] },
+        "EnvironmentName": { "Ref" : "EBApplicationName"},
         "TemplateName": { "Ref": "HyboxConfigurationTemplate" },
         "VersionLabel": { "Ref": "HyboxApplicationVersion" },
         "OptionSettings" : [
@@ -290,7 +290,7 @@
     "EBRecordSet" : {
       "Type" : "AWS::Route53::RecordSet",
       "Properties" : {
-        "Name" : { "Fn::Join": [ ".", [ { "Ref" : "AWS::StackName"}, { "Ref": "HostedZoneName" } ] ] },
+        "Name" : { "Fn::Join": [ ".", [ { "Ref": "EBApplicationName" }, { "Ref": "HostedZoneName" } ] ] },
         "HostedZoneName" : { "Ref" : "HostedZoneName"},
         "Type" : "CNAME",
         "TTL": "900",
