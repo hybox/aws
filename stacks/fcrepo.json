@@ -2,6 +2,10 @@
   "AWSTemplateFormatVersion" : "2010-09-09",
 
   "Parameters" : {
+    "EBApplicationName": {
+      "Type": "String",
+      "Description": "Name of the ElasticBeanstalk environment"
+    },
     "KeyName": {
       "Type": "AWS::EC2::KeyPair::KeyName",
       "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
@@ -40,6 +44,7 @@
     "FcrepoApplication" : {
       "Type" : "AWS::ElasticBeanstalk::Application",
       "Properties" : {
+        "ApplicationName" : { "Ref" : "EBApplicationName"},
         "Description" : "Fcrepo service"
       }
     },
@@ -104,6 +109,7 @@
       "Properties": {
         "ApplicationName": { "Ref": "FcrepoApplication" },
         "Description": "Fcrepo Environment",
+        "EnvironmentName": { "Ref" : "EBApplicationName"},
         "TemplateName": { "Ref": "FcrepoConfigurationTemplate" },
         "VersionLabel": { "Ref": "FcrepoApplicationVersion" }
       }
