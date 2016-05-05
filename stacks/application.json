@@ -139,6 +139,17 @@
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/webapp.json"]] }
       }
+    },
+    "codepipeline" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "ApplicationName" : { "Ref" : "AWS::StackName"},
+          "EnvironmentName" : { "Ref" : "AWS::StackName"},
+          "S3Bucket" : { "Ref" : "S3Bucket" }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/codepipeline.json"]] }
+      }
     }
   },
   "Outputs": {
