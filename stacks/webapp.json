@@ -208,6 +208,11 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__MULTITENANCY__DEFAULT_HOST",
+            "Value": { "Fn::Join": [ ".", [ "%{tenant}", { "Ref": "EBApplicationName" }, { "Ref": "HostedZoneName" } ] ] }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "RDS_DB_NAME",
             "Value": { "Ref" : "RDSDatabaseName"}
           },
@@ -291,6 +296,16 @@
       "Type" : "AWS::Route53::RecordSet",
       "Properties" : {
         "Name" : { "Fn::Join": [ ".", [ { "Ref": "EBApplicationName" }, { "Ref": "HostedZoneName" } ] ] },
+        "HostedZoneName" : { "Ref" : "HostedZoneName"},
+        "Type" : "CNAME",
+        "TTL": "900",
+        "ResourceRecords" : [{ "Fn::GetAtt" : ["HyboxEnvironment", "EndpointURL"] }]
+      }
+    },
+    "EBWildcardRecordSet" : {
+      "Type" : "AWS::Route53::RecordSet",
+      "Properties" : {
+        "Name" : { "Fn::Join": [ ".", [ "*", { "Ref": "EBApplicationName" }, { "Ref": "HostedZoneName" } ] ] },
         "HostedZoneName" : { "Ref" : "HostedZoneName"},
         "Type" : "CNAME",
         "TTL": "900",
