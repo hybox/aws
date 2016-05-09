@@ -24,7 +24,7 @@
     "S3KeyPrefix" : {
       "Description" : "S3 prefix to deployment artifacts",
       "Type" : "String",
-      "Default": "master"
+      "Default": "current"
     },
     "PrivateZoneName" : {
       "Description" : "Route53 zone to create an alias in",
@@ -84,7 +84,7 @@
           "SecurityGroups" : { "Fn::Join" : [",", { "Ref" : "SecurityGroups" }] },
           "HostedZoneName" : { "Ref" : "PrivateZoneName" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/fcrepo.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/fcrepo.json"]] }
       }
     },
     "solr" : {
@@ -96,13 +96,13 @@
           "SubnetID" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] },
           "ZookeeperHosts" : { "Ref" : "ZookeeperHosts" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/solr.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/solr.json"]] }
       }
     },
     "redis" : {
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/redis.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/redis.json"]] }
       }
     },
     "database" : {
@@ -113,7 +113,7 @@
           "MasterUsername" : { "Ref" : "DatabaseUsername" },
           "MasterUserPassword" : { "Ref" : "DatabasePassword" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/postgres.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/postgres.json"]] }
       }
     },
     "webapp" : {
@@ -137,7 +137,7 @@
           "RDSUsername" : { "Ref" : "DatabaseUsername" },
           "RDSPassword" : { "Ref" : "DatabasePassword" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/webapp.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/webapp.json"]] }
       }
     },
     "codepipeline" : {
@@ -148,7 +148,7 @@
           "EnvironmentName" : { "Ref" : "AWS::StackName"},
           "S3Bucket" : { "Ref" : "S3Bucket" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/", { "Ref" : "S3KeyPrefix"}, "/stacks/codepipeline.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/codepipeline.json"]] }
       }
     }
   },
