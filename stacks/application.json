@@ -26,6 +26,11 @@
       "Type" : "String",
       "Default": "current"
     },
+    "WebappS3Key" : {
+      "Description" : "S3 key to webapp deployment artifacts",
+      "Type" : "String",
+      "Default": "webapp/branch/master/hybox.zip"
+    },
     "PrivateZoneName" : {
       "Description" : "Route53 zone to create an alias in",
       "Type" : "String"
@@ -123,6 +128,7 @@
           "EBApplicationName" : { "Ref" : "AWS::StackName" },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3Key" : { "Ref" : "WebappS3Key" },
           "SecurityGroups" : { "Fn::Join" : [",", { "Ref" : "SecurityGroups" }] },
           "HostedZoneName" : { "Ref" : "PublicZoneName" },
           "SecretKeyBase" : { "Ref" : "SecretKeyBase" },
@@ -146,7 +152,8 @@
         "Parameters" : {
           "ApplicationName" : { "Ref" : "AWS::StackName"},
           "EnvironmentName" : { "Ref" : "AWS::StackName"},
-          "S3Bucket" : { "Ref" : "S3Bucket" }
+          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3Key" : { "Ref" : "WebappS3Key" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/codepipeline.json"]] }
       }
