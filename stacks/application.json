@@ -65,14 +65,18 @@
       "ParameterGroups" : [
         {
           "Label" : { "default" : "Deployment Artifacts" },
-          "Parameters" : [ "S3Bucket" ]
+          "Parameters" : [ "S3Bucket", "S3KeyPrefix", "WebappS3Key" ]
         },
         {
           "Label" : { "default" : "Network Configuration" },
-          "Parameters" : [ "SubnetID", "SecurityGroups", "PublicZoneName", "PrivateZoneName" ]
+          "Parameters" : [ "SubnetID", "SecurityGroups", "KeyName" ]
         },
         {
-          "Label" : { "default":"Configuration" },
+          "Label" : { "default" : "DNS Configuration"},
+          "Parameters" : [ "PublicZoneName", "PrivateZoneName" ]
+        },
+        {
+          "Label" : { "default" : "Application Configuration" },
           "Parameters" : [ "DatabaseUsername", "DatabasePassword", "ZookeeperHosts", "SecretKeyBase" ]
         }
       ]
