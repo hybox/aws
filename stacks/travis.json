@@ -1,12 +1,39 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
-
+  "Parameters" : {
+    "BucketName": {
+      "Type": "String",
+      "Description": "S3 Bucket of the deployment artifact",
+      "Default": "hybox-deployment-artifacts"
+    }
+  },
   "Resources" : {
     "S3Bucket": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
-        "BucketName": "hybox-deployment-artifacts",
-        "AccessControl": "PublicRead"
+        "BucketName": { "Ref" : "BucketName"},
+        "AccessControl": "PublicRead",
+        "VersioningConfiguration": {
+          "Status" : "Enabled"
+        },
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "Status": "Enabled",
+              "NoncurrentVersionExpirationInDays": 1
+            },
+            {
+              "Status": "Enabled",
+              "Prefix": "cloudformation/branch",
+              "ExpirationInDays" : 7
+            },
+            {
+              "Status": "Enabled",
+              "Prefix": "webapp/branch",
+              "ExpirationInDays" : 7
+            }
+          ]
+        }
       }
     },
     "S3User": {

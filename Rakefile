@@ -8,9 +8,9 @@ end
 
 task :copy_artifacts do
   if ENV['CI'] == 'true' && ENV['TRAVIS_PULL_REQUEST'] == 'false'
-    `mkdir -p build/#{ENV['TRAVIS_BRANCH']};
-     cp -R stacks build/#{ENV['TRAVIS_BRANCH']};
-     cp -R params build/#{ENV['TRAVIS_BRANCH']};`
+    `mkdir -p build;
+     cp -R stacks build;
+     cp -R params build`
   end
 end
 
