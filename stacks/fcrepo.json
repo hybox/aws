@@ -18,7 +18,7 @@
     "S3Key": {
       "Type": "String",
       "Description": "S3 key to the Fcrepo war",
-      "Default": "fcrepo-webapp-4.5.0.war"
+      "Default": "fcrepo-webapp-4.5.1.war"
     },
     "MinSize": {
       "Type": "Number",
