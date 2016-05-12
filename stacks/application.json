@@ -83,6 +83,17 @@
     }
   },
   "Resources" : {
+    "zookeeper" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
+          "SubnetID" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] },
+          "HostedZoneName" : { "Ref" : "PrivateZoneName" }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/zookeeper.json"]] }
+      }
+    },
     "fcrepo" : {
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
@@ -103,7 +114,7 @@
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "HostedZoneName" : { "Ref" : "PrivateZoneName" },
           "SubnetID" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] },
-          "ZookeeperHosts" : { "Ref" : "ZookeeperHosts" }
+          "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/solr.json"]] }
       }
