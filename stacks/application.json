@@ -29,7 +29,7 @@
     "WebappS3Key" : {
       "Description" : "S3 key to webapp deployment artifacts",
       "Type" : "String",
-      "Default": "webapp/branch/master/hybox.zip"
+      "Default": "hybox/current/hybox.zip"
     },
     "PrivateZoneName" : {
       "Description" : "Route53 zone to create an alias in",
