@@ -88,21 +88,21 @@
         "Subnets" : { "Ref" : "SubnetID" },
         "Listeners" : [
           {
-          "LoadBalancerPort" : "80",
-          "InstancePort" : "8080",
-          "Protocol" : "HTTP"
-          },
-          {
             "LoadBalancerPort" : "2181",
             "InstancePort" : "2181",
             "Protocol" : "TCP"
+          },
+          {
+            "LoadBalancerPort" : "80",
+            "InstancePort" : "8080",
+            "Protocol" : "HTTP"
           }
         ],
         "HealthCheck" : {
-          "Target" : "HTTP:8080/exhibitor/v1/cluster/state",
+          "Target" : "TCP:2181",
           "HealthyThreshold" : "2",
           "UnhealthyThreshold" : "10",
-          "Interval" : "30",
+          "Interval" : "15",
           "Timeout" : "5"
         }
       }
@@ -217,7 +217,7 @@
         "LoadBalancers": [
           {
             "ContainerName": { "Ref" : "AWS::StackName" },
-            "ContainerPort": "8080",
+            "ContainerPort": "2181",
             "LoadBalancerName" : { "Ref" : "EcsElasticLoadBalancer" }
           }
         ],
@@ -349,26 +349,13 @@
   },
 
   "Outputs" : {
-    "url" : {
+    "EndpointAddress" : {
       "Value": {
          "Fn::Join": [
            "",
            [
-            "http://",
              { "Ref" : "ECSRecordSet" },
-            "/exhibitor/"
-           ]
-         ]
-       }
-    },
-    "getCluster" : {
-      "Value": {
-         "Fn::Join": [
-           "",
-           [
-            "http://",
-             { "Ref" : "ECSRecordSet" },
-            "/exhibitor/v1/cluster/list"
+            ":2181"
            ]
          ]
        }
