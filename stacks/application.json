@@ -49,11 +49,6 @@
       "Type": "String",
       "Description": "Password for the DB Root User"
     },
-    "ZookeeperHosts": {
-      "Type": "String",
-      "Description": "A list of zookeeper host IP + ports",
-      "Default": "127.0.0.1:2181"
-    },
     "SecretKeyBase" : {
       "NoEcho": "true",
       "Description" : "Secret key for Rails",
@@ -83,6 +78,17 @@
     }
   },
   "Resources" : {
+    "zookeeper" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
+          "SubnetID" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] },
+          "HostedZoneName" : { "Ref" : "PrivateZoneName" }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/zookeeper.json"]] }
+      }
+    },
     "fcrepo" : {
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
@@ -103,7 +109,7 @@
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "HostedZoneName" : { "Ref" : "PrivateZoneName" },
           "SubnetID" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] },
-          "ZookeeperHosts" : { "Ref" : "ZookeeperHosts" }
+          "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/solr.json"]] }
       }
@@ -138,7 +144,7 @@
           "SecretKeyBase" : { "Ref" : "SecretKeyBase" },
           "FcrepoUrl" : { "Fn::GetAtt" : ["fcrepo", "Outputs.URL"] },
           "SolrUrl" : { "Fn::GetAtt" : ["solr", "Outputs.URL"] },
-          "ZookeeperHosts" : { "Ref" : "ZookeeperHosts" },
+          "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] },
           "RedisHost" : { "Fn::GetAtt" : ["redis", "Outputs.EndpointAddress"] },
           "RedisPort" : { "Fn::GetAtt" : ["redis", "Outputs.EndpointPort"] },
           "RDSDatabaseName" : { "Fn::GetAtt" : ["database", "Outputs.DatabaseName"] },

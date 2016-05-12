@@ -28,10 +28,6 @@
     "ParameterValue": "test"
   },
   {
-    "ParameterKey": "ZookeeperHosts",
-    "ParameterValue": "zk.vpc.hydrainabox.org:2181"
-  },
-  {
     "ParameterKey": "DatabaseUsername",
     "ParameterValue": "ebroot"
   },
