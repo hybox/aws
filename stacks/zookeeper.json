@@ -85,6 +85,7 @@
     "EcsElasticLoadBalancer" : {
       "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties" : {
+        "Scheme" : "internal",
         "Subnets" : { "Ref" : "SubnetID" },
         "Listeners" : [
           {
