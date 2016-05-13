@@ -91,6 +91,11 @@
       "Type": "String",
       "Description": "Database Port",
       "Default": "5432"
+    },
+    "QueuePrefix": {
+      "Type": "String",
+      "Description": "SQS Queue prefix",
+      "Default": "hybox"
     }
   },
   "Resources" : {
@@ -273,6 +278,22 @@
                   "Resource": [
                     "arn:aws:s3:::elasticbeanstalk-*",
                     "arn:aws:s3:::elasticbeanstalk-*/*"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName" : "aws-elasticbeanstalk-sqs-role",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sqs:*"
+                  ],
+                  "Resource": [
+                    { "Fn::Join": ["", ["arn:aws:sqs:", { "Ref" : "AWS::Region" }, ":", {"Ref" : "AWS::AccountId" }, ":", { "Ref" : "QueuePrefix"}, "*"]] }
                   ]
                 }
               ]
