@@ -76,6 +76,11 @@
             "Value" : { "Ref" : "KeyName" }
           },
           {
+            "Namespace" : "aws:ec2:vpc",
+            "OptionName" : "ELBScheme",
+            "Value" : "internal"
+          },
+          {
             "Namespace" : "aws:autoscaling:launchconfiguration",
             "OptionName" : "SecurityGroups",
             "Value" : { "Fn::Join": ["", { "Ref" : "SecurityGroups" }] }
