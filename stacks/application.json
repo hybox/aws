@@ -144,7 +144,7 @@
           "SecretKeyBase" : { "Ref" : "SecretKeyBase" },
           "FcrepoUrl" : { "Fn::GetAtt" : ["fcrepo", "Outputs.URL"] },
           "SolrUrl" : { "Fn::GetAtt" : ["solr", "Outputs.URL"] },
-          "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] },
+          "ZookeeperHosts" : { "Fn::Join": ["", [{ "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] }, "/configs"]] },
           "RedisHost" : { "Fn::GetAtt" : ["redis", "Outputs.EndpointAddress"] },
           "RedisPort" : { "Fn::GetAtt" : ["redis", "Outputs.EndpointPort"] },
           "RDSDatabaseName" : { "Fn::GetAtt" : ["database", "Outputs.DatabaseName"] },
