@@ -80,7 +80,8 @@
       }
     },
     "S3Bucket": {
-      "Type": "AWS::S3::Bucket"
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy" : "Retain"
     },
     "EcsElasticLoadBalancer" : {
       "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
