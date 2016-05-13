@@ -10,6 +10,10 @@
       "Type": "AWS::EC2::KeyPair::KeyName",
       "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
     },
+    "SubnetID": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "List of an existing subnet IDs to use for the load balancer and auto scaling group"
+    },
     "S3Bucket": {
       "Type": "String",
       "Description": "S3 bucket with the Fcrepo war",
@@ -29,11 +33,6 @@
       "Type": "Number",
       "Default" : "2",
       "Description": "Maximum number of instances"
-    },
-    "SecurityGroups": {
-      "Type": "List<AWS::EC2::SecurityGroup::GroupName>",
-      "Description": "A list of security group names, such as my-sg-ab.",
-      "Default": "default"
     },
     "HostedZoneName" : {
       "Description" : "Route53 zone to create an alias in",
@@ -81,9 +80,14 @@
             "Value" : "internal"
           },
           {
-            "Namespace" : "aws:autoscaling:launchconfiguration",
-            "OptionName" : "SecurityGroups",
-            "Value" : { "Fn::Join": ["", { "Ref" : "SecurityGroups" }] }
+            "Namespace" : "aws:ec2:vpc",
+            "OptionName" : "Subnets",
+            "Value" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] }
+          },
+          {
+            "Namespace" : "aws:ec2:vpc",
+            "OptionName" : "ELBSubnets",
+            "Value" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] }
           },
           {
             "Namespace" : "aws:autoscaling:launchconfiguration",

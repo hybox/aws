@@ -95,8 +95,8 @@
         "Parameters" : {
           "EBApplicationName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "fcrepo"]] },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
+          "SubnetID" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
-          "SecurityGroups" : { "Fn::Join" : [",", { "Ref" : "SecurityGroups" }] },
           "HostedZoneName" : { "Ref" : "PrivateZoneName" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/fcrepo.json"]] }
