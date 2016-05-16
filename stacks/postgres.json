@@ -1,6 +1,10 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
   "Parameters" : {
+    "SubnetID": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "List of an existing subnet IDs to use for the load balancer and auto scaling group"
+    },
     "DatabaseName": {
       "Type": "String",
       "Description": "Name of the database",
@@ -22,9 +26,8 @@
       "Description": "Password for the DB Root User"
     },
     "SecurityGroups": {
-      "Type": "List<AWS::EC2::SecurityGroup::GroupName>",
-      "Description": "A list of security group names, such as my-sg-ab.",
-      "Default": "default"
+      "Type": "CommaDelimitedList",
+      "Description": "A list of security group ids, such as sg-a123fd85"
     },
     "AllocatedStorage" : {
       "Description" : "Size of DB in Gigs",
@@ -41,15 +44,16 @@
         "MasterUsername": { "Ref" : "MasterUsername" },
         "MasterUserPassword": { "Ref" : "MasterUserPassword" },
         "DBInstanceClass": { "Ref" : "DBInstanceClass" },
-        "DBSecurityGroups": [ { "Ref" : "DBSecurityGroup" } ],
+        "DBSubnetGroupName" : { "Ref" : "DBSubnetGroup" },
+        "VPCSecurityGroups": { "Ref" : "SecurityGroups" },
         "AllocatedStorage": { "Ref" : "AllocatedStorage" }
       }
     },
-    "DBSecurityGroup": {
-      "Type": "AWS::RDS::DBSecurityGroup",
-      "Properties": {
-        "DBSecurityGroupIngress": { "EC2SecurityGroupName": { "Fn::Join": ["", { "Ref" : "SecurityGroups" }] } },
-        "GroupDescription"      : "Frontend Access"
+    "DBSubnetGroup" : {
+      "Type" : "AWS::RDS::DBSubnetGroup",
+      "Properties" : {
+        "DBSubnetGroupDescription" : "RDS Subnet Group",
+        "SubnetIds" : { "Ref" : "SubnetID" }
       }
     }
   },
