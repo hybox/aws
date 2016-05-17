@@ -17,17 +17,6 @@
       "PublicSubnetB"  : { "CIDR" : "10.0.4.0/24" },
       "PrivateSubnetC"  : { "CIDR" : "10.0.5.0/24" },
       "PublicSubnetC"  : { "CIDR" : "10.0.6.0/24" }
-    },
-    "NatRegionMap" : {
-      "us-east-1"      : { "AMI" : "ami-184dc970" },
-      "us-west-1"      : { "AMI" : "ami-a98396ec" },
-      "us-west-2"      : { "AMI" : "ami-290f4119" },
-      "eu-west-1"      : { "AMI" : "ami-14913f63" },
-      "eu-central-1"   : { "AMI" : "ami-ae380eb3" },
-      "sa-east-1"      : { "AMI" : "ami-8122969c" },
-      "ap-southeast-1" : { "AMI" : "ami-6aa38238" },
-      "ap-southeast-2" : { "AMI" : "ami-893f53b3" },
-      "ap-northeast-1" : { "AMI" : "ami-27d6e626" }
     }
   },
 
@@ -176,78 +165,18 @@
         "RouteTableId" : { "Ref" : "PrivateRouteTable" }
       }
     },
-    "NatSecurityGroup" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
-        "GroupDescription" : "NAT Security Group",
-        "VpcId" : { "Ref" : "VPC" },
-	      "SecurityGroupIngress" : [{
-          "IpProtocol" : "tcp",
-          "FromPort" : "22",
-          "ToPort" : "22",
-          "CidrIp" : "0.0.0.0/0"
-        }]
-      }
-    },
-    "NatSecurityGroupIngress1" : {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": { "Ref": "NatSecurityGroup" },
-        "IpProtocol": "icmp",
-        "FromPort": "-1",
-        "ToPort": "-1",
-        "SourceSecurityGroupId": { "Ref": "NatSecurityGroup" }
-      }
-    },
-    "NatSecurityGroupIngress22" : {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": { "Ref": "NatSecurityGroup" },
-        "IpProtocol": "tcp",
-        "FromPort": "22",
-        "ToPort": "22",
-        "SourceSecurityGroupId": { "Ref": "NatSecurityGroup" }
-      }
-    },
-    "NatSecurityGroupIngress80" : {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": { "Ref": "NatSecurityGroup" },
-        "IpProtocol": "tcp",
-        "FromPort": "80",
-        "ToPort": "80",
-        "SourceSecurityGroupId": { "Ref": "NatSecurityGroup" }
-      }
-    },
-    "NatSecurityGroupIngress443" : {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": { "Ref": "NatSecurityGroup" },
-        "IpProtocol": "tcp",
-        "FromPort": "443",
-        "ToPort": "443",
-        "SourceSecurityGroupId": { "Ref": "NatSecurityGroup" }
-      }
-    },
     "NAT" : {
-      "Type" : "AWS::EC2::Instance",
+      "DependsOn" : "GatewayToInternet",
+      "Type" : "AWS::EC2::NatGateway",
       "Properties" : {
-        "InstanceType" : "t2.micro",
-        "KeyName"  : { "Ref" : "KeyName" },
-        "SourceDestCheck" : "false",
-        "ImageId" : { "Fn::FindInMap" : [ "NatRegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
-	      "NetworkInterfaces" : [{
-          "GroupSet"                 : [{ "Ref" : "NatSecurityGroup" }],
-          "AssociatePublicIpAddress" : "true",
-          "DeviceIndex"              : "0",
-          "DeleteOnTermination"      : "true",
-          "SubnetId"                 : { "Ref" : "PublicSubnetA" }
-        }],
-        "Tags" : [ { "Key" : "Name", "Value" : "NAT" } ],
-        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
-          "#!/bin/bash\n",
-          "yum update -y && yum install -y yum-cron && chkconfig yum-cron on"
-        ]]}}
+        "AllocationId" : { "Fn::GetAtt" : ["NATEIP", "AllocationId"]},
+        "SubnetId" : { "Ref" : "PublicSubnetA"}
+      }
+    },
+    "NATEIP" : {
+      "Type" : "AWS::EC2::EIP",
+      "Properties" : {
+        "Domain" : "vpc"
       }
     },
     "PrivateRoute" : {
@@ -255,16 +184,12 @@
       "Properties" : {
         "RouteTableId" : { "Ref" : "PrivateRouteTable" },
         "DestinationCidrBlock" : "0.0.0.0/0",
-        "InstanceId" : { "Ref" : "NAT" }
+        "NatGatewayId" : { "Ref" : "NAT" }
       }
     }
   },
 
   "Outputs" : {
-    "NATIP" : {
-      "Description" : "NAT IP address",
-      "Value" : { "Fn::GetAtt" : [ "NAT", "PublicIp" ] }
-    },
     "DefaultSecurityGroup" : {
       "Value" : { "Fn::GetAtt" : [ "VPC", "DefaultSecurityGroup" ] }
     },
