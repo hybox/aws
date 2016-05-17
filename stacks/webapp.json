@@ -31,10 +31,17 @@
       "Default" : "2",
       "Description": "Maximum number of instances"
     },
+    "PublicSubnets": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "List of an existing subnet IDs to use for the load balancer"
+    },
+    "PrivateSubnets": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "List of an existing subnet IDs to use for the auto scaling group"
+    },
     "SecurityGroups": {
-      "Type": "List<AWS::EC2::SecurityGroup::GroupName>",
-      "Description": "A list of security group names, such as my-sg-ab.",
-      "Default": "default"
+      "Type": "List<AWS::EC2::SecurityGroup::Id>",
+      "Description": "A list of security groups, such as sg-a123fd85."
     },
     "HostedZoneName" : {
       "Description" : "Route53 zone to create an alias in",
@@ -132,6 +139,16 @@
             "Namespace" : "aws:autoscaling:launchconfiguration",
             "OptionName" : "InstanceType",
             "Value" : "t2.large"
+          },
+          {
+            "Namespace" : "aws:ec2:vpc",
+            "OptionName" : "Subnets",
+            "Value" : { "Fn::Join" : [",", { "Ref" : "PrivateSubnets" }] }
+          },
+          {
+            "Namespace" : "aws:ec2:vpc",
+            "OptionName" : "ELBSubnets",
+            "Value" : { "Fn::Join" : [",", { "Ref" : "PublicSubnets" }] }
           },
           {
             "Namespace" : "aws:autoscaling:launchconfiguration",

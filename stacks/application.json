@@ -7,15 +7,6 @@
       "Type": "AWS::EC2::KeyPair::KeyName",
       "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
     },
-    "SecurityGroups": {
-      "Type": "List<AWS::EC2::SecurityGroup::GroupName>",
-      "Description": "A list of security group names, such as my-sg-ab.",
-      "Default": "default"
-    },
-    "SubnetID": {
-      "Type": "List<AWS::EC2::Subnet::Id>",
-      "Description": "List of an existing subnet IDs to use for the load balancer and auto scaling group"
-    },
     "S3Bucket": {
       "Type": "String",
       "Description": "S3 bucket to the deployment artifacts",
@@ -64,7 +55,7 @@
         },
         {
           "Label" : { "default" : "Network Configuration" },
-          "Parameters" : [ "SubnetID", "SecurityGroups", "KeyName" ]
+          "Parameters" : [ "KeyName" ]
         },
         {
           "Label" : { "default" : "DNS Configuration"},
@@ -78,12 +69,21 @@
     }
   },
   "Resources" : {
+    "vpc" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/vpc.json"]] }
+      }
+    },
     "zookeeper" : {
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
-          "SubnetID" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] },
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "HostedZoneName" : { "Ref" : "PrivateZoneName" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/zookeeper.json"]] }
@@ -95,7 +95,7 @@
         "Parameters" : {
           "EBApplicationName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "fcrepo"]] },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
-          "SubnetID" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] },
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
           "HostedZoneName" : { "Ref" : "PrivateZoneName" }
         },
@@ -108,7 +108,7 @@
         "Parameters" : {
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "HostedZoneName" : { "Ref" : "PrivateZoneName" },
-          "SubnetID" : { "Fn::Join" : [",", { "Ref" : "SubnetID" }] },
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/solr.json"]] }
@@ -117,6 +117,10 @@
     "redis" : {
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
+        "Parameters" : {
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "vpc", "Outputs.DefaultSecurityGroup"] }
+        },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/redis.json"]] }
       }
     },
@@ -124,7 +128,8 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
-          "SecurityGroups" : { "Fn::Join" : [",", { "Ref" : "SecurityGroups" }] },
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "vpc", "Outputs.DefaultSecurityGroup"] },
           "MasterUsername" : { "Ref" : "DatabaseUsername" },
           "MasterUserPassword" : { "Ref" : "DatabasePassword" }
         },
@@ -139,7 +144,9 @@
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
           "S3Key" : { "Ref" : "WebappS3Key" },
-          "SecurityGroups" : { "Fn::Join" : [",", { "Ref" : "SecurityGroups" }] },
+          "PrivateSubnets" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "PublicSubnets" : { "Fn::GetAtt" : ["vpc", "Outputs.PublicSubnets"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "vpc", "Outputs.DefaultSecurityGroup"] },
           "HostedZoneName" : { "Ref" : "PublicZoneName" },
           "SecretKeyBase" : { "Ref" : "SecretKeyBase" },
           "FcrepoUrl" : { "Fn::GetAtt" : ["fcrepo", "Outputs.URL"] },
