@@ -7,7 +7,7 @@
 2. Create the application stack
 
 ```console
-$ aws --region us-east-1 cloudformation create-stack --stack-name hybox --template-body file://templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/application.json
+$ aws --region us-east-1 cloudformation create-stack --stack-name hybox --template-body file://templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/stack.json
 ```
 
 ## Travis deployment integration

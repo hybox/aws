@@ -8,11 +8,6 @@
       "Description": "Name of the ElasticBeanstalk environment",
       "Default" : "HyboxApplication"
     },
-    "ApplicationName": {
-      "Type": "String",
-      "Description": "Name of the ElasticBeanstalk environment",
-      "Default" : "HyboxApplication"
-    },
     "KeyName": {
       "Type": "AWS::EC2::KeyPair::KeyName",
       "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
@@ -29,7 +24,7 @@
     },
     "PublicSubnets": {
       "Type": "List<AWS::EC2::Subnet::Id>",
-      "Description": "List of an existing subnet IDs to use for the load balancer"
+      "Description": "[UNUSED] List of an existing subnet IDs to use for the load balancer"
     },
     "PrivateSubnets": {
       "Type": "List<AWS::EC2::Subnet::Id>",
@@ -41,7 +36,7 @@
     },
     "LBSecurityGroups": {
       "Type": "List<AWS::EC2::SecurityGroup::Id>",
-      "Description": "A list of security groups, such as sg-a123fd85."
+      "Description": "[UNUSED] A list of security groups, such as sg-a123fd85."
     },
     "HostedZoneName" : {
       "Description" : "Route53 zone to create an alias in",
@@ -103,82 +98,25 @@
       "Type": "String",
       "Description": "SQS Queue prefix",
       "Default": "hybox"
+    },
+    "DefaultQueue": {
+      "Type": "String",
+      "Description": "SQS Default Queue"
     }
   },
   "Resources" : {
-    "HyboxConfigurationTemplate" : {
-      "Type" : "AWS::ElasticBeanstalk::ConfigurationTemplate",
-      "Properties" : {
-        "ApplicationName" : { "Ref" : "ApplicationName"},
-        "Description" : "Hybox configuration template",
-        "OptionSettings" : [
-          {
-            "Namespace" : "aws:autoscaling:launchconfiguration",
-            "OptionName" : "ImageId",
-            "Value" : "ami-f38a6b9e"
-          },
-          {
-            "Namespace" : "aws:autoscaling:launchconfiguration",
-            "OptionName" : "InstanceType",
-            "Value" : "t2.large"
-          },
-          {
-            "Namespace" : "aws:ec2:vpc",
-            "OptionName" : "Subnets",
-            "Value" : { "Fn::Join" : [",", { "Ref" : "PrivateSubnets" }] }
-          },
-          {
-            "Namespace" : "aws:ec2:vpc",
-            "OptionName" : "ELBSubnets",
-            "Value" : { "Fn::Join" : [",", { "Ref" : "PublicSubnets" }] }
-          },
-          {
-            "Namespace" : "aws:autoscaling:launchconfiguration",
-            "OptionName" : "EC2KeyName",
-            "Value" : { "Ref" : "KeyName" }
-          },
-          {
-            "Namespace" : "aws:autoscaling:launchconfiguration",
-            "OptionName" : "SecurityGroups",
-            "Value" : { "Fn::Join": [",", { "Ref" : "SecurityGroups" }] }
-          },
-          {
-            "Namespace" : "aws:elb:loadbalancer",
-            "OptionName" : "SecurityGroups",
-            "Value" : { "Fn::Join": [",", { "Ref" : "LBSecurityGroups" }] }
-          },
-          {
-            "Namespace" : "aws:autoscaling:launchconfiguration",
-            "OptionName" : "IamInstanceProfile",
-            "Value" : { "Ref" : "IamInstanceProfile" }
-          },
-          {
-            "Namespace": "aws:autoscaling:asg",
-            "OptionName": "MinSize",
-            "Value": { "Ref" : "MinSize" }
-          },
-          {
-            "Namespace": "aws:autoscaling:asg",
-            "OptionName": "MaxSize",
-            "Value": { "Ref" : "MaxSize" }
-          },
-          {
-            "Namespace": "aws:elasticbeanstalk:environment",
-            "OptionName": "EnvironmentType",
-            "Value": "LoadBalanced"
-          }
-        ],
-        "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.2 running Ruby 2.3 (Puma)"
-      }
-    },
-    "WebappEnvironment": {
+    "WorkerEnvironment": {
       "Type": "AWS::ElasticBeanstalk::Environment",
       "Properties": {
         "ApplicationName": { "Ref": "HyboxApplication" },
         "Description": "Hybox Environment",
-        "EnvironmentName": { "Fn::Join": ["-", [{ "Ref" : "StackName"}, "webapp"]] },
-        "TemplateName": { "Ref": "HyboxConfigurationTemplate" },
+        "EnvironmentName": { "Fn::Join": ["-", [{ "Ref" : "StackName"}, "workers"]] },
+        "TemplateName": { "Ref": "HyboxWorkersConfigurationTemplate" },
         "VersionLabel": { "Ref": "HyboxApplicationVersion" },
+        "Tier": {
+          "Name": "Worker",
+          "Type": "SQS/HTTP"
+        },
         "OptionSettings" : [
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
@@ -246,59 +184,72 @@
             "Value": { "Ref" : "RDSPort"}
           },
           {
-            "Namespace": "aws:elasticbeanstalk:application:environment",
-            "OptionName": "QUEUE_URL",
+            "Namespace": "aws:elasticbeanstalk:sqsd",
+            "OptionName": "WorkerQueueURL",
             "Value": { "Ref" : "DefaultQueue"}
-          },
-          {
-            "Namespace": "aws:elasticbeanstalk:application:environment",
-            "OptionName": "DISABLE_SQS_CONSUMER",
-            "Value": "true"
-          },
-          {
-            "Namespace": "aws:elasticbeanstalk:application:environment",
-            "OptionName": "AWS_REGION",
-            "Value": { "Ref" : "AWS::Region"}
           }
         ]
       }
     },
-    "EBRecordSet" : {
-      "Type" : "AWS::Route53::RecordSet",
+    "HyboxWorkersConfigurationTemplate" : {
+      "Type" : "AWS::ElasticBeanstalk::ConfigurationTemplate",
       "Properties" : {
-        "Name" : { "Fn::Join": [ ".", [ { "Ref": "StackName" }, { "Ref": "HostedZoneName" } ] ] },
-        "HostedZoneName" : { "Ref" : "HostedZoneName"},
-        "Type" : "CNAME",
-        "TTL": "900",
-        "ResourceRecords" : [{ "Fn::GetAtt" : ["WebappEnvironment", "EndpointURL"] }]
-      }
-    },
-    "EBWildcardRecordSet" : {
-      "Type" : "AWS::Route53::RecordSet",
-      "Properties" : {
-        "Name" : { "Fn::Join": [ ".", [ "*", { "Ref": "StackName" }, { "Ref": "HostedZoneName" } ] ] },
-        "HostedZoneName" : { "Ref" : "HostedZoneName"},
-        "Type" : "CNAME",
-        "TTL": "900",
-        "ResourceRecords" : [{ "Fn::GetAtt" : ["WebappEnvironment", "EndpointURL"] }]
+        "ApplicationName" : { "Ref" : "HyboxApplication"},
+        "Description" : "Hybox configuration template",
+        "OptionSettings" : [
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "ImageId",
+            "Value" : "ami-f38a6b9e"
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "InstanceType",
+            "Value" : "t2.large"
+          },
+          {
+            "Namespace" : "aws:ec2:vpc",
+            "OptionName" : "Subnets",
+            "Value" : { "Fn::Join" : [",", { "Ref" : "PrivateSubnets" }] }
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "EC2KeyName",
+            "Value" : { "Ref" : "KeyName" }
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "SecurityGroups",
+            "Value" : { "Fn::Join": [",", { "Ref" : "SecurityGroups" }] }
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "IamInstanceProfile",
+            "Value" : { "Ref" : "IamInstanceProfile" }
+          },
+          {
+            "Namespace": "aws:autoscaling:asg",
+            "OptionName": "MinSize",
+            "Value": { "Ref" : "MinSize" }
+          },
+          {
+            "Namespace": "aws:autoscaling:asg",
+            "OptionName": "MaxSize",
+            "Value": { "Ref" : "MinSize" }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:environment",
+            "OptionName": "EnvironmentType",
+            "Value": "LoadBalanced"
+          }
+        ],
+        "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.2 running Ruby 2.3 (Puma)"
       }
     }
   },
   "Outputs": {
     "EnvironmentName": {
-      "Value" : { "Ref" : "WebappEnvironment" }
-    },
-    "URL": {
-      "Description": "URL of the AWS Elastic Beanstalk Environment",
-      "Value": {
-        "Fn::Join": [
-          "",
-          [
-            "http://",
-            { "Ref" : "EBRecordSet" }
-          ]
-        ]
-      }
+      "Value" : { "Ref" : "WorkerEnvironment" }
     }
   }
 }

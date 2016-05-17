@@ -1,0 +1,216 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description": "Hydra-in-a-Box (branch '{{branch}}'; revision '{{commit}}')",
+
+  "Parameters" : {
+    "KeyName": {
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
+    },
+    "S3Bucket": {
+      "Type": "String",
+      "Description": "S3 bucket to the deployment artifacts",
+      "Default": "hybox-deployment-artifacts"
+    },
+    "S3KeyPrefix" : {
+      "Description" : "S3 prefix to deployment artifacts",
+      "Type" : "String",
+      "Default": "branch/{{branch}}"
+    },
+    "WebappS3Key" : {
+      "Description" : "S3 key to webapp deployment artifacts",
+      "Type" : "String",
+      "Default": "hybox/current/hybox.zip"
+    },
+    "PublicZoneName" : {
+      "Description" : "Route53 zone to create an alias in",
+      "Type" : "String"
+    },
+    "DatabaseUsername": {
+      "Type": "String",
+      "Description": "Database Root Username",
+      "Default": "root"
+    },
+    "DatabasePassword": {
+      "NoEcho": "true",
+      "Type": "String",
+      "Description": "Password for the DB Root User"
+    },
+    "SecretKeyBase" : {
+      "NoEcho": "true",
+      "Description" : "Secret key for Rails",
+      "Type" : "String"
+    }
+  },
+  "Metadata" : {
+    "AWS::CloudFormation::Interface" : {
+      "ParameterGroups" : [
+        {
+          "Label" : { "default" : "Deployment Artifacts" },
+          "Parameters" : [ "S3Bucket", "S3KeyPrefix", "WebappS3Key" ]
+        },
+        {
+          "Label" : { "default" : "Network Configuration" },
+          "Parameters" : [ "KeyName" ]
+        },
+        {
+          "Label" : { "default" : "DNS Configuration"},
+          "Parameters" : [ "PublicZoneName", "PrivateZoneName" ]
+        },
+        {
+          "Label" : { "default" : "Application Configuration" },
+          "Parameters" : [ "DatabaseUsername", "DatabasePassword", "ZookeeperHosts", "SecretKeyBase" ]
+        }
+      ]
+    }
+  },
+  "Resources" : {
+    "vpc" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "StackName" : { "Ref" : "AWS::StackName"},
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
+          "HostedZoneName" : { "Fn::Join" : [".", [{ "Ref" : "AWS::StackName"}, "vpc", { "Ref" : "PublicZoneName" }]] }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/vpc.json"]] }
+      }
+    },
+    "securitygroups" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "StackName" : { "Ref" : "AWS::StackName" },
+          "VPC" : { "Fn::GetAtt" : ["vpc", "Outputs.VPCID"] }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/securitygroups.json"]] }
+      }
+    },
+    "zookeeper" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "StackName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "zookeeper"]] },
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Zookeeper"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
+          "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.ZookeeperLb"] },
+          "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/zookeeper.json"]] }
+      }
+    },
+    "fcrepo" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "StackName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "fcrepo"]] },
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Fcrepo"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
+          "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.FcrepoLb"] },
+          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/fcrepo.json"]] }
+      }
+    },
+    "solr" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "StackName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "solr"]] },
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
+          "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] },
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Solr"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
+          "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.SolrLb"] },
+          "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/solr.json"]] }
+      }
+    },
+    "redis" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Redis"] }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/redis.json"]] }
+      }
+    },
+    "database" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Database"] },
+          "MasterUsername" : { "Ref" : "DatabaseUsername" },
+          "MasterUserPassword" : { "Ref" : "DatabasePassword" }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/postgres.json"]] }
+      }
+    },
+    "application" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "StackName" : { "Ref" : "AWS::StackName" },
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
+          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3Key" : { "Ref" : "WebappS3Key" },
+          "S3KeyPrefix" : { "Ref" : "S3KeyPrefix" },
+          "PrivateSubnets" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "PublicSubnets" : { "Fn::GetAtt" : ["vpc", "Outputs.PublicSubnets"] },
+          "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Webapp"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
+          "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.WebappLb"] },
+          "HostedZoneName" : { "Ref" : "PublicZoneName" },
+          "SecretKeyBase" : { "Ref" : "SecretKeyBase" },
+          "FcrepoUrl" : { "Fn::GetAtt" : ["fcrepo", "Outputs.URL"] },
+          "SolrUrl" : { "Fn::GetAtt" : ["solr", "Outputs.URL"] },
+          "ZookeeperHosts" : { "Fn::Join": ["", [{ "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] }, "/configs"]] },
+          "RedisHost" : { "Fn::GetAtt" : ["redis", "Outputs.EndpointAddress"] },
+          "RedisPort" : { "Fn::GetAtt" : ["redis", "Outputs.EndpointPort"] },
+          "RDSDatabaseName" : { "Fn::GetAtt" : ["database", "Outputs.DatabaseName"] },
+          "RDSHostname" : { "Fn::GetAtt" : ["database", "Outputs.EndpointAddress"] },
+          "RDSPort" : { "Fn::GetAtt" : ["database", "Outputs.EndpointPort"] },
+          "RDSUsername" : { "Ref" : "DatabaseUsername" },
+          "RDSPassword" : { "Ref" : "DatabasePassword" }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/application.json"]] }
+      }
+    },
+    "codepipeline" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "ApplicationName" : { "Fn::GetAtt" : ["application", "Outputs.ApplicationName"] },
+          "WebappEnvironmentName" : { "Fn::GetAtt" : ["application", "Outputs.WebappEnvironment"] },
+          "WorkerEnvironmentName" : { "Fn::GetAtt" : ["application", "Outputs.WorkerEnvironment"] },
+          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3Key" : { "Ref" : "WebappS3Key" }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/codepipeline.json"]] }
+      }
+    },
+    "bastion" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "StackName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "bastion"]] },
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PublicSubnets"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Bastion"] }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/bastion.json"]] }
+      }
+    }
+  },
+  "Outputs": {
+    "URL" : {
+      "Description" : "URL for the deployed application",
+      "Value" : { "Fn::GetAtt" : ["application", "Outputs.URL"] }
+    }
+  }
+}
