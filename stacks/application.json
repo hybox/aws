@@ -75,12 +75,23 @@
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/vpc.json"]] }
       }
     },
+    "securitygroups" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "VPC" : { "Fn::GetAtt" : ["vpc", "Outputs.VPCID"] }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/securitygroups.json"]] }
+      }
+    },
     "zookeeper" : {
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Zookeeper"] },
+          "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.ZookeeperLb"] },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/zookeeper.json"]] }
@@ -93,6 +104,8 @@
           "EBApplicationName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "fcrepo"]] },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Fcrepo"] },
+          "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.FcrepoLb"] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] }
         },
@@ -106,6 +119,8 @@
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Solr"] },
+          "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.SolrLb"] },
           "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/solr.json"]] }
@@ -116,7 +131,7 @@
       "Properties" : {
         "Parameters" : {
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
-          "SecurityGroups" : { "Fn::GetAtt" : [ "vpc", "Outputs.DefaultSecurityGroup"] }
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Redis"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/redis.json"]] }
       }
@@ -126,7 +141,7 @@
       "Properties" : {
         "Parameters" : {
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
-          "SecurityGroups" : { "Fn::GetAtt" : [ "vpc", "Outputs.DefaultSecurityGroup"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Database"] },
           "MasterUsername" : { "Ref" : "DatabaseUsername" },
           "MasterUserPassword" : { "Ref" : "DatabasePassword" }
         },
@@ -143,7 +158,8 @@
           "S3Key" : { "Ref" : "WebappS3Key" },
           "PrivateSubnets" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "PublicSubnets" : { "Fn::GetAtt" : ["vpc", "Outputs.PublicSubnets"] },
-          "SecurityGroups" : { "Fn::GetAtt" : [ "vpc", "Outputs.DefaultSecurityGroup"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Webapp"] },
+          "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.WebappLb"] },
           "HostedZoneName" : { "Ref" : "PublicZoneName" },
           "SecretKeyBase" : { "Ref" : "SecretKeyBase" },
           "FcrepoUrl" : { "Fn::GetAtt" : ["fcrepo", "Outputs.URL"] },

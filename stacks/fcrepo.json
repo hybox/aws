@@ -34,6 +34,14 @@
       "Default" : "2",
       "Description": "Maximum number of instances"
     },
+    "SecurityGroups": {
+      "Type": "List<AWS::EC2::SecurityGroup::Id>",
+      "Description": "A list of security groups, such as sg-a123fd85."
+    },
+    "LBSecurityGroups": {
+      "Type": "List<AWS::EC2::SecurityGroup::Id>",
+      "Description": "A list of security groups, such as sg-a123fd85."
+    },
     "HostedZoneName" : {
       "Description" : "Route53 zone to create an alias in",
       "Type" : "String"
@@ -73,6 +81,16 @@
             "Namespace" : "aws:autoscaling:launchconfiguration",
             "OptionName" : "EC2KeyName",
             "Value" : { "Ref" : "KeyName" }
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "SecurityGroups",
+            "Value" : { "Fn::Join": [",", { "Ref" : "SecurityGroups" }] }
+          },
+          {
+            "Namespace" : "aws:elb:loadbalancer",
+            "OptionName" : "SecurityGroups",
+            "Value" : { "Fn::Join": [",", { "Ref" : "LBSecurityGroups" }] }
           },
           {
             "Namespace" : "aws:ec2:vpc",
