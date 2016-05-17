@@ -24,7 +24,7 @@
   "Resources" : {
     "ArtifactStoreBucket": {
       "Type": "AWS::S3::Bucket",
-      "DeletionPolicy" : "Delete",
+      "DeletionPolicy" : "Retain",
       "Properties": {
         "VersioningConfiguration": {
           "Status" : "Enabled"
