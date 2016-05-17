@@ -186,6 +186,14 @@
         "DestinationCidrBlock" : "0.0.0.0/0",
         "NatGatewayId" : { "Ref" : "NAT" }
       }
+    },
+    "S3Endpoint" : {
+      "Type" : "AWS::EC2::VPCEndpoint",
+      "Properties" : {
+        "RouteTableIds" : [ {"Ref" : "PrivateRouteTable"}, {"Ref" : "PublicRouteTable"} ],
+        "ServiceName" : { "Fn::Join": [ "", [ "com.amazonaws.", { "Ref": "AWS::Region" }, ".s3" ] ] },
+        "VpcId" : {"Ref" : "VPC"}
+      }
     }
   },
 
