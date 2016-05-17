@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
-  "Description": "AWS CloudFormation Template for Hydra-in-a-Box; Version 0.1",
+  "Description": "Hydra-in-a-Box (branch {{branch}} revision {{commit}})",
 
   "Parameters" : {
     "KeyName": {
