@@ -22,6 +22,15 @@
   },
 
   "Resources" : {
+    "ArtifactStoreBucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy" : "Delete",
+      "Properties": {
+        "VersioningConfiguration": {
+          "Status" : "Enabled"
+        }
+      }
+    },
     "codepipeline": {
       "Type": "AWS::CodePipeline::Pipeline",
       "Properties": {
@@ -78,7 +87,7 @@
         ],
         "ArtifactStore": {
           "Type": "S3",
-          "Location": { "Ref" : "S3Bucket" }
+          "Location": { "Ref" : "ArtifactStoreBucket" }
         }
       }
     },
