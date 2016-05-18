@@ -214,6 +214,9 @@
   },
 
   "Outputs" : {
+    "VPCID" : {
+      "Value" : { "Ref" : "VPC" }
+    },
     "DefaultSecurityGroup" : {
       "Value" : { "Fn::GetAtt" : [ "VPC", "DefaultSecurityGroup" ] }
     },

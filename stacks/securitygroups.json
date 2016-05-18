@@ -1,0 +1,191 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Parameters" : {
+    "VPC": {
+      "Type": "AWS::EC2::VPC::Id",
+      "Description": "A VPC ID, such as vpc-a123baa3."
+    }
+  },
+
+  "Resources" : {
+    "WebappSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Webapp security group",
+         "VpcId" : { "Ref" : "VPC" }
+      }
+    },
+    "WebappLbSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Webapp security group",
+         "VpcId" : { "Ref" : "VPC" }
+      }
+    },
+    "DatabaseSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Webapp security group",
+         "VpcId" : { "Ref" : "VPC" },
+         "SecurityGroupIngress" : [
+           {
+             "SourceSecurityGroupId" : { "Ref" : "WebappSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "5432",
+             "ToPort" : "5432"
+           }
+         ]
+      }
+    },
+    "RedisSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Webapp security group",
+         "VpcId" : { "Ref" : "VPC" },
+         "SecurityGroupIngress" : [
+           {
+             "SourceSecurityGroupId" : { "Ref" : "WebappSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "6379",
+             "ToPort" : "6379"
+           }
+         ]
+      }
+    },
+    "SolrSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Solr security group",
+         "VpcId" : { "Ref" : "VPC" }
+      }
+    },
+    "SolrSecurityGroupIngress" : {
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupId" : { "Fn::GetAtt": ["SolrSecurityGroup", "GroupId"] },
+        "SourceSecurityGroupId" : { "Ref" : "SolrSecurityGroup" },
+        "IpProtocol": "tcp",
+        "FromPort" : "0",
+        "ToPort" : "65535"
+      }
+    },
+    "SolrLbSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Solr security group",
+         "VpcId" : { "Ref" : "VPC" },
+         "SecurityGroupIngress" : [
+           {
+             "SourceSecurityGroupId" : { "Ref" : "WebappSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80"
+           }
+         ]
+      }
+    },
+    "FedoraSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Fedora security group",
+         "VpcId" : { "Ref" : "VPC" }
+      }
+    },
+    "FedoraLbSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Fedora security group",
+         "VpcId" : { "Ref" : "VPC" },
+         "SecurityGroupIngress" : [
+           {
+             "SourceSecurityGroupId" : { "Ref" : "WebappSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80"
+           }
+         ]
+      }
+    },
+    "ZookeeperLbSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Zookeeper security group",
+         "VpcId" : { "Ref" : "VPC" },
+         "SecurityGroupIngress" : [
+           {
+             "SourceSecurityGroupId" : { "Ref" : "SolrSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "2181",
+             "ToPort" : "2181"
+           },
+           {
+             "SourceSecurityGroupId" : { "Ref" : "WebappSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "2181",
+             "ToPort" : "2181"
+           }
+         ]
+      }
+    },
+    "ZookeeperSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Zookeeper security group",
+         "VpcId" : { "Ref" : "VPC" }
+      }
+    },
+    "ZookeeperSecurityGroupIngress" : {
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupId" : { "Fn::GetAtt": ["ZookeeperSecurityGroup", "GroupId"] },
+        "SourceSecurityGroupId" : { "Ref" : "ZookeeperSecurityGroup" },
+        "IpProtocol": "tcp",
+        "FromPort" : "0",
+        "ToPort" : "65535"
+      }
+    }
+  },
+  "Outputs" : {
+    "Webapp" : {
+      "Description": "Security Group ID for the webapp security group",
+      "Value": { "Ref" : "WebappSecurityGroup" }
+    },
+    "WebappLb" : {
+      "Description": "Security Group ID for the webapp load balancer security group",
+      "Value": { "Ref" : "WebappLbSecurityGroup" }
+    },
+    "Fcrepo" : {
+      "Description": "Security Group ID for the fcrepo security group",
+      "Value": { "Ref" : "FedoraSecurityGroup" }
+    },
+    "FcrepoLb" : {
+      "Description": "Security Group ID for the fcrepo load balancersecurity group",
+      "Value": { "Ref" : "FedoraLbSecurityGroup" }
+    },
+    "Solr" : {
+      "Description": "Security Group ID for the solr security group",
+      "Value": { "Ref" : "SolrSecurityGroup" }
+    },
+    "SolrLb" : {
+      "Description": "Security Group ID for the solr load balancer security group",
+      "Value": { "Ref" : "SolrLbSecurityGroup" }
+    },
+    "Zookeeper" : {
+      "Description": "Security Group ID for the zookeeper security group",
+      "Value": { "Ref" : "ZookeeperSecurityGroup" }
+    },
+    "ZookeeperLb" : {
+      "Description": "Security Group ID for the zookeeper load balancer security group",
+      "Value": { "Ref" : "ZookeeperSecurityGroup" }
+    },
+    "Database" : {
+      "Description": "Security Group ID for the database security group",
+      "Value": { "Ref" : "DatabaseSecurityGroup" }
+    },
+    "Redis" : {
+      "Description": "Security Group ID for the redis security group",
+      "Value": { "Ref" : "RedisSecurityGroup" }
+    }
+  }
+}

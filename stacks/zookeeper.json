@@ -9,6 +9,14 @@
       "Type": "List<AWS::EC2::Subnet::Id>",
       "Description": "List of an existing subnet IDs to use for the load balancer and auto scaling group"
     },
+    "SecurityGroups": {
+      "Type": "List<AWS::EC2::SecurityGroup::Id>",
+      "Description": "A list of security groups, such as sg-a123fd85."
+    },
+    "LBSecurityGroups": {
+      "Type": "List<AWS::EC2::SecurityGroup::Id>",
+      "Description": "A list of security groups, such as sg-a123fd85."
+    },
     "DesiredCapacity": {
       "Type": "Number",
       "Default" : "3",
@@ -88,6 +96,7 @@
       "Properties" : {
         "Scheme" : "internal",
         "Subnets" : { "Ref" : "SubnetID" },
+        "SecurityGroups" : { "Ref" : "LBSecurityGroups" },
         "Listeners" : [
           {
             "LoadBalancerPort" : "2181",
@@ -194,6 +203,7 @@
         "InstanceType"   : { "Ref" : "InstanceType" },
         "IamInstanceProfile": { "Ref": "EC2InstanceProfile" },
         "KeyName"        : { "Ref" : "KeyName" },
+        "SecurityGroups" : { "Ref" : "SecurityGroups" },
         "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
              "#!/bin/bash -xe\n",
              "yum install -y aws-cfn-bootstrap\n",
