@@ -12,10 +12,6 @@
     "ParameterValue": "hydrainabox.org."
   },
   {
-    "ParameterKey": "PrivateZoneName",
-    "ParameterValue": "vpc.hydrainabox.org."
-  },
-  {
     "ParameterKey": "SecretKeyBase",
     "ParameterValue": "test"
   },

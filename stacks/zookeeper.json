@@ -112,7 +112,7 @@
     "ECSRecordSet" : {
       "Type" : "AWS::Route53::RecordSet",
       "Properties" : {
-        "Name" : { "Fn::Join": [ ".", [ { "Ref" : "AWS::StackName"}, { "Ref": "HostedZoneName" } ] ] },
+        "Name" : { "Fn::Join": [ ".", [ "zookeeper", { "Ref": "HostedZoneName" } ] ] },
         "HostedZoneName" : { "Ref" : "HostedZoneName"},
         "Type" : "A",
         "AliasTarget" : {
