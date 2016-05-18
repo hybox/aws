@@ -9,6 +9,28 @@
   },
 
   "Resources" : {
+    "DefaultSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Default security group",
+         "VpcId" : { "Ref" : "VPC" },
+         "SecurityGroupIngress" : [
+           {
+             "SourceSecurityGroupId" : { "Ref" : "BastionSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "22",
+             "ToPort" : "22"
+           }
+         ]
+      }
+    },
+    "BastionSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Bastion security group",
+         "VpcId" : { "Ref" : "VPC" }
+      }
+    },
     "WebappSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
@@ -147,6 +169,14 @@
     }
   },
   "Outputs" : {
+    "Default" : {
+      "Description": "Security Group ID for the default security group",
+      "Value": { "Ref" : "DefaultSecurityGroup" }
+    },
+    "Bastion" : {
+      "Description": "Security Group ID for the bastion security group",
+      "Value": { "Ref" : "BastionSecurityGroup" }
+    },
     "Webapp" : {
       "Description": "Security Group ID for the webapp security group",
       "Value": { "Ref" : "WebappSecurityGroup" }

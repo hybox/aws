@@ -90,7 +90,7 @@
         "Parameters" : {
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
-          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Zookeeper"] },
+          "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Zookeeper"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.ZookeeperLb"] },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] }
         },
@@ -104,7 +104,7 @@
           "EBApplicationName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "fcrepo"]] },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
-          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Fcrepo"] },
+          "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Fcrepo"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.FcrepoLb"] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] }
@@ -119,7 +119,7 @@
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
-          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Solr"] },
+          "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Solr"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.SolrLb"] },
           "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] }
         },
@@ -158,7 +158,7 @@
           "S3Key" : { "Ref" : "WebappS3Key" },
           "PrivateSubnets" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "PublicSubnets" : { "Fn::GetAtt" : ["vpc", "Outputs.PublicSubnets"] },
-          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Webapp"] },
+          "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Webapp"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.WebappLb"] },
           "HostedZoneName" : { "Ref" : "PublicZoneName" },
           "SecretKeyBase" : { "Ref" : "SecretKeyBase" },
@@ -195,7 +195,7 @@
         "Parameters" : {
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PublicSubnets"] },
-          "SecurityGroups" : { "Fn::GetAtt" : [ "vpc", "Outputs.DefaultSecurityGroup"] }
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.BastionSecurityGroup"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/bastion.json"]] }
       }
