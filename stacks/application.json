@@ -70,7 +70,7 @@
       "Properties" : {
         "Parameters" : {
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
-          "HostedZoneName" : { "Fn::Join" : [".", ["vpc", { "Ref" : "AWS::StackName"}, { "Ref" : "PublicZoneName" }]] }
+          "HostedZoneName" : { "Fn::Join" : [".", [{ "Ref" : "AWS::StackName"}, "vpc", { "Ref" : "PublicZoneName" }]] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/vpc.json"]] }
       }
