@@ -50,7 +50,7 @@
         "KeyName" : { "Ref" : "KeyName" },
         "ImageId" : { "Fn::FindInMap" : [ "AWSRegionToAMI", { "Ref" : "AWS::Region" }, "AMIID" ] },
         "InstanceType" : "t2.nano",
-        "SecurityGroups" : [ { "Ref" : "SecurityGroups" } ]
+        "SecurityGroups" : { "Ref" : "SecurityGroups" }
       }
     }
   }
