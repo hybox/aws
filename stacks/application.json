@@ -162,6 +162,7 @@
     },
     "codepipeline" : {
       "Type" : "AWS::CloudFormation::Stack",
+      "DependsOn": ["webapp"],
       "Properties" : {
         "Parameters" : {
           "ApplicationName" : { "Ref" : "AWS::StackName"},
