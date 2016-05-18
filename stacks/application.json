@@ -195,7 +195,7 @@
         "Parameters" : {
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PublicSubnets"] },
-          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.BastionSecurityGroup"] }
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Bastion"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/bastion.json"]] }
       }
