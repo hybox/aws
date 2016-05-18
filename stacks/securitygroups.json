@@ -28,7 +28,15 @@
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
          "GroupDescription" : "Bastion security group",
-         "VpcId" : { "Ref" : "VPC" }
+         "VpcId" : { "Ref" : "VPC" },
+         "SecurityGroupIngress" : [
+           {
+             "CidrIp" : "0.0.0.0/0",
+             "IpProtocol": "tcp",
+             "FromPort" : "22",
+             "ToPort" : "22"
+           }
+         ]
       }
     },
     "WebappSecurityGroup" : {
