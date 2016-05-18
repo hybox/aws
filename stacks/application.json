@@ -22,10 +22,6 @@
       "Type" : "String",
       "Default": "hybox/current/hybox.zip"
     },
-    "PrivateZoneName" : {
-      "Description" : "Route53 zone to create an alias in",
-      "Type" : "String"
-    },
     "PublicZoneName" : {
       "Description" : "Route53 zone to create an alias in",
       "Type" : "String"
@@ -73,7 +69,8 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
-          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] }
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
+          "HostedZoneName" : { "Fn::Join" : [".", ["vpc", { "Ref" : "AWS::StackName"}, { "Ref" : "PublicZoneName" }]] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/vpc.json"]] }
       }
@@ -84,7 +81,7 @@
         "Parameters" : {
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
-          "HostedZoneName" : { "Ref" : "PrivateZoneName" }
+          "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/zookeeper.json"]] }
       }
@@ -97,7 +94,7 @@
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
-          "HostedZoneName" : { "Ref" : "PrivateZoneName" }
+          "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/fcrepo.json"]] }
       }
@@ -107,7 +104,7 @@
       "Properties" : {
         "Parameters" : {
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
-          "HostedZoneName" : { "Ref" : "PrivateZoneName" },
+          "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] }
         },

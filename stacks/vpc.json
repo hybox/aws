@@ -5,6 +5,10 @@
     "KeyName": {
       "Type": "AWS::EC2::KeyPair::KeyName",
       "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
+    },
+    "HostedZoneName" : {
+      "Description" : "Route53 zone to create internal aliases",
+      "Type" : "String"
     }
   },
 
@@ -194,6 +198,16 @@
         "ServiceName" : { "Fn::Join": [ "", [ "com.amazonaws.", { "Ref": "AWS::Region" }, ".s3" ] ] },
         "VpcId" : {"Ref" : "VPC"}
       }
+    },
+    "DNS": {
+      "Type": "AWS::Route53::HostedZone",
+      "Properties": {
+        "Name": { "Ref" : "HostedZoneName" },
+        "VPCs": [{
+          "VPCId": { "Ref" : "VPC" },
+          "VPCRegion": { "Ref" : "AWS::Region" }
+        }]
+      }
     }
   },
 
@@ -206,6 +220,9 @@
     },
     "PublicSubnets" : {
       "Value" : { "Fn::Join": [",", [{ "Ref" : "PublicSubnetA" }, { "Ref" : "PublicSubnetB" }, { "Ref" : "PublicSubnetC" }]] }
+    },
+    "HostedZoneName" : {
+      "Value" : { "Ref" : "HostedZoneName" }
     }
   }
 }
