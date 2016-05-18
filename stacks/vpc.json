@@ -28,7 +28,9 @@
     "VPC" : {
       "Type" : "AWS::EC2::VPC",
       "Properties" : {
-        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "VPC", "CIDR" ]}
+        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "VPC", "CIDR" ] },
+        "EnableDnsSupport" : "true",
+        "EnableDnsHostnames" : "true"
       }
     },
     "PublicSubnetA" : {
