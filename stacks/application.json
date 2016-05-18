@@ -171,6 +171,17 @@
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/codepipeline.json"]] }
       }
+    },
+    "bastion" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PublicSubnets"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "vpc", "Outputs.DefaultSecurityGroup"] }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/bastion.json"]] }
+      }
     }
   },
   "Outputs": {

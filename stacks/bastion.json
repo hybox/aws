@@ -1,0 +1,57 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Parameters" : {
+    "SubnetID": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "List of an existing subnet IDs to use for the load balancer and auto scaling group"
+    },
+    "SecurityGroups": {
+      "Type": "List<AWS::EC2::SecurityGroup::Id>",
+      "Description": "A list of security groups, such as sg-a123fd85."
+    },
+    "KeyName": {
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
+    }
+  },
+  "Mappings" : {
+    "AWSRegionToAMI" : {
+      "us-east-1"      : { "AMIID" : "ami-f5f41398" },
+      "us-west-1"      : { "AMIID" : "ami-6e84fa0e" },
+      "us-west-2"      : { "AMIID" : "ami-d0f506b0" },
+      "eu-west-1"      : { "AMIID" : "ami-b0ac25c3" },
+      "ap-northeast-1" : { "AMIID" : "ami-29160d47" },
+      "ap-southeast-2" : { "AMIID" : "ami-0c95b86f" },
+      "ap-southeast-1" : { "AMIID" : "ami-1ddc0b7e" },
+      "eu-central-1"   : { "AMIID" : "ami-d3c022bc" }
+    }
+  },
+  "Resources" : {
+    "AutoScalingGroup" : {
+      "Type" : "AWS::AutoScaling::AutoScalingGroup",
+      "Properties" : {
+        "VPCZoneIdentifier" : { "Ref" : "SubnetID" },
+        "LaunchConfigurationName" : { "Ref" : "ContainerInstances" },
+        "MinSize" : "1",
+        "MaxSize" : "2",
+        "DesiredCapacity" : "1"
+      },
+      "CreationPolicy" : {
+        "ResourceSignal" : {
+          "Timeout" : "PT5M"
+        }
+      }
+    },
+    "ContainerInstances": {
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Properties": {
+        "AssociatePublicIpAddress" : "true",
+        "KeyName" : { "Ref" : "KeyName" },
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionToAMI", { "Ref" : "AWS::Region" }, "AMIID" ] },
+        "InstanceType" : "t2.nano",
+        "SecurityGroups" : [ { "Ref" : "SecurityGroups" } ]
+      }
+    }
+  }
+}
