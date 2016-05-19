@@ -33,25 +33,25 @@
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
          "GroupDescription" : "Bastion security group",
-         "VpcId" : { "Ref" : "VPC" }
-      },
-      "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "bastion"] ] } } ]
+         "VpcId" : { "Ref" : "VPC" },
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "bastion"] ] } } ]
+      }
     },
     "WebappSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
          "GroupDescription" : "Webapp security group",
-         "VpcId" : { "Ref" : "VPC" }
-      },
-      "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "webapp"] ] } } ]
+         "VpcId" : { "Ref" : "VPC" },
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "webapp"] ] } } ]
+      }
     },
     "WebappLbSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
          "GroupDescription" : "Webapp load balancer security group",
-         "VpcId" : { "Ref" : "VPC" }
-      },
-      "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "webapp-lb"] ] } } ]
+         "VpcId" : { "Ref" : "VPC" },
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "webapp-lb"] ] } } ]
+      }
     },
     "DatabaseSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
