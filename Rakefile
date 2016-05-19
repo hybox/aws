@@ -12,7 +12,7 @@ task :copy_artifacts do
      cp -R stacks build;
      cp -R params build;
      sed -i "s/{{branch}}/#{ENV['TRAVIS_BRANCH']}/" build/stacks/application.json;
-     sed -i "s/{{commit}}/#{ENV['TRAVIS_COMMIT']}/" build/stacks/application.json
+     sed -i "s/{{commit}}/#{ENV['TRAVIS_COMMIT'].slice(0, 8)}/" build/stacks/application.json
      `
   end
 end

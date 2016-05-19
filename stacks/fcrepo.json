@@ -1,5 +1,6 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Hydra-in-a-Box fcrepo stack",
 
   "Parameters" : {
     "StackName": {
