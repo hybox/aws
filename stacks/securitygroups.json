@@ -34,7 +34,7 @@
       "Properties" : {
          "GroupDescription" : "Bastion security group",
          "VpcId" : { "Ref" : "VPC" },
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["0", [{ "Ref" : "StackName" }, "bastion"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "bastion"] ] } } ]
       }
     },
     "WebappSecurityGroup" : {
