@@ -79,7 +79,15 @@
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
          "GroupDescription" : "Solr load balancer security group",
-         "VpcId" : { "Ref" : "VPC" }
+         "VpcId" : { "Ref" : "VPC" },
+         "SecurityGroupIngress" : [
+           {
+             "SourceSecurityGroupId" : { "Ref" : "SolrLbSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "8983",
+             "ToPort" : "8983"
+           }
+         ]
       }
     },
     "SolrSecurityGroupIngress" : {
@@ -154,7 +162,21 @@
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
          "GroupDescription" : "Zookeeper security group",
-         "VpcId" : { "Ref" : "VPC" }
+         "VpcId" : { "Ref" : "VPC" },
+         "SecurityGroupIngress" : [
+           {
+             "SourceSecurityGroupId" : { "Ref" : "ZookeeperLbSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "2181",
+             "ToPort" : "2181"
+           },
+           {
+             "SourceSecurityGroupId" : { "Ref" : "ZookeeperLbSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "8080",
+             "ToPort" : "8080"
+           }
+         ]
       }
     },
     "ZookeeperSecurityGroupIngress" : {
