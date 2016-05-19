@@ -73,7 +73,7 @@
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "HostedZoneName" : { "Fn::Join" : [".", [{ "Ref" : "AWS::StackName"}, "vpc", { "Ref" : "PublicZoneName" }]] }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/vpc.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/vpc.json"]] }
       }
     },
     "securitygroups" : {
@@ -83,7 +83,7 @@
           "StackName" : { "Ref" : "AWS::StackName" },
           "VPC" : { "Fn::GetAtt" : ["vpc", "Outputs.VPCID"] }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/securitygroups.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/securitygroups.json"]] }
       }
     },
     "zookeeper" : {
@@ -97,7 +97,7 @@
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.ZookeeperLb"] },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/zookeeper.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/zookeeper.json"]] }
       }
     },
     "fcrepo" : {
@@ -112,7 +112,7 @@
           "S3Bucket" : { "Ref" : "S3Bucket" },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/fcrepo.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/fcrepo.json"]] }
       }
     },
     "solr" : {
@@ -127,7 +127,7 @@
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.SolrLb"] },
           "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/solr.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/solr.json"]] }
       }
     },
     "redis" : {
@@ -137,7 +137,7 @@
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Redis"] }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/redis.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/redis.json"]] }
       }
     },
     "database" : {
@@ -149,7 +149,7 @@
           "MasterUsername" : { "Ref" : "DatabaseUsername" },
           "MasterUserPassword" : { "Ref" : "DatabasePassword" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/postgres.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/postgres.json"]] }
       }
     },
     "webapp" : {
@@ -177,7 +177,7 @@
           "RDSUsername" : { "Ref" : "DatabaseUsername" },
           "RDSPassword" : { "Ref" : "DatabasePassword" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/webapp.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/webapp.json"]] }
       }
     },
     "codepipeline" : {
@@ -190,7 +190,7 @@
           "S3Bucket" : { "Ref" : "S3Bucket" },
           "S3Key" : { "Ref" : "WebappS3Key" }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/codepipeline.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/codepipeline.json"]] }
       }
     },
     "bastion" : {
@@ -202,7 +202,7 @@
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PublicSubnets"] },
           "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Bastion"] }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/bastion.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/bastion.json"]] }
       }
     }
   },
