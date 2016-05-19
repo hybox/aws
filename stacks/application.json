@@ -15,7 +15,7 @@
     "S3KeyPrefix" : {
       "Description" : "S3 prefix to deployment artifacts",
       "Type" : "String",
-      "Default": "current"
+      "Default": "branch/{{branch}}"
     },
     "WebappS3Key" : {
       "Description" : "S3 key to webapp deployment artifacts",
