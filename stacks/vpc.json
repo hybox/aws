@@ -2,6 +2,10 @@
   "AWSTemplateFormatVersion" : "2010-09-09",
 
   "Parameters" : {
+    "StackName": {
+      "Type": "String",
+      "Description": "Name of the ElasticBeanstalk environment"
+    },
     "KeyName": {
       "Type": "AWS::EC2::KeyPair::KeyName",
       "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
@@ -30,7 +34,10 @@
       "Properties" : {
         "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "VPC", "CIDR" ] },
         "EnableDnsSupport" : "true",
-        "EnableDnsHostnames" : "true"
+        "EnableDnsHostnames" : "true",
+        "Tags" : [
+	        { "Key" : "Name", "Value" : { "Ref" : "StackName" } }
+        ]
       }
     },
     "PublicSubnetA" : {

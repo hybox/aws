@@ -2,6 +2,10 @@
   "AWSTemplateFormatVersion" : "2010-09-09",
 
   "Parameters" : {
+    "StackName": {
+      "Type": "String",
+      "Description": "Name of the ElasticBeanstalk environment"
+    },
     "SubnetID": {
       "Type": "List<AWS::EC2::Subnet::Id>",
       "Description": "List of an existing subnet IDs to use for the load balancer and auto scaling group"
@@ -35,7 +39,15 @@
         "LaunchConfigurationName" : { "Ref" : "ContainerInstances" },
         "MinSize" : "1",
         "MaxSize" : "2",
-        "DesiredCapacity" : "1"
+        "DesiredCapacity" : "1",
+        "Tags" : [
+          {
+            "Key" : "Name",
+            "Value" : {
+              "Ref" : "StackName"
+            }
+          }
+        ]
       },
       "CreationPolicy" : {
         "ResourceSignal" : {
