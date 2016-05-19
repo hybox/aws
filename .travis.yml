@@ -16,6 +16,7 @@ deploy:
     skip_cleanup: true
     local_dir: build
     upload-dir: cloudformation/branch/${TRAVIS_BRANCH}
+    acl: public_read
     on:
       all_branches: true
   - provider: s3
@@ -27,3 +28,4 @@ deploy:
     skip_cleanup: true
     local_dir: build
     upload-dir: cloudformation/current
+    acl: public_read
