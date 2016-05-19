@@ -2,7 +2,7 @@
   "AWSTemplateFormatVersion" : "2010-09-09",
 
   "Parameters" : {
-    "EBApplicationName": {
+    "StackName": {
       "Type": "String",
       "Description": "Name of the ElasticBeanstalk environment"
     },
@@ -51,7 +51,7 @@
     "FcrepoApplication" : {
       "Type" : "AWS::ElasticBeanstalk::Application",
       "Properties" : {
-        "ApplicationName" : { "Ref" : "EBApplicationName"},
+        "ApplicationName" : { "Ref" : "StackName"},
         "Description" : "Fcrepo service"
       }
     },
@@ -136,7 +136,7 @@
       "Properties": {
         "ApplicationName": { "Ref": "FcrepoApplication" },
         "Description": "Fcrepo Environment",
-        "EnvironmentName": { "Ref" : "EBApplicationName"},
+        "EnvironmentName": { "Ref" : "StackName"},
         "TemplateName": { "Ref": "FcrepoConfigurationTemplate" },
         "VersionLabel": { "Ref": "FcrepoApplicationVersion" }
       }

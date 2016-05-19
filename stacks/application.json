@@ -69,6 +69,7 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
+          "StackName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "fcrepo"]] },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "HostedZoneName" : { "Fn::Join" : [".", [{ "Ref" : "AWS::StackName"}, "vpc", { "Ref" : "PublicZoneName" }]] }
         },
@@ -79,6 +80,7 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
+          "StackName" : { "Ref" : "AWS::StackName" },
           "VPC" : { "Fn::GetAtt" : ["vpc", "Outputs.VPCID"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/securitygroups.json"]] }
@@ -88,6 +90,7 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
+          "StackName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "solr"]] },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Zookeeper"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
@@ -101,7 +104,7 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
-          "EBApplicationName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "fcrepo"]] },
+          "StackName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "fcrepo"]] },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Fcrepo"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
@@ -116,6 +119,7 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
+          "StackName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "solr"]] },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
@@ -152,7 +156,7 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
-          "EBApplicationName" : { "Ref" : "AWS::StackName" },
+          "StackName" : { "Ref" : "AWS::StackName" },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
           "S3Key" : { "Ref" : "WebappS3Key" },
@@ -193,6 +197,7 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
+          "StackName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "bastion"]] },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PublicSubnets"] },
           "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Bastion"] }

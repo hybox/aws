@@ -2,7 +2,7 @@
   "AWSTemplateFormatVersion" : "2010-09-09",
 
   "Parameters" : {
-    "EBApplicationName": {
+    "StackName": {
       "Type": "String",
       "Description": "Name of the ElasticBeanstalk environment",
       "Default" : "HyboxApplication"
@@ -113,7 +113,7 @@
     "HyboxApplication" : {
       "Type" : "AWS::ElasticBeanstalk::Application",
       "Properties" : {
-        "ApplicationName" : { "Ref" : "EBApplicationName" },
+        "ApplicationName" : { "Ref" : "StackName" },
         "Description" : "Hybox service"
       }
     },
@@ -198,7 +198,7 @@
       "Properties": {
         "ApplicationName": { "Ref": "HyboxApplication" },
         "Description": "Hybox Environment",
-        "EnvironmentName": { "Ref" : "EBApplicationName"},
+        "EnvironmentName": { "Ref" : "StackName"},
         "TemplateName": { "Ref": "HyboxConfigurationTemplate" },
         "VersionLabel": { "Ref": "HyboxApplicationVersion" },
         "OptionSettings" : [
@@ -240,7 +240,7 @@
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SETTINGS__MULTITENANCY__DEFAULT_HOST",
-            "Value": { "Fn::Join": [ ".", [ "%{tenant}", { "Ref": "EBApplicationName" }, { "Ref": "HostedZoneName" } ] ] }
+            "Value": { "Fn::Join": [ ".", [ "%{tenant}", { "Ref": "StackName" }, { "Ref": "HostedZoneName" } ] ] }
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
@@ -342,7 +342,7 @@
     "EBRecordSet" : {
       "Type" : "AWS::Route53::RecordSet",
       "Properties" : {
-        "Name" : { "Fn::Join": [ ".", [ { "Ref": "EBApplicationName" }, { "Ref": "HostedZoneName" } ] ] },
+        "Name" : { "Fn::Join": [ ".", [ { "Ref": "StackName" }, { "Ref": "HostedZoneName" } ] ] },
         "HostedZoneName" : { "Ref" : "HostedZoneName"},
         "Type" : "CNAME",
         "TTL": "900",
@@ -352,7 +352,7 @@
     "EBWildcardRecordSet" : {
       "Type" : "AWS::Route53::RecordSet",
       "Properties" : {
-        "Name" : { "Fn::Join": [ ".", [ "*", { "Ref": "EBApplicationName" }, { "Ref": "HostedZoneName" } ] ] },
+        "Name" : { "Fn::Join": [ ".", [ "*", { "Ref": "StackName" }, { "Ref": "HostedZoneName" } ] ] },
         "HostedZoneName" : { "Ref" : "HostedZoneName"},
         "Type" : "CNAME",
         "TTL": "900",
