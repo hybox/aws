@@ -26,7 +26,7 @@
              "ToPort" : "22"
            }
          ],
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "default"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "default"] ] } } ]
       }
     },
     "BastionSecurityGroup" : {
@@ -34,7 +34,7 @@
       "Properties" : {
          "GroupDescription" : "Bastion security group",
          "VpcId" : { "Ref" : "VPC" },
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "bastion"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["0", [{ "Ref" : "StackName" }, "bastion"] ] } } ]
       }
     },
     "WebappSecurityGroup" : {
@@ -42,7 +42,7 @@
       "Properties" : {
          "GroupDescription" : "Webapp security group",
          "VpcId" : { "Ref" : "VPC" },
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "webapp"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "webapp"] ] } } ]
       }
     },
     "WebappLbSecurityGroup" : {
@@ -50,7 +50,7 @@
       "Properties" : {
          "GroupDescription" : "Webapp load balancer security group",
          "VpcId" : { "Ref" : "VPC" },
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "webapp-lb"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "webapp-lb"] ] } } ]
       }
     },
     "DatabaseSecurityGroup" : {
@@ -66,7 +66,7 @@
              "ToPort" : "5432"
            }
          ],
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "db"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "db"] ] } } ]
       }
     },
     "RedisSecurityGroup" : {
@@ -82,7 +82,7 @@
              "ToPort" : "6379"
            }
          ],
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "redis"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "redis"] ] } } ]
       }
     },
     "SolrSecurityGroup" : {
@@ -98,7 +98,7 @@
              "ToPort" : "8983"
            }
          ],
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "solr"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "solr"] ] } } ]
       }
     },
     "SolrSecurityGroupIngress" : {
@@ -124,7 +124,7 @@
              "ToPort" : "80"
            }
          ],
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "solr-lb"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "solr-lb"] ] } } ]
       }
     },
     "FedoraSecurityGroup" : {
@@ -132,7 +132,7 @@
       "Properties" : {
          "GroupDescription" : "Fedora load balancer security group",
          "VpcId" : { "Ref" : "VPC" },
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "fcrepo"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "fcrepo"] ] } } ]
       }
     },
     "FedoraLbSecurityGroup" : {
@@ -148,7 +148,7 @@
              "ToPort" : "80"
            }
          ],
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "fcrepo-lb"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "fcrepo-lb"] ] } } ]
       }
     },
     "ZookeeperLbSecurityGroup" : {
@@ -170,7 +170,7 @@
              "ToPort" : "2181"
            }
          ],
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "zookeeper-lb"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "zookeeper-lb"] ] } } ]
       }
     },
     "ZookeeperSecurityGroup" : {
@@ -192,7 +192,7 @@
              "ToPort" : "8080"
            }
          ],
-         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "zookeeper"] ] } } ]
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "zookeeper"] ] } } ]
       }
     },
     "ZookeeperSecurityGroupIngress" : {
