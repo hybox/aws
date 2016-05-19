@@ -80,6 +80,7 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
+          "StackName" : { "Ref" : "AWS::StackName" },
           "VPC" : { "Fn::GetAtt" : ["vpc", "Outputs.VPCID"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/securitygroups.json"]] }

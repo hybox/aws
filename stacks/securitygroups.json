@@ -2,6 +2,10 @@
   "AWSTemplateFormatVersion" : "2010-09-09",
 
   "Parameters" : {
+    "StackName": {
+      "Type": "String",
+      "Description": "Name of the ElasticBeanstalk environment"
+    },
     "VPC": {
       "Type": "AWS::EC2::VPC::Id",
       "Description": "A VPC ID, such as vpc-a123baa3."
@@ -21,7 +25,8 @@
              "FromPort" : "22",
              "ToPort" : "22"
            }
-         ]
+         ],
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "default"] ] } } ]
       }
     },
     "BastionSecurityGroup" : {
@@ -29,21 +34,24 @@
       "Properties" : {
          "GroupDescription" : "Bastion security group",
          "VpcId" : { "Ref" : "VPC" }
-      }
+      },
+      "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "bastion"] ] } } ]
     },
     "WebappSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
          "GroupDescription" : "Webapp security group",
          "VpcId" : { "Ref" : "VPC" }
-      }
+      },
+      "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "webapp"] ] } } ]
     },
     "WebappLbSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
          "GroupDescription" : "Webapp load balancer security group",
          "VpcId" : { "Ref" : "VPC" }
-      }
+      },
+      "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "webapp-lb"] ] } } ]
     },
     "DatabaseSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
@@ -57,7 +65,8 @@
              "FromPort" : "5432",
              "ToPort" : "5432"
            }
-         ]
+         ],
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "db"] ] } } ]
       }
     },
     "RedisSecurityGroup" : {
@@ -72,7 +81,8 @@
              "FromPort" : "6379",
              "ToPort" : "6379"
            }
-         ]
+         ],
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "redis"] ] } } ]
       }
     },
     "SolrSecurityGroup" : {
@@ -87,7 +97,8 @@
              "FromPort" : "8983",
              "ToPort" : "8983"
            }
-         ]
+         ],
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "solr"] ] } } ]
       }
     },
     "SolrSecurityGroupIngress" : {
@@ -112,14 +123,16 @@
              "FromPort" : "80",
              "ToPort" : "80"
            }
-         ]
+         ],
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "solr-lb"] ] } } ]
       }
     },
     "FedoraSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
          "GroupDescription" : "Fedora load balancer security group",
-         "VpcId" : { "Ref" : "VPC" }
+         "VpcId" : { "Ref" : "VPC" },
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "fcrepo"] ] } } ]
       }
     },
     "FedoraLbSecurityGroup" : {
@@ -134,7 +147,8 @@
              "FromPort" : "80",
              "ToPort" : "80"
            }
-         ]
+         ],
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "fcrepo-lb"] ] } } ]
       }
     },
     "ZookeeperLbSecurityGroup" : {
@@ -155,7 +169,8 @@
              "FromPort" : "2181",
              "ToPort" : "2181"
            }
-         ]
+         ],
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "zookeeper-lb"] ] } } ]
       }
     },
     "ZookeeperSecurityGroup" : {
@@ -176,7 +191,8 @@
              "FromPort" : "8080",
              "ToPort" : "8080"
            }
-         ]
+         ],
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["", [{ "Ref" : "StackName" }, "zookeeper"] ] } } ]
       }
     },
     "ZookeeperSecurityGroupIngress" : {
