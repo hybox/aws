@@ -147,7 +147,8 @@
             "Key" : "Name",
             "Value" : {
               "Ref" : "StackName"
-            }
+            },
+            "PropagateAtLaunch" : true
           }
         ]
       },
