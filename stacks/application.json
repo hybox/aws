@@ -69,7 +69,7 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
-          "StackName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "fcrepo"]] },
+          "StackName" : { "Ref" : "AWS::StackName"},
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "HostedZoneName" : { "Fn::Join" : [".", [{ "Ref" : "AWS::StackName"}, "vpc", { "Ref" : "PublicZoneName" }]] }
         },
