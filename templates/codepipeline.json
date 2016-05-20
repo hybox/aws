@@ -69,7 +69,7 @@
             "Name": "Release",
             "Actions": [
               {
-                "Name": "ReleaseAction",
+                "Name": "ReleaseWebapp",
                 "InputArtifacts": [
                   {
                     "Name": "SourceOutput"
@@ -88,7 +88,7 @@
                 "RunOrder": 1
               },
               {
-                "Name": "ReleaseAction",
+                "Name": "ReleaseWorkers",
                 "InputArtifacts": [
                   {
                     "Name": "SourceOutput"
