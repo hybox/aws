@@ -10,8 +10,11 @@
     },
     "ApplicationName": {
       "Type": "String",
-      "Description": "Name of the ElasticBeanstalk environment",
-      "Default" : "HyboxApplication"
+      "Description": "Name of the ElasticBeanstalk environment"
+    },
+    "VersionLabel": {
+      "Type": "String",
+      "Description": "Name of the ElasticBeanstalk version"
     },
     "KeyName": {
       "Type": "AWS::EC2::KeyPair::KeyName",
@@ -182,11 +185,11 @@
     "WebappEnvironment": {
       "Type": "AWS::ElasticBeanstalk::Environment",
       "Properties": {
-        "ApplicationName": { "Ref": "HyboxApplication" },
+        "ApplicationName": { "Ref": "ApplicationName" },
         "Description": "Hybox Environment",
         "EnvironmentName": { "Fn::Join": ["-", [{ "Ref" : "StackName"}, "webapp"]] },
         "TemplateName": { "Ref": "HyboxConfigurationTemplate" },
-        "VersionLabel": { "Ref": "HyboxApplicationVersion" },
+        "VersionLabel": { "Ref": "VersionLabel" },
         "OptionSettings" : [
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",

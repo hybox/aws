@@ -150,6 +150,7 @@
         "Parameters" : {
           "StackName" : { "Ref" : "StackName" },
           "ApplicationName" : { "Ref" : "HyboxApplication" },
+          "VersionLabel" : { "Ref" : "HyboxApplicationVersion" },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "MinSize" : { "Ref" : "MinSize" },
           "MaxSize" : { "Ref" : "MaxSize" },
@@ -182,6 +183,7 @@
         "Parameters" : {
           "StackName" : { "Ref" : "StackName" },
           "ApplicationName" : { "Ref" : "HyboxApplication" },
+          "VersionLabel" : { "Ref" : "HyboxApplicationVersion" },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "MinSize" : { "Ref" : "WorkerMinSize" },
           "MaxSize" : { "Ref" : "WorkerMaxSize" },

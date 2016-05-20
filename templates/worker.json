@@ -8,6 +8,14 @@
       "Description": "Name of the ElasticBeanstalk environment",
       "Default" : "HyboxApplication"
     },
+    "ApplicationName": {
+      "Type": "String",
+      "Description": "Name of the ElasticBeanstalk environment"
+    },
+    "VersionLabel": {
+      "Type": "String",
+      "Description": "Name of the ElasticBeanstalk version"
+    },
     "KeyName": {
       "Type": "AWS::EC2::KeyPair::KeyName",
       "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
@@ -112,11 +120,11 @@
     "WorkerEnvironment": {
       "Type": "AWS::ElasticBeanstalk::Environment",
       "Properties": {
-        "ApplicationName": { "Ref": "HyboxApplication" },
-        "Description": "Hybox Environment",
+        "ApplicationName": { "Ref": "ApplicationName" },
+        "Description": "Hybox worker Environment",
         "EnvironmentName": { "Fn::Join": ["-", [{ "Ref" : "StackName"}, "workers"]] },
         "TemplateName": { "Ref": "HyboxWorkersConfigurationTemplate" },
-        "VersionLabel": { "Ref": "HyboxApplicationVersion" },
+        "VersionLabel": { "Ref": "VersionLabel" },
         "Tier": {
           "Name": "Worker",
           "Type": "SQS/HTTP"
@@ -198,7 +206,7 @@
     "HyboxWorkersConfigurationTemplate" : {
       "Type" : "AWS::ElasticBeanstalk::ConfigurationTemplate",
       "Properties" : {
-        "ApplicationName" : { "Ref" : "HyboxApplication"},
+        "ApplicationName" : { "Ref" : "ApplicationName"},
         "Description" : "Hybox configuration template",
         "OptionSettings" : [
           {
