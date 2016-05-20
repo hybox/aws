@@ -161,27 +161,7 @@
           ]
         },
         "Path": "/",
-        "Policies": [
-          {
-            "PolicyName": "aws-elasticbeanstalk-ec2-role",
-            "PolicyDocument": {
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "s3:Get*",
-                    "s3:List*",
-                    "s3:PutObject"
-                  ],
-                  "Resource": [
-                    "arn:aws:s3:::elasticbeanstalk-*",
-                    "arn:aws:s3:::elasticbeanstalk-*/*"
-                  ]
-                }
-              ]
-            }
-          }
-        ]
+        "ManagedPolicyArns" : ["arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier", "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier"]
       }
     },
     "EC2InstanceProfile": {
