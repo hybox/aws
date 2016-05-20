@@ -149,7 +149,7 @@
       "Properties" : {
         "VPCZoneIdentifier" : { "Ref" : "SubnetID" },
         "LaunchConfigurationName" : { "Ref" : "ContainerInstances" },
-        "MinSize" : "3",
+        "MinSize" : { "Ref" : "DesiredCapacity" },
         "MaxSize" : { "Ref" : "MaxSize" },
         "DesiredCapacity" : { "Ref" : "DesiredCapacity" },
         "Tags" : [
