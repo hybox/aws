@@ -23,7 +23,7 @@
       "Default": "hybox/current/hybox.zip"
     },
     "PublicZoneName" : {
-      "Description" : "Route53 zone to create an alias in",
+      "Description" : "Existing Route53 zone; used to create a public DNS record for the web application",
       "Type" : "String"
     },
     "DatabaseUsername": {
@@ -61,15 +61,15 @@
         },
         {
           "Label" : { "default" : "Network Configuration" },
-          "Parameters" : [ "KeyName" ]
+          "Parameters" : [ "KeyName", "PublicZoneName" ]
         },
         {
-          "Label" : { "default" : "DNS Configuration"},
-          "Parameters" : [ "PublicZoneName", "PrivateZoneName" ]
+          "Label" : { "default" : "Resources"},
+          "Parameters" : ["SolrCloudSize" , "ZookeeperEnsembleSize" ]
         },
         {
           "Label" : { "default" : "Application Configuration" },
-          "Parameters" : [ "DatabaseUsername", "DatabasePassword", "ZookeeperHosts", "SecretKeyBase" ]
+          "Parameters" : [ "DatabaseUsername", "DatabasePassword", "SecretKeyBase" ]
         }
       ]
     }
