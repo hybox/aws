@@ -205,7 +205,7 @@
           "DefaultQueue" : { "Ref" : "DefaultQueue" },
           "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] }
         },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/worker.json"]] }
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/worker.json"]] }
       }
     },
     "DefaultQueue" : {

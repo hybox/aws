@@ -103,6 +103,14 @@
       "Type": "String",
       "Description": "SQS Queue prefix",
       "Default": "hybox"
+    },
+    "DefaultQueue": {
+      "Type": "String",
+      "Description": "SQS Default Queue"
+    },
+    "IamInstanceProfile" : {
+      "Description" : "ARN for an IAM profile to assign to the EC2 instances",
+      "Type" : "String"
     }
   },
   "Resources" : {
