@@ -271,26 +271,7 @@
           ]
         },
         "Path": "/",
-        "Policies": [
-          {
-            "PolicyName": "ecs-service",
-            "PolicyDocument": {
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "elasticloadbalancing:Describe*",
-                    "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
-                    "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
-                    "ec2:Describe*",
-                    "ec2:AuthorizeSecurityGroupIngress"
-                  ],
-                  "Resource": "*"
-                }
-              ]
-            }
-          }
-        ]
+        "ManagedPolicyArns" : ["arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"]
       }
     },
     "EC2Role": {
@@ -312,26 +293,8 @@
           ]
         },
         "Path": "/",
+        "ManagedPolicyArns" : ["arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"],
         "Policies": [
-          {
-            "PolicyName": "ecs-service",
-            "PolicyDocument": {
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "ecs:CreateCluster",
-                    "ecs:RegisterContainerInstance",
-                    "ecs:DeregisterContainerInstance",
-                    "ecs:DiscoverPollEndpoint",
-                    "ecs:Submit*",
-                    "ecs:Poll"
-                  ],
-                  "Resource": "*"
-                }
-              ]
-            }
-          },
           {
             "PolicyName": "exhibitor-s3",
             "PolicyDocument": {
