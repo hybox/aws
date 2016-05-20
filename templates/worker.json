@@ -1,0 +1,255 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Hydra-in-a-Box web application stack",
+
+  "Parameters" : {
+    "StackName": {
+      "Type": "String",
+      "Description": "Name of the ElasticBeanstalk environment",
+      "Default" : "HyboxApplication"
+    },
+    "KeyName": {
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
+    },
+    "MinSize": {
+      "Type": "Number",
+      "Default" : "1",
+      "Description": "Minimum number of instances"
+    },
+    "MaxSize": {
+      "Type": "Number",
+      "Default" : "2",
+      "Description": "Maximum number of instances"
+    },
+    "PublicSubnets": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "[UNUSED] List of an existing subnet IDs to use for the load balancer"
+    },
+    "PrivateSubnets": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "List of an existing subnet IDs to use for the auto scaling group"
+    },
+    "SecurityGroups": {
+      "Type": "List<AWS::EC2::SecurityGroup::Id>",
+      "Description": "A list of security groups, such as sg-a123fd85."
+    },
+    "LBSecurityGroups": {
+      "Type": "List<AWS::EC2::SecurityGroup::Id>",
+      "Description": "[UNUSED] A list of security groups, such as sg-a123fd85."
+    },
+    "HostedZoneName" : {
+      "Description" : "Route53 zone to create an alias in",
+      "Type" : "String"
+    },
+    "SecretKeyBase" : {
+      "NoEcho": "true",
+      "Description" : "Secret key for Rails",
+      "Type" : "String"
+    },
+    "FcrepoUrl" : {
+      "Description" : "URL to Fedora",
+      "Type" : "String"
+    },
+    "SolrUrl" : {
+      "Description" : "URL to Solr",
+      "Type" : "String"
+    },
+    "ZookeeperHosts": {
+      "Type": "String",
+      "Description": "A list of zookeeper host IP + ports",
+      "Default": "127.0.0.1:2181"
+    },
+    "RedisHost": {
+      "Type": "String",
+      "Description": "URL to Redis"
+    },
+    "RedisPort": {
+      "Type": "String",
+      "Description": "Redis Port",
+      "Default": "6379"
+    },
+    "RDSDatabaseName": {
+      "Type": "String",
+      "Description": "Database name",
+      "Default": "hybox"
+    },
+    "RDSUsername": {
+      "Type": "String",
+      "Description": "Username for Database",
+      "Default": "root"
+    },
+    "RDSPassword": {
+      "NoEcho": "true",
+      "Type": "String",
+      "Description": "Password for Database",
+      "Default": "changeme"
+    },
+    "RDSHostname": {
+      "Type": "String",
+      "Description": "Hostname for RDS Database"
+    },
+    "RDSPort": {
+      "Type": "String",
+      "Description": "Database Port",
+      "Default": "5432"
+    },
+    "QueuePrefix": {
+      "Type": "String",
+      "Description": "SQS Queue prefix",
+      "Default": "hybox"
+    },
+    "DefaultQueue": {
+      "Type": "String",
+      "Description": "SQS Default Queue"
+    }
+  },
+  "Resources" : {
+    "WorkerEnvironment": {
+      "Type": "AWS::ElasticBeanstalk::Environment",
+      "Properties": {
+        "ApplicationName": { "Ref": "HyboxApplication" },
+        "Description": "Hybox Environment",
+        "EnvironmentName": { "Fn::Join": ["-", [{ "Ref" : "StackName"}, "workers"]] },
+        "TemplateName": { "Ref": "HyboxWorkersConfigurationTemplate" },
+        "VersionLabel": { "Ref": "HyboxApplicationVersion" },
+        "Tier": {
+          "Name": "Worker",
+          "Type": "SQS/HTTP"
+        },
+        "OptionSettings" : [
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SECRET_KEY_BASE",
+            "Value": { "Ref" : "SecretKeyBase"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SOLR_URL",
+            "Value": { "Ref" : "SolrUrl"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__SOLR__URL",
+            "Value": { "Ref" : "SolrUrl"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "FEDORA_URL",
+            "Value": { "Ref" : "FcrepoUrl"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "REDIS_HOST",
+            "Value": { "Ref" : "RedisHost"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "REDIS_PORT",
+            "Value": { "Ref" : "RedisPort"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__ZOOKEEPER__CONNECTION_STR",
+            "Value": { "Ref" : "ZookeeperHosts"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__MULTITENANCY__DEFAULT_HOST",
+            "Value": { "Fn::Join": [ ".", [ "%{tenant}", { "Ref": "StackName" }, { "Ref": "HostedZoneName" } ] ] }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "RDS_DB_NAME",
+            "Value": { "Ref" : "RDSDatabaseName"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "RDS_USERNAME",
+            "Value": { "Ref" : "RDSUsername"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "RDS_PASSWORD",
+            "Value": { "Ref" : "RDSPassword"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "RDS_HOSTNAME",
+            "Value": { "Ref" : "RDSHostname"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "RDS_PORT",
+            "Value": { "Ref" : "RDSPort"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:sqsd",
+            "OptionName": "WorkerQueueURL",
+            "Value": { "Ref" : "DefaultQueue"}
+          }
+        ]
+      }
+    },
+    "HyboxWorkersConfigurationTemplate" : {
+      "Type" : "AWS::ElasticBeanstalk::ConfigurationTemplate",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "HyboxApplication"},
+        "Description" : "Hybox configuration template",
+        "OptionSettings" : [
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "ImageId",
+            "Value" : "ami-f38a6b9e"
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "InstanceType",
+            "Value" : "t2.large"
+          },
+          {
+            "Namespace" : "aws:ec2:vpc",
+            "OptionName" : "Subnets",
+            "Value" : { "Fn::Join" : [",", { "Ref" : "PrivateSubnets" }] }
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "EC2KeyName",
+            "Value" : { "Ref" : "KeyName" }
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "SecurityGroups",
+            "Value" : { "Fn::Join": [",", { "Ref" : "SecurityGroups" }] }
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "IamInstanceProfile",
+            "Value" : { "Ref" : "IamInstanceProfile" }
+          },
+          {
+            "Namespace": "aws:autoscaling:asg",
+            "OptionName": "MinSize",
+            "Value": { "Ref" : "MinSize" }
+          },
+          {
+            "Namespace": "aws:autoscaling:asg",
+            "OptionName": "MaxSize",
+            "Value": { "Ref" : "MinSize" }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:environment",
+            "OptionName": "EnvironmentType",
+            "Value": "LoadBalanced"
+          }
+        ],
+        "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.2 running Ruby 2.3 (Puma)"
+      }
+    }
+  },
+  "Outputs": {
+    "EnvironmentName": {
+      "Value" : { "Ref" : "WorkerEnvironment" }
+    }
+  }
+}

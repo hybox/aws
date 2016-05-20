@@ -1,5 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Hydra-in-a-Box Zookeeper stack for SolrCloud using ECS",
+
   "Parameters" : {
     "StackName": {
       "Type": "String",

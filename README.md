@@ -7,7 +7,7 @@
 2. Create the application stack
 
 ```console
-$ aws --region us-east-1 cloudformation create-stack --stack-name hybox --template-body file://stacks/application.json --capabilities CAPABILITY_IAM --parameters file://params/application.json
+$ aws --region us-east-1 cloudformation create-stack --stack-name hybox --template-body file://templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/stack.json
 ```
 
 ## Travis deployment integration
@@ -15,5 +15,5 @@ $ aws --region us-east-1 cloudformation create-stack --stack-name hybox --templa
 Create a new IAM user, bucket, and access keys for the `.travis.yml` deployment step.
 
 ```console
-$ aws --region us-east-1 cloudformation create-stack --stack-name travis --template-body file://stacks/travis.json --capabilities CAPABILITY_IAM
+$ aws --region us-east-1 cloudformation create-stack --stack-name travis --template-body file://templates/travis.json --capabilities CAPABILITY_IAM
 ```

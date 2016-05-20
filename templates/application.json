@@ -1,0 +1,300 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Hydra-in-a-Box web application stack",
+
+  "Parameters" : {
+    "StackName": {
+      "Type": "String",
+      "Description": "Name of the ElasticBeanstalk environment",
+      "Default" : "HyboxApplication"
+    },
+    "KeyName": {
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
+    },
+    "S3Bucket": {
+      "Type": "String",
+      "Description": "S3 bucket with the hybox zip",
+      "Default": "hybox-deployment-artifacts"
+    },
+    "S3Key": {
+      "Type": "String",
+      "Description": "S3 key to the hybox zip",
+      "Default": "hybox.zip"
+    },
+    "S3KeyPrefix" : {
+      "Description" : "S3 prefix to deployment artifacts",
+      "Type" : "String",
+      "Default": "branch/{{branch}}"
+    },
+    "MinSize": {
+      "Type": "Number",
+      "Default" : "1",
+      "Description": "Minimum number of instances"
+    },
+    "MaxSize": {
+      "Type": "Number",
+      "Default" : "2",
+      "Description": "Maximum number of instances"
+    },
+    "WorkerMinSize": {
+      "Type": "Number",
+      "Default" : "1",
+      "Description": "Minimum number of instances"
+    },
+    "WorkerMaxSize": {
+      "Type": "Number",
+      "Default" : "2",
+      "Description": "Maximum number of instances"
+    },
+    "PublicSubnets": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "List of an existing subnet IDs to use for the load balancer"
+    },
+    "PrivateSubnets": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "List of an existing subnet IDs to use for the auto scaling group"
+    },
+    "SecurityGroups": {
+      "Type": "List<AWS::EC2::SecurityGroup::Id>",
+      "Description": "A list of security groups, such as sg-a123fd85."
+    },
+    "LBSecurityGroups": {
+      "Type": "List<AWS::EC2::SecurityGroup::Id>",
+      "Description": "A list of security groups, such as sg-a123fd85."
+    },
+    "HostedZoneName" : {
+      "Description" : "Route53 zone to create an alias in",
+      "Type" : "String"
+    },
+    "SecretKeyBase" : {
+      "NoEcho": "true",
+      "Description" : "Secret key for Rails",
+      "Type" : "String"
+    },
+    "FcrepoUrl" : {
+      "Description" : "URL to Fedora",
+      "Type" : "String"
+    },
+    "SolrUrl" : {
+      "Description" : "URL to Solr",
+      "Type" : "String"
+    },
+    "ZookeeperHosts": {
+      "Type": "String",
+      "Description": "A list of zookeeper host IP + ports",
+      "Default": "127.0.0.1:2181"
+    },
+    "RedisHost": {
+      "Type": "String",
+      "Description": "URL to Redis"
+    },
+    "RedisPort": {
+      "Type": "String",
+      "Description": "Redis Port",
+      "Default": "6379"
+    },
+    "RDSDatabaseName": {
+      "Type": "String",
+      "Description": "Database name",
+      "Default": "hybox"
+    },
+    "RDSUsername": {
+      "Type": "String",
+      "Description": "Username for Database",
+      "Default": "root"
+    },
+    "RDSPassword": {
+      "NoEcho": "true",
+      "Type": "String",
+      "Description": "Password for Database",
+      "Default": "changeme"
+    },
+    "RDSHostname": {
+      "Type": "String",
+      "Description": "Hostname for RDS Database"
+    },
+    "RDSPort": {
+      "Type": "String",
+      "Description": "Database Port",
+      "Default": "5432"
+    },
+    "QueuePrefix": {
+      "Type": "String",
+      "Description": "SQS Queue prefix",
+      "Default": "hybox"
+    }
+  },
+  "Resources" : {
+    "HyboxApplication" : {
+      "Type" : "AWS::ElasticBeanstalk::Application",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "StackName" },
+        "Description" : "Hybox service"
+      }
+    },
+    "HyboxApplicationVersion" : {
+      "Type" : "AWS::ElasticBeanstalk::ApplicationVersion",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "HyboxApplication" },
+        "Description" : "Hybox service version",
+        "SourceBundle" : {
+          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3Key" : { "Ref" : "S3Key" }
+        }
+      }
+    },
+    "webapp" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "StackName" : { "Ref" : "StackName" },
+          "ApplicationName" : { "Ref" : "HyboxApplication" },
+          "KeyName" : { "Ref" : "KeyName" },
+          "MinSize" : { "Ref" : "MinSize" },
+          "MaxSize" : { "Ref" : "MaxSize" },
+          "PublicSubnets" : { "Ref" : "PublicSubnets" },
+          "PrivateSubnets" : { "Ref" : "PrivateSubnets" },
+          "SecurityGroups" : { "Ref" : "SecurityGroups" },
+          "LBSecurityGroups" : { "Ref" : "LBSecurityGroups" },
+          "HostedZoneName" : { "Ref" : "HostedZoneName" },
+          "SecretKeyBase" : { "Ref" : "SecretKeyBase" },
+          "FcrepoUrl" : { "Ref" : "FcrepoUrl" },
+          "SolrUrl" : { "Ref" : "SolrUrl" },
+          "ZookeeperHosts" : { "Ref" : "ZookeeperHosts" },
+          "RedisHost" : { "Ref" : "RedisHost" },
+          "RedisPort" : { "Ref" : "RedisPort" },
+          "RDSDatabaseName" : { "Ref" : "RDSDatabaseName" },
+          "RDSUsername" : { "Ref" : "RDSUsername" },
+          "RDSPassword" : { "Ref" : "RDSPassword" },
+          "RDSHostname" : { "Ref" : "RDSHostname" },
+          "RDSPort" : { "Ref" : "RDSPort" },
+          "QueuePrefix" : { "Ref" : "QueuePrefix" },
+          "DefaultQueue" : { "Ref" : "DefaultQueue"},
+          "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/webapp.json"]] }
+      }
+    },
+    "workers" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "StackName" : { "Ref" : "StackName" },
+          "ApplicationName" : { "Ref" : "HyboxApplication" },
+          "KeyName" : { "Ref" : "KeyName" },
+          "MinSize" : { "Ref" : "WorkerMinSize" },
+          "MaxSize" : { "Ref" : "WorkerMaxSize" },
+          "PublicSubnets" : { "Ref" : "PublicSubnets" },
+          "PrivateSubnets" : { "Ref" : "PrivateSubnets" },
+          "SecurityGroups" : { "Ref" : "SecurityGroups" },
+          "LBSecurityGroups" : { "Ref" : "LBSecurityGroups" },
+          "HostedZoneName" : { "Ref" : "HostedZoneName" },
+          "SecretKeyBase" : { "Ref" : "SecretKeyBase" },
+          "FcrepoUrl" : { "Ref" : "FcrepoUrl" },
+          "SolrUrl" : { "Ref" : "SolrUrl" },
+          "ZookeeperHosts" : { "Ref" : "ZookeeperHosts" },
+          "RedisHost" : { "Ref" : "RedisHost" },
+          "RedisPort" : { "Ref" : "RedisPort" },
+          "RDSDatabaseName" : { "Ref" : "RDSDatabaseName" },
+          "RDSUsername" : { "Ref" : "RDSUsername" },
+          "RDSPassword" : { "Ref" : "RDSPassword" },
+          "RDSHostname" : { "Ref" : "RDSHostname" },
+          "RDSPort" : { "Ref" : "RDSPort" },
+          "QueuePrefix" : { "Ref" : "QueuePrefix" },
+          "DefaultQueue" : { "Ref" : "DefaultQueue" },
+          "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/stacks/worker.json"]] }
+      }
+    },
+    "DefaultQueue" : {
+      "Type" : "AWS::SQS::Queue"
+    },
+    "EC2Role": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "aws-elasticbeanstalk-ec2-role",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:Get*",
+                    "s3:List*",
+                    "s3:PutObject"
+                  ],
+                  "Resource": [
+                    "arn:aws:s3:::elasticbeanstalk-*",
+                    "arn:aws:s3:::elasticbeanstalk-*/*"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName" : "aws-elasticbeanstalk-sqs-role",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sqs:*"
+                  ],
+                  "Resource": [
+                    { "Fn::Join": ["", ["arn:aws:sqs:", { "Ref" : "AWS::Region" }, ":", {"Ref" : "AWS::AccountId" }, ":", { "Ref" : "QueuePrefix"}, "*"]] },
+                    { "Fn::GetAtt" : ["DefaultQueue", "Arn"] }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "EC2InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "EC2Role"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "ApplicationName": {
+      "Value" : { "Ref" : "HyboxApplication" }
+    },
+    "WebappEnvironment": {
+      "Value" : { "Fn::GetAtt" : ["webapp", "Outputs.EnvironmentName"] }
+    },
+    "WorkerEnvironment": {
+      "Value" : { "Fn::GetAtt" : ["workers", "Outputs.EnvironmentName"] }
+    },
+    "URL": {
+      "Description": "URL of the AWS Elastic Beanstalk Environment",
+      "Value": { "Fn::GetAtt" : ["webapp", "Outputs.URL"] }
+    }
+  }
+}

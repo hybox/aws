@@ -1,5 +1,6 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Hydra-in-a-Box CodePipeline continuous deploy for the webapp",
 
   "Parameters" : {
     "S3Bucket": {
@@ -15,7 +16,11 @@
       "Type": "String",
       "Description": "ElasticBeanstalk Application Name"
     },
-    "EnvironmentName": {
+    "WebappEnvironmentName": {
+      "Type": "String",
+      "Description": "ElasticBeanstalk Application Environment"
+    },
+    "WorkerEnvironmentName": {
       "Type": "String",
       "Description": "ElasticBeanstalk Application Environment"
     }
@@ -78,9 +83,28 @@
                 },
                 "Configuration": {
                   "ApplicationName": {"Ref" : "ApplicationName"},
-                  "EnvironmentName": {"Ref" : "EnvironmentName"}
+                  "EnvironmentName": {"Ref" : "WebappEnvironmentName"}
                 },
                 "RunOrder": 1
+              },
+              {
+                "Name": "ReleaseAction",
+                "InputArtifacts": [
+                  {
+                    "Name": "SourceOutput"
+                  }
+                ],
+                "ActionTypeId": {
+                  "Category": "Deploy",
+                  "Owner": "AWS",
+                  "Version": "1",
+                  "Provider": "ElasticBeanstalk"
+                },
+                "Configuration": {
+                  "ApplicationName": {"Ref" : "ApplicationName"},
+                  "EnvironmentName": {"Ref" : "WorkerEnvironmentName"}
+                },
+                "RunOrder": 2
               }
             ]
           }

@@ -1,5 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Hydra-in-a-Box postgresql database stack using RDS",
+  
   "Parameters" : {
     "SubnetID": {
       "Type": "List<AWS::EC2::Subnet::Id>",
