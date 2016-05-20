@@ -40,6 +40,16 @@
       "NoEcho": "true",
       "Description" : "Secret key for Rails",
       "Type" : "String"
+    },
+    "SolrCloudSize" : {
+      "Type": "Number",
+      "Default" : "3",
+      "Description": "Number of instances to launch"
+    },
+    "ZookeeperEnsembleSize" : {
+      "Type": "Number",
+      "Default" : "3",
+      "Description": "Number of instances to launch"
     }
   },
   "Metadata" : {
@@ -95,7 +105,8 @@
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Zookeeper"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.ZookeeperLb"] },
-          "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] }
+          "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] },
+          "DesiredCapacity" : { "Ref" : "ZookeeperEnsembleSize" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/zookeeper.json"]] }
       }
@@ -125,7 +136,8 @@
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Solr"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.SolrLb"] },
-          "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] }
+          "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] },
+          "DesiredCapacity" : { "Ref" : "SolrCloudSize" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/solr.json"]] }
       }
