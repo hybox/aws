@@ -193,19 +193,6 @@
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/application.json"]] }
       }
     },
-    "codepipeline" : {
-      "Type" : "AWS::CloudFormation::Stack",
-      "Properties" : {
-        "Parameters" : {
-          "ApplicationName" : { "Fn::GetAtt" : ["application", "Outputs.ApplicationName"] },
-          "WebappEnvironmentName" : { "Fn::GetAtt" : ["application", "Outputs.WebappEnvironment"] },
-          "WorkerEnvironmentName" : { "Fn::GetAtt" : ["application", "Outputs.WorkerEnvironment"] },
-          "S3Bucket" : { "Ref" : "S3Bucket" },
-          "S3Key" : { "Ref" : "WebappS3Key" }
-        },
-        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/codepipeline.json"]] }
-      }
-    },
     "bastion" : {
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {

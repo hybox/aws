@@ -245,18 +245,22 @@
           }
         ]
       }
+    },
+    "codepipeline" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "ApplicationName" : { "Ref" : "HyboxApplication" },
+          "WebappEnvironmentName" : { "Fn::GetAtt" : ["webapp", "Outputs.EnvironmentName"] },
+          "WorkerEnvironmentName" : { "Fn::GetAtt" : ["workers", "Outputs.EnvironmentName"] },
+          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3Key" : { "Ref" : "S3Key" }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/codepipeline.json"]] }
+      }
     }
   },
   "Outputs": {
-    "ApplicationName": {
-      "Value" : { "Ref" : "HyboxApplication" }
-    },
-    "WebappEnvironment": {
-      "Value" : { "Fn::GetAtt" : ["webapp", "Outputs.EnvironmentName"] }
-    },
-    "WorkerEnvironment": {
-      "Value" : { "Fn::GetAtt" : ["workers", "Outputs.EnvironmentName"] }
-    },
     "URL": {
       "Description": "URL of the AWS Elastic Beanstalk Environment",
       "Value": { "Fn::GetAtt" : ["webapp", "Outputs.URL"] }
