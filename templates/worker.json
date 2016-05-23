@@ -118,6 +118,10 @@
     "IamInstanceProfile" : {
       "Description" : "ARN for an IAM profile to assign to the EC2 instances",
       "Type" : "String"
+    },
+    "UploadBucket" : {
+      "Description" : "S3 Bucket to store uploaded files into",
+      "Type" : "String"
     }
   },
   "Resources" : {
@@ -198,6 +202,11 @@
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "RDS_PORT",
             "Value": { "Ref" : "RDSPort"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__CARRIERWAVE__S3__UPLOAD_BUCKET",
+            "Value": { "Ref" : "UploadBucket"}
           },
           {
             "Namespace": "aws:elasticbeanstalk:sqsd",

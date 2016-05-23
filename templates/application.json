@@ -172,7 +172,8 @@
           "RDSPort" : { "Ref" : "RDSPort" },
           "QueuePrefix" : { "Ref" : "QueuePrefix" },
           "DefaultQueue" : { "Ref" : "DefaultQueue"},
-          "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] }
+          "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] },
+          "UploadBucket" : { "Ref" : "UploadBucket" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/webapp.json"]] }
       }
@@ -206,7 +207,8 @@
           "QueuePrefix" : { "Ref" : "QueuePrefix" },
           "DefaultQueue" : { "Ref" : "DefaultQueue" },
           "DefaultQueueName" : { "Fn::GetAtt" : ["DefaultQueue", "QueueName"] },
-          "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] }
+          "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] },
+          "UploadBucket" : { "Ref" : "UploadBucket" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/worker.json"]] }
       }
@@ -233,7 +235,32 @@
           ]
         },
         "Path": "/",
-        "ManagedPolicyArns" : ["arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier", "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier"]
+        "ManagedPolicyArns" : ["arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier", "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier"],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "s3:*",
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:aws:s3:::",
+                        {
+                          "Ref": "UploadBucket"
+                        },
+                        "/*"
+                      ]
+                    ]
+                  }
+                }
+              ]
+            },
+            "PolicyName": "S3Access"
+          }
+        ]
       }
     },
     "EC2InstanceProfile": {
@@ -258,6 +285,15 @@
           "S3Key" : { "Ref" : "S3Key" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/codepipeline.json"]] }
+      }
+    },
+    "UploadBucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy" : "Retain",
+      "Properties": {
+        "VersioningConfiguration": {
+          "Status" : "Enabled"
+        }
       }
     }
   },
