@@ -205,6 +205,7 @@
           "RDSPort" : { "Ref" : "RDSPort" },
           "QueuePrefix" : { "Ref" : "QueuePrefix" },
           "DefaultQueue" : { "Ref" : "DefaultQueue" },
+          "DefaultQueueName" : { "Fn::GetAtt" : ["DefaultQueue", "QueueName"] },
           "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/worker.json"]] }
