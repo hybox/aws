@@ -41,15 +41,70 @@
       "Description" : "Secret key for Rails",
       "Type" : "String"
     },
+    "FcrepoInstanceType" : {
+      "Type": "String",
+      "Default" : "t2.large",
+      "Description": "Instance type to launch"
+    },
     "SolrCloudSize" : {
       "Type": "Number",
       "Default" : "3",
       "Description": "Number of instances to launch"
     },
+    "SolrCloudInstanceType" : {
+      "Type": "String",
+      "Default" : "t2.medium",
+      "Description": "Instance type to launch"
+    },
     "ZookeeperEnsembleSize" : {
       "Type": "Number",
       "Default" : "3",
       "Description": "Number of instances to launch"
+    },
+    "ZookeeperEnsembleInstanceType" : {
+      "Type": "String",
+      "Default" : "t2.micro",
+      "Description": "Instance type to launch"
+    },
+    "WorkerInstanceType" : {
+      "Type": "String",
+      "Default" : "t2.medium",
+      "Description": "Instance type to launch"
+    },
+    "WorkerMinSize" : {
+      "Type": "Number",
+      "Default" : "1",
+      "Description": "Minimum number of instances to launch"
+    },
+    "WorkerMaxSize" : {
+      "Type": "Number",
+      "Default" : "4",
+      "Description": "Maximum number of instances to launch"
+    },
+    "WebappInstanceType" : {
+      "Type": "String",
+      "Default" : "t2.large",
+      "Description": "Instance type to launch"
+    },
+    "WebappMinSize" : {
+      "Type": "Number",
+      "Default" : "1",
+      "Description": "Minimum number of instances to launch"
+    },
+    "WebappMaxSize" : {
+      "Type": "Number",
+      "Default" : "4",
+      "Description": "Maximum number of instances to launch"
+    },
+    "RedisInstanceType" : {
+      "Type": "String",
+      "Default" : "cache.m1.small",
+      "Description": "Instance type to launch"
+    },
+    "DatabaseInstanceType" : {
+      "Type": "String",
+      "Default" : "db.t2.medium",
+      "Description": "Instance type to launch"
     }
   },
   "Metadata" : {
@@ -65,7 +120,7 @@
         },
         {
           "Label" : { "default" : "Resources"},
-          "Parameters" : ["SolrCloudSize" , "ZookeeperEnsembleSize" ]
+          "Parameters" : ["WorkerInstanceType", "WorkerMinSize", "WorkerMaxSize", "WebappInstanceType", "WebappMinSize", "WebappMaxSize", "DatabaseInstanceType", "RedisInstanceType", "FcrepoInstanceType", "SolrCloudSize", "SolrCloudInstanceType", "ZookeeperEnsembleSize", "ZookeeperEnsembleInstanceType"]
         },
         {
           "Label" : { "default" : "Application Configuration" },
@@ -106,7 +161,8 @@
           "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Zookeeper"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.ZookeeperLb"] },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] },
-          "DesiredCapacity" : { "Ref" : "ZookeeperEnsembleSize" }
+          "DesiredCapacity" : { "Ref" : "ZookeeperEnsembleSize" },
+          "InstanceType" : { "Ref" : "ZookeeperEnsembleInstanceType" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/zookeeper.json"]] }
       }
@@ -121,7 +177,8 @@
           "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Fcrepo"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.FcrepoLb"] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
-          "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] }
+          "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] },
+          "InstanceType" : { "Ref" : "FcrepoInstanceType" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/fcrepo.json"]] }
       }
@@ -137,7 +194,8 @@
           "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Solr"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.SolrLb"] },
           "ZookeeperHosts" : { "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] },
-          "DesiredCapacity" : { "Ref" : "SolrCloudSize" }
+          "DesiredCapacity" : { "Ref" : "SolrCloudSize" },
+          "InstanceType" : { "Ref" : "SolrCloudInstanceType" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/solr.json"]] }
       }
@@ -147,7 +205,8 @@
       "Properties" : {
         "Parameters" : {
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
-          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Redis"] }
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Redis"] },
+          "InstanceType" : { "Ref" : "RedisInstanceType" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/redis.json"]] }
       }
@@ -159,7 +218,8 @@
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Database"] },
           "MasterUsername" : { "Ref" : "DatabaseUsername" },
-          "MasterUserPassword" : { "Ref" : "DatabasePassword" }
+          "MasterUserPassword" : { "Ref" : "DatabasePassword" },
+          "DBInstanceClass" : { "Ref" : "DatabaseInstanceType" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/postgres.json"]] }
       }
@@ -188,7 +248,13 @@
           "RDSHostname" : { "Fn::GetAtt" : ["database", "Outputs.EndpointAddress"] },
           "RDSPort" : { "Fn::GetAtt" : ["database", "Outputs.EndpointPort"] },
           "RDSUsername" : { "Ref" : "DatabaseUsername" },
-          "RDSPassword" : { "Ref" : "DatabasePassword" }
+          "RDSPassword" : { "Ref" : "DatabasePassword" },
+          "WebappInstanceType" : { "Ref" : "WebappInstanceType" },
+          "WebappMinSize" : { "Ref" : "WebappMinSize" },
+          "WebappMaxSize" : { "Ref" : "WebappMaxSize" },
+          "WorkerInstanceType" : { "Ref" : "WorkerInstanceType" },
+          "WorkerMinSize" : { "Ref" : "WorkerMinSize" },
+          "WorkerMaxSize" : { "Ref" : "WorkerMaxSize" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/application.json"]] }
       }
