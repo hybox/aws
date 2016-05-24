@@ -27,14 +27,14 @@
       "Type" : "String",
       "Default": "branch/{{branch}}"
     },
-    "MinSize": {
+    "WebappMinSize": {
       "Type": "Number",
       "Default" : "1",
       "Description": "Minimum number of instances"
     },
-    "MaxSize": {
+    "WebappMaxSize": {
       "Type": "Number",
-      "Default" : "2",
+      "Default" : "4",
       "Description": "Maximum number of instances"
     },
     "WorkerMinSize": {
@@ -44,7 +44,7 @@
     },
     "WorkerMaxSize": {
       "Type": "Number",
-      "Default" : "2",
+      "Default" : "4",
       "Description": "Maximum number of instances"
     },
     "PublicSubnets": {
@@ -152,8 +152,8 @@
           "ApplicationName" : { "Ref" : "HyboxApplication" },
           "VersionLabel" : { "Ref" : "HyboxApplicationVersion" },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
-          "MinSize" : { "Ref" : "MinSize" },
-          "MaxSize" : { "Ref" : "MaxSize" },
+          "MinSize" : { "Ref" : "WebappMinSize" },
+          "MaxSize" : { "Ref" : "WebappMaxSize" },
           "PublicSubnets" : { "Fn::Join" : [",", { "Ref" : "PublicSubnets" }] },
           "PrivateSubnets" : { "Fn::Join" : [",", { "Ref" : "PrivateSubnets" }] },
           "SecurityGroups" : { "Fn::Join" : [",", { "Ref" : "SecurityGroups" }] },
