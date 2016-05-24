@@ -129,6 +129,12 @@
 "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge",
 "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge"],
       "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+    "HealthReportingSystemType": {
+      "Type": "String",
+      "Description": "Health reporting system",
+      "Default": "enhanced",
+      "AllowedValues" : [ "enhanced", "basic"]
     }
   },
   "Resources" : {
@@ -207,6 +213,16 @@
             "Namespace": "aws:elasticbeanstalk:application",
             "OptionName": "Application Healthcheck URL",
             "Value": "/is_it_working"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:healthreporting:system",
+            "OptionName": "SystemType",
+            "Value": { "Ref" : "HealthReportingSystemType" }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:environment",
+            "OptionName": "ServiceRole",
+            "Value": "aws-elasticbeanstalk-service-role"
           }
         ],
         "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.2 running Ruby 2.3 (Puma)"

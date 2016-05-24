@@ -123,6 +123,12 @@
       "Type": "String",
       "Description": "SQS Queue prefix",
       "Default": "hybox"
+    },
+    "HealthReportingSystemType": {
+      "Type": "String",
+      "Description": "Health reporting system",
+      "Default": "enhanced",
+      "AllowedValues" : [ "enhanced", "basic"]
     }
   },
   "Resources" : {
