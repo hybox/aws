@@ -209,6 +209,16 @@
             "Value": { "Ref" : "UploadBucket"}
           },
           {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "AWS_REGION",
+            "Value": { "Ref" : "AWS::Region"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "QUEUE_URL",
+            "Value": { "Ref" : "DefaultQueue"}
+          },
+          {
             "Namespace": "aws:elasticbeanstalk:sqsd",
             "OptionName": "WorkerQueueURL",
             "Value": { "Ref" : "DefaultQueue"}
