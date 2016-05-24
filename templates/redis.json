@@ -16,7 +16,7 @@
       "Type" : "String",
       "Default" : "cache.m1.small",
       "ConstraintDescription" : "must be a valid EC2 cache instance type."
-    },
+    }
   },
   "Resources": {
     "RedisCluster": {
