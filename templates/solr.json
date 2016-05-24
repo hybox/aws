@@ -248,7 +248,7 @@
       "DependsOn": ["ECSAutoScalingGroup"],
       "Properties" : {
         "Cluster": {"Ref": "ECSCluster"},
-        "DesiredCount": "3",
+        "DesiredCount": { "Ref": "DesiredCapacity" },
         "LoadBalancers": [
           {
             "ContainerName": { "Ref" : "AWS::StackName" },
