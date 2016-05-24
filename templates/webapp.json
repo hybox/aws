@@ -27,7 +27,7 @@
     },
     "MaxSize": {
       "Type": "Number",
-      "Default" : "2",
+      "Default" : "4",
       "Description": "Maximum number of instances"
     },
     "PublicSubnets": {
@@ -181,6 +181,21 @@
             "Namespace": "aws:elasticbeanstalk:environment",
             "OptionName": "EnvironmentType",
             "Value": "LoadBalanced"
+          },
+          {
+            "Namespace": "aws:autoscaling:updatepolicy:rollingupdate",
+            "OptionName": "RollingUpdateEnabled",
+            "Value": "true"
+          },
+          {
+            "Namespace": "aws:autoscaling:updatepolicy:rollingupdate",
+            "OptionName": "RollingUpdateType",
+            "Value": "Health"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application",
+            "OptionName": "Application Healthcheck URL",
+            "Value": "/is_it_working"
           }
         ],
         "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.2 running Ruby 2.3 (Puma)"

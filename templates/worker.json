@@ -27,7 +27,7 @@
     },
     "MaxSize": {
       "Type": "Number",
-      "Default" : "2",
+      "Default" : "4",
       "Description": "Maximum number of instances"
     },
     "PublicSubnets": {
@@ -270,7 +270,7 @@
           {
             "Namespace": "aws:autoscaling:asg",
             "OptionName": "MaxSize",
-            "Value": { "Ref" : "MinSize" }
+            "Value": { "Ref" : "MaxSize" }
           },
           {
             "Namespace": "aws:elasticbeanstalk:environment",
