@@ -35,6 +35,11 @@
       "Description" : "Size of DB in Gigs",
       "Type" : "String",
       "Default": "5"
+    },
+    "MultiAZDatabase" : {
+      "Description" : "Launch the database in multiple availability zones",
+      "Type" : "String",
+      "Default": "true"
     }
   },
   "Resources": {
@@ -48,7 +53,8 @@
         "DBInstanceClass": { "Ref" : "DBInstanceClass" },
         "DBSubnetGroupName" : { "Ref" : "DBSubnetGroup" },
         "VPCSecurityGroups": { "Ref" : "SecurityGroups" },
-        "AllocatedStorage": { "Ref" : "AllocatedStorage" }
+        "AllocatedStorage": { "Ref" : "AllocatedStorage" },
+        "MultiAZ": { "Ref": "MultiAZDatabase" }
       }
     },
     "DBSubnetGroup" : {
