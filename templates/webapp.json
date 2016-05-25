@@ -321,16 +321,6 @@
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SETTINGS__S3__UPLOAD_BUCKET",
             "Value": { "Ref" : "UploadBucket"}
-          },
-          {
-            "Namespace": "aws:elasticbeanstalk:application:environment",
-            "OptionName": "SETTINGS__CARRIERWAVE__S3__UPLOAD_BUCKET",
-            "Value": { "Ref" : "UploadBucket"}
-          },
-          {
-            "Namespace": "aws:elasticbeanstalk:application:environment",
-            "OptionName": "QUEUE_URL",
-            "Value": { "Ref" : "DefaultQueue"}
           }
         ]
       }
