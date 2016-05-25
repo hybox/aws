@@ -22,13 +22,5 @@
   {
     "ParameterKey": "DatabasePassword",
     "ParameterValue": "changeme"
-  },
-  {
-    "ParameterKey": "SlackWebhookToken",
-    "ParameterValue": "notatoken"
-  },
-  {
-    "ParameterKey": "SlackWebhookChannel",
-    "ParameterValue": "notachannel"
   }
 ]

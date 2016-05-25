@@ -152,13 +152,9 @@
 "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge"],
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
-    "SlackWebhookToken": {
+    "BeanstalkSNSTopic": {
       "Type": "String",
-      "Description": "Slack generated token for Incoming Webhook"
-    },
-    "SlackWebhookChannel": {
-      "Type": "String",
-      "Description": "Slack channel for posting notifications"
+      "Description": "SNS Topic for Beanstalk application to write change events to"
     }
   },
   "Resources" : {
@@ -208,8 +204,7 @@
           "RDSPort" : { "Ref" : "RDSPort" },
           "QueuePrefix" : { "Ref" : "QueuePrefix" },
           "DefaultQueue" : { "Ref" : "DefaultQueue"},
-          "SlackWebhookToken" : { "Ref" : "SlackWebhookToken"},
-          "SlackWebhookChannel" : { "Ref" : "SlackWebhookChannel"},
+          "BeanstalkSNSTopic" : { "Ref" : "BeanstalkSNSTopic"},
           "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] },
           "UploadBucket" : { "Ref" : "UploadBucket" }
         },
@@ -245,8 +240,7 @@
           "QueuePrefix" : { "Ref" : "QueuePrefix" },
           "DefaultQueue" : { "Ref" : "DefaultQueue" },
           "DefaultQueueName" : { "Fn::GetAtt" : ["DefaultQueue", "QueueName"] },
-          "SlackWebhookToken" : { "Ref" : "SlackWebhookToken"},
-          "SlackWebhookChannel" : { "Ref" : "SlackWebhookChannel"},
+          "BeanstalkSNSTopic" : { "Ref" : "BeanstalkSNSTopic"},
           "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] },
           "UploadBucket" : { "Ref" : "UploadBucket" }
         },

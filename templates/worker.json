@@ -115,14 +115,6 @@
       "Type": "String",
       "Description": "SQS Default Queue Name"
     },
-    "SlackWebhookToken": {
-      "Type": "String",
-      "Description": "Slack generated token for Incoming Webhook"
-    },
-    "SlackWebhookChannel": {
-      "Type": "String",
-      "Description": "Slack channel for posting notifications"
-    },
     "IamInstanceProfile" : {
       "Description" : "ARN for an IAM profile to assign to the EC2 instances",
       "Type" : "String"
@@ -147,6 +139,10 @@
       "Description": "Health reporting system",
       "Default": "enhanced",
       "AllowedValues" : [ "enhanced", "basic"]
+    },
+    "BeanstalkSNSTopic": {
+      "Type": "String",
+      "Description": "SNS Topic for Beanstalk application to write change events to"
     }
   },
   "Resources" : {
@@ -242,16 +238,6 @@
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SETTINGS__ACTIVE_JOB_QUEUE__URL",
             "Value": { "Ref" : "DefaultQueue"}
-          },
-          {
-            "Namespace": "aws:elasticbeanstalk:sqsd",
-            "OptionName": "WorkerQueueURL",
-            "Value": { "Ref" : "DefaultQueue"}
-          },
-          {
-            "Namespace": "aws:elasticbeanstalk:sns:topics",
-            "OptionName": "Notification Topic ARN",
-            "Value": { "Ref" : "BeanstalkSNSTopic"}
           }
         ]
       }
@@ -316,18 +302,19 @@
             "Namespace": "aws:elasticbeanstalk:environment",
             "OptionName": "ServiceRole",
             "Value": "aws-elasticbeanstalk-service-role"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:sqsd",
+            "OptionName": "WorkerQueueURL",
+            "Value": { "Ref" : "DefaultQueue"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:sns:topics",
+            "OptionName": "Notification Topic ARN",
+            "Value": { "Ref" : "BeanstalkSNSTopic"}
           }
         ],
         "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.2 running Ruby 2.3 (Puma)"
-      }
-    },
-    "BeanstalkSNSTopic" : {
-      "Type" : "AWS::SNS::Topic",
-      "Properties" : {
-        "Subscription" : [ {
-          "Endpoint" : { "Fn::GetAtt" : ["LambdaSNSFunction", "Arn"] },
-          "Protocol" : "lambda"
-        } ]
       }
     },
     "BeanstalkStack": {
@@ -376,104 +363,6 @@
         "Runtime": "nodejs",
         "Timeout": "10",
         "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] }
-      }
-    },
-    "LambdaSNSFunction": {
-      "Type": "AWS::Lambda::Function",
-      "Properties": {
-        "Code": {
-          "ZipFile":  { "Fn::Join": ["\n", [
-            "var https = require('https');",
-            "var util = require('util');",
-            "exports.handler = function(event, context) {",
-            "    console.log(JSON.stringify(event, null, 2));",
-            "    console.log('From SNS:', event.Records[0].Sns.Message);",
-            "    var postData = {",
-            { "Fn::Join": ["", ["        'channel': '#", { "Ref":"SlackWebhookChannel"}, "',"]]},
-            "        'text': '*' + event.Records[0].Sns.Subject + '*',",
-            "    };",
-            "    var message = event.Records[0].Sns.Message;",
-            "    var severity = 'good';",
-            "    var dangerMessages = [",
-            "        ' but with errors',",
-            "        ' to RED',",
-            "        'During an aborted deployment',",
-            "        'Failed to deploy application',",
-            "        'Failed to deploy configuration',",
-            "        'has a dependent object',",
-            "        'is not authorized to perform',",
-            "        'Pending to Degraded',",
-            "        'Stack deletion failed',",
-            "        'Unsuccessful command execution',",
-            "        'You do not have permission',",
-            "        'Your quota allows for 0 more running instance'];",
-            "    var warningMessages = [",
-            "        ' aborted operation.',",
-            "        ' to YELLOW',",
-            "        'Adding instance ',",
-            "        'Degraded to Info',",
-            "        'Deleting SNS topic',",
-            "        'is currently running under desired capacity',",
-            "        'Ok to Info',",
-            "        'Ok to Warning',",
-            "        'Pending Initialization',",
-            "        'Removed instance ',",
-            "        'Rollback of environment'",
-            "        ];",
-            "    for(var dangerMessagesItem in dangerMessages) {",
-            "        if (message.indexOf(dangerMessages[dangerMessagesItem]) != -1) {",
-            "            severity = 'danger';",
-            "            break;",
-            "        }",
-            "    }",
-            "    // Only check for warning messages if necessary",
-            "    if (severity == 'good') {",
-            "        for(var warningMessagesItem in warningMessages) {",
-            "            if (message.indexOf(warningMessages[warningMessagesItem]) != -1) {",
-            "                severity = 'warning';",
-            "                break;",
-            "            }",
-            "        }",
-            "    }",
-            "    postData.attachments = [",
-            "        {",
-            "            'color': severity,",
-            "            'text': message",
-            "        }",
-            "    ];",
-            "    var options = {",
-            "        method: 'POST',",
-            "        hostname: 'hooks.slack.com',",
-            "        port: 443,",
-            { "Fn::Join": ["", ["        path: '/services/", { "Ref":"SlackWebhookToken"}, "'"]]},
-            "    };",
-            "    var req = https.request(options, function(res) {",
-            "      res.setEncoding('utf8');",
-            "      res.on('data', function (chunk) {",
-            "        context.done(null);",
-            "      });",
-            "    });",
-            "    req.on('error', function(e) {",
-            "      console.log('problem with request: ' + e.message);",
-            "    });",
-            "    req.write(util.format('%j', postData));",
-            "    req.end();",
-            "};"
-          ]]}
-        },
-        "Handler": "index.handler",
-        "Runtime": "nodejs",
-        "Timeout": "10",
-        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] }
-      }
-    },
-    "LambdaInvokePermission": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "FunctionName" : { "Fn::GetAtt" : ["LambdaSNSFunction", "Arn"] },
-        "Action": "lambda:InvokeFunction",
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": { "Ref" : "BeanstalkSNSTopic" }
       }
     },
     "LambdaExecutionRole": {
