@@ -222,7 +222,7 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
-            "OptionName": "SETTINGS__CARRIERWAVE__S3__UPLOAD_BUCKET",
+            "OptionName": "SETTINGS__S3__UPLOAD_BUCKET",
             "Value": { "Ref" : "UploadBucket"}
           },
           {
@@ -232,12 +232,22 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
-            "OptionName": "QUEUE_URL",
+            "OptionName": "SETTINGS__ACTIVE_JOB_QUEUE__URL",
             "Value": { "Ref" : "DefaultQueue"}
           },
           {
             "Namespace": "aws:elasticbeanstalk:sqsd",
             "OptionName": "WorkerQueueURL",
+            "Value": { "Ref" : "DefaultQueue"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__CARRIERWAVE__S3__UPLOAD_BUCKET",
+            "Value": { "Ref" : "UploadBucket"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "QUEUE_URL",
             "Value": { "Ref" : "DefaultQueue"}
           }
         ]
