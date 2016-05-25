@@ -105,6 +105,14 @@
       "Type": "String",
       "Default" : "db.t2.medium",
       "Description": "Instance type to launch"
+    },
+    "SlackWebhookToken": {
+      "Type": "String",
+      "Description": "Slack generated token for Incoming Webhook"
+    },
+    "SlackWebhookChannel": {
+      "Type": "String",
+      "Description": "Slack channel for posting notifications"
     }
   },
   "Metadata" : {
@@ -232,6 +240,8 @@
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
           "S3Key" : { "Ref" : "WebappS3Key" },
+          "SlackWebhookToken" : { "Ref" : "SlackWebhookToken" },
+          "SlackWebhookChannel" : { "Ref" : "SlackWebhookChannel" },
           "S3KeyPrefix" : { "Ref" : "S3KeyPrefix" },
           "PrivateSubnets" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "PublicSubnets" : { "Fn::GetAtt" : ["vpc", "Outputs.PublicSubnets"] },
