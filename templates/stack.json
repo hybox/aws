@@ -81,10 +81,6 @@
       "Default" : "4",
       "Description": "Maximum number of instances to launch"
     },
-    "FitsPath" : {
-      "Description" : "System path to fits.sh",
-      "Type" : "String"
-    },
     "WebappInstanceType" : {
       "Type": "String",
       "Default" : "t2.large",
@@ -265,7 +261,6 @@
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.WebappLb"] },
           "HostedZoneName" : { "Ref" : "PublicZoneName" },
           "SecretKeyBase" : { "Ref" : "SecretKeyBase" },
-          "FitsPath" : { "Ref" : "FitsPath" },
           "FcrepoUrl" : { "Fn::GetAtt" : ["fcrepo", "Outputs.URL"] },
           "SolrUrl" : { "Fn::GetAtt" : ["solr", "Outputs.URL"] },
           "ZookeeperHosts" : { "Fn::Join": ["", [{ "Fn::GetAtt" : ["zookeeper", "Outputs.EndpointAddress"] }, "/configs"]] },
