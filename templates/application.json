@@ -80,6 +80,10 @@
       "Description" : "URL to Solr",
       "Type" : "String"
     },
+    "FitsPath" : {
+      "Description" : "System path to fits.sh",
+      "Type" : "String"
+    },
     "ZookeeperHosts": {
       "Type": "String",
       "Description": "A list of zookeeper host IP + ports",
@@ -237,6 +241,7 @@
           "SecretKeyBase" : { "Ref" : "SecretKeyBase" },
           "FcrepoUrl" : { "Ref" : "FcrepoUrl" },
           "SolrUrl" : { "Ref" : "SolrUrl" },
+          "FitsPath" : { "Ref" : "FitsPath" },
           "ZookeeperHosts" : { "Ref" : "ZookeeperHosts" },
           "RedisHost" : { "Ref" : "RedisHost" },
           "RedisPort" : { "Ref" : "RedisPort" },

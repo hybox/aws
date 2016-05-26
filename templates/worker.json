@@ -63,6 +63,10 @@
       "Description" : "URL to Solr",
       "Type" : "String"
     },
+    "FitsPath" : {
+      "Description" : "System path to fits.sh",
+      "Type" : "String"
+    },
     "ZookeeperHosts": {
       "Type": "String",
       "Description": "A list of zookeeper host IP + ports",
@@ -173,6 +177,11 @@
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SETTINGS__SOLR__URL",
             "Value": { "Ref" : "SolrUrl"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__FITS_PATH",
+            "Value": { "Ref" : "FitsPath"}
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
