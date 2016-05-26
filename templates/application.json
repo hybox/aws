@@ -267,6 +267,15 @@
       }
     },
     "DefaultQueue" : {
+      "Type" : "AWS::SQS::Queue",
+      "Properties" : {
+        "RedrivePolicy": {
+          "deadLetterTargetArn" : {"Fn::GetAtt" : [ "DefaultDeadLetterQueue" , "Arn" ]},
+          "maxReceiveCount" : 5
+        }
+      }
+    },
+    "DefaultDeadLetterQueue" : {
       "Type" : "AWS::SQS::Queue"
     },
     "EC2Role": {
