@@ -155,7 +155,15 @@
     "BeanstalkSNSTopic": {
       "Type": "String",
       "Description": "SNS Topic for Beanstalk application to write change events to"
+    },
+    "ContinuousDeployment": {
+      "Type": "String",
+      "Description": "Configure continuous deployment for the webapp and workers?",
+      "Default": "true"
     }
+  },
+  "Conditions": {
+    "CreateContinuousDeployment": { "Fn::Equals" : [{ "Ref": "ContinuousDeployment"}, "true"] }
   },
   "Resources" : {
     "HyboxApplication" : {
@@ -310,6 +318,7 @@
     },
     "codepipeline" : {
       "Type" : "AWS::CloudFormation::Stack",
+      "Condition": "CreateContinuousDeployment",
       "Properties" : {
         "Parameters" : {
           "ApplicationName" : { "Ref" : "HyboxApplication" },

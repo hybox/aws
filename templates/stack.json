@@ -116,6 +116,11 @@
       "Type": "String",
       "Description": "Slack channel for posting notifications",
       "Default": ""
+    },
+    "ContinuousDeployment": {
+      "Type": "String",
+      "Description": "Configure continuous deployment for the webapp and workers?",
+      "Default": "true"
     }
   },
   "Metadata" : {
