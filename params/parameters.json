@@ -94,5 +94,9 @@
    {
       "ParameterKey" : "ContinuousDeployment",
       "UsePreviousValue" : true
+   },
+   {
+      "ParameterKey" : "SSLCertificateId",
+      "UsePreviousValue" : true
    }
 ]
