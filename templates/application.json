@@ -160,6 +160,11 @@
       "Type": "String",
       "Description": "Configure continuous deployment for the webapp and workers?",
       "Default": "true"
+    },
+    "SSLCertificateId": {
+      "Type": "String",
+      "Description": "The Amazon Resource Name (ARN) of the SSL certificate",
+      "Default": ""
     }
   },
   "Conditions": {
@@ -214,7 +219,8 @@
           "DefaultQueue" : { "Ref" : "DefaultQueue"},
           "BeanstalkSNSTopic" : { "Ref" : "BeanstalkSNSTopic"},
           "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] },
-          "UploadBucket" : { "Ref" : "UploadBucket" }
+          "UploadBucket" : { "Ref" : "UploadBucket" },
+          "SSLCertificateId" : { "Ref" : "SSLCertificateId" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/webapp.json"]] }
       }
