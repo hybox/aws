@@ -146,8 +146,8 @@
       "Default": ""
     }
   },
-  "HasSSLCertificate": {
-    "UseSSLCertificate": { "Fn::Not": [{ "Fn::Equals" : [{ "Ref": "SSLCertificateId"}, ""] }] }
+  "Conditions": {
+    "HasSSLCertificate": { "Fn::Not": [{ "Fn::Equals" : [{ "Ref": "SSLCertificateId"}, ""] }] }
   },
   "Resources" : {
     "HyboxConfigurationTemplate" : {
