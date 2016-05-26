@@ -287,6 +287,11 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__MULTITENANCY__HOST",
+            "Value": { "Ref": "EBRecordSet" }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "RDS_DB_NAME",
             "Value": { "Ref" : "RDSDatabaseName"}
           },
