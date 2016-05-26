@@ -139,7 +139,15 @@
     "BeanstalkSNSTopic": {
       "Type": "String",
       "Description": "SNS Topic for Beanstalk application to write change events to"
+    },
+    "SSLCertificateId": {
+      "Type": "String",
+      "Description": "The Amazon Resource Name (ARN) of the SSL certificate",
+      "Default": ""
     }
+  },
+  "HasSSLCertificate": {
+    "UseSSLCertificate": { "Fn::Not": [{ "Fn::Equals" : [{ "Ref": "SSLCertificateId"}, ""] }] }
   },
   "Resources" : {
     "HyboxConfigurationTemplate" : {
@@ -232,7 +240,31 @@
             "Namespace": "aws:elasticbeanstalk:sns:topics",
             "OptionName": "Notification Topic ARN",
             "Value": { "Ref" : "BeanstalkSNSTopic"}
-          }
+          },
+          {
+            "Namespace": "aws:elb:listener:80",
+            "OptionName": "ListenerProtocol",
+            "Value": "HTTP"
+          },
+          {
+            "Namespace": "aws:elb:listener:443",
+            "OptionName": "ListenerProtocol",
+            "Value": "HTTPS"
+          },
+          {
+            "Namespace": "aws:elb:listener:443",
+            "OptionName": "InstancePort",
+            "Value": "80"
+          },
+          { "Fn::If": [
+            "HasSSLCertificate",
+            {
+              "Namespace": "aws:elb:listener:443",
+              "OptionName": "SSLCertificateId",
+              "Value": { "Ref" : "SSLCertificateId" }
+            },
+            { "Ref" : "AWS::NoValue" }
+          ]}
         ],
         "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.2 running Ruby 2.3 (Puma)"
       }
