@@ -289,7 +289,7 @@
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SETTINGS__MULTITENANCY__HOST",
-            "Value": { "Ref": "EBRecordSet" }
+            "Value": { "Fn::Join": [ ".", [ { "Ref": "StackName" }, { "Ref": "HostedZoneName" } ] ] }
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
