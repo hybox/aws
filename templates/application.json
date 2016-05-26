@@ -152,14 +152,18 @@
 "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge"],
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
-    "SlackWebhookToken": {
+    "BeanstalkSNSTopic": {
       "Type": "String",
-      "Description": "Slack generated token for Incoming Webhook"
+      "Description": "SNS Topic for Beanstalk application to write change events to"
     },
-    "SlackWebhookChannel": {
+    "ContinuousDeployment": {
       "Type": "String",
-      "Description": "Slack channel for posting notifications"
+      "Description": "Configure continuous deployment for the webapp and workers?",
+      "Default": "true"
     }
+  },
+  "Conditions": {
+    "CreateContinuousDeployment": { "Fn::Equals" : [{ "Ref": "ContinuousDeployment"}, "true"] }
   },
   "Resources" : {
     "HyboxApplication" : {
@@ -208,8 +212,7 @@
           "RDSPort" : { "Ref" : "RDSPort" },
           "QueuePrefix" : { "Ref" : "QueuePrefix" },
           "DefaultQueue" : { "Ref" : "DefaultQueue"},
-          "SlackWebhookToken" : { "Ref" : "SlackWebhookToken"},
-          "SlackWebhookChannel" : { "Ref" : "SlackWebhookChannel"},
+          "BeanstalkSNSTopic" : { "Ref" : "BeanstalkSNSTopic"},
           "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] },
           "UploadBucket" : { "Ref" : "UploadBucket" }
         },
@@ -245,8 +248,7 @@
           "QueuePrefix" : { "Ref" : "QueuePrefix" },
           "DefaultQueue" : { "Ref" : "DefaultQueue" },
           "DefaultQueueName" : { "Fn::GetAtt" : ["DefaultQueue", "QueueName"] },
-          "SlackWebhookToken" : { "Ref" : "SlackWebhookToken"},
-          "SlackWebhookChannel" : { "Ref" : "SlackWebhookChannel"},
+          "BeanstalkSNSTopic" : { "Ref" : "BeanstalkSNSTopic"},
           "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] },
           "UploadBucket" : { "Ref" : "UploadBucket" }
         },
@@ -316,6 +318,7 @@
     },
     "codepipeline" : {
       "Type" : "AWS::CloudFormation::Stack",
+      "Condition": "CreateContinuousDeployment",
       "Properties" : {
         "Parameters" : {
           "ApplicationName" : { "Ref" : "HyboxApplication" },

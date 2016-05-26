@@ -108,11 +108,19 @@
     },
     "SlackWebhookToken": {
       "Type": "String",
-      "Description": "Slack generated token for Incoming Webhook"
+      "Description": "Slack generated token for Incoming Webhook",
+      "Default": "",
+      "NoEcho": "true"
     },
     "SlackWebhookChannel": {
       "Type": "String",
-      "Description": "Slack channel for posting notifications"
+      "Description": "Slack channel for posting notifications",
+      "Default": ""
+    },
+    "ContinuousDeployment": {
+      "Type": "String",
+      "Description": "Configure continuous deployment for the webapp and workers?",
+      "Default": "true"
     }
   },
   "Metadata" : {
@@ -240,9 +248,8 @@
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "S3Bucket" : { "Ref" : "S3Bucket" },
           "S3Key" : { "Ref" : "WebappS3Key" },
-          "SlackWebhookToken" : { "Ref" : "SlackWebhookToken" },
-          "SlackWebhookChannel" : { "Ref" : "SlackWebhookChannel" },
           "S3KeyPrefix" : { "Ref" : "S3KeyPrefix" },
+          "BeanstalkSNSTopic" : { "Fn::GetAtt": ["slack", "Outputs.BeanstalkSNSTopic"] },
           "PrivateSubnets" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "PublicSubnets" : { "Fn::GetAtt" : ["vpc", "Outputs.PublicSubnets"] },
           "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Webapp"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
@@ -279,6 +286,16 @@
           "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.Bastion"] }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/bastion.json"]] }
+      }
+    },
+    "slack" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "SlackWebhookToken" : { "Ref" : "SlackWebhookToken" },
+          "SlackWebhookChannel" : { "Ref" : "SlackWebhookChannel" }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/slack.json"]] }
       }
     }
   },
