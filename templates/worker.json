@@ -252,6 +252,11 @@
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SETTINGS__ACTIVE_JOB_QUEUE__URL",
             "Value": { "Ref" : "DefaultQueue"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__WORKER",
+            "Value": "true"
           }
         ]
       }
