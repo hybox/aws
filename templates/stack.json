@@ -303,6 +303,16 @@
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/slack.json"]] }
       }
+    },
+    "mail" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "Domain" : { "Fn::Join": [ ".", [ { "Ref": "StackName" }, { "Ref": "PublicZoneName" } ] ] },
+          "HostedZoneName" : { "Ref" : "PublicZoneName" }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/mail.json"]] }
+      }
     }
   },
   "Outputs": {
