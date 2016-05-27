@@ -149,6 +149,19 @@
   "Conditions": {
     "HasSSLCertificate": { "Fn::Not": [{ "Fn::Equals" : [{ "Ref": "SSLCertificateId"}, ""] }] }
   },
+  "Mappings" : {
+    "AWSRegionToBeanstalkHostedZoneId" : {
+      "us-east-1"      : { "HostedZoneId" : "Z3DZXE0Q79N41H" },
+      "us-west-1"      : { "HostedZoneId" : "Z1M58G0W56PQJA" },
+      "us-west-2"      : { "HostedZoneId" : "Z33MTJ483KN6FU" },
+      "eu-west-1"      : { "HostedZoneId" : "Z3NF1Z3NOM5OY2" },
+      "eu-central-1"   : { "HostedZoneId" : "Z215JYRZR1TBD5" },
+      "ap-northeast-1" : { "HostedZoneId" : "Z2YN17T5R711GT" },
+      "ap-southeast-1" : { "HostedZoneId" : "Z1WI8VXHPB1R38" },
+      "ap-southeast-2" : { "HostedZoneId" : "Z2999QAZ9SRTIC" },
+      "sa-east-1" : { "HostedZoneId" : "Z2ES78Y61JGQKS" }
+    }
+  },
   "Resources" : {
     "HyboxConfigurationTemplate" : {
       "Type" : "AWS::ElasticBeanstalk::ConfigurationTemplate",
@@ -407,9 +420,11 @@
       "Properties" : {
         "Name" : { "Fn::Join": [ ".", [ { "Ref": "StackName" }, { "Ref": "HostedZoneName" } ] ] },
         "HostedZoneName" : { "Ref" : "HostedZoneName"},
-        "Type" : "CNAME",
-        "TTL": "900",
-        "ResourceRecords" : [{ "Fn::GetAtt" : ["WebappEnvironment", "EndpointURL"] }]
+        "Type" : "A",
+        "AliasTarget": {
+          "DNSName": { "Fn::GetAtt" : ["WebappEnvironment", "EndpointURL"] },
+          "HostedZoneId":{ "Fn::FindInMap" : [ "AWSRegionToBeanstalkHostedZoneId", { "Ref" : "AWS::Region" }, "HostedZoneId" ] }
+        }
       }
     },
     "EBWildcardRecordSet" : {
@@ -417,9 +432,11 @@
       "Properties" : {
         "Name" : { "Fn::Join": [ ".", [ "*", { "Ref": "StackName" }, { "Ref": "HostedZoneName" } ] ] },
         "HostedZoneName" : { "Ref" : "HostedZoneName"},
-        "Type" : "CNAME",
-        "TTL": "900",
-        "ResourceRecords" : [{ "Fn::GetAtt" : ["WebappEnvironment", "EndpointURL"] }]
+        "Type" : "A",
+        "AliasTarget": {
+          "DNSName": { "Fn::GetAtt" : ["WebappEnvironment", "EndpointURL"] },
+          "HostedZoneId":{ "Fn::FindInMap" : [ "AWSRegionToBeanstalkHostedZoneId", { "Ref" : "AWS::Region" }, "HostedZoneId" ] }
+        }
       }
     }
   },
