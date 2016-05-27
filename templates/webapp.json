@@ -380,7 +380,16 @@
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SETTINGS__S3__UPLOAD_BUCKET",
             "Value": { "Ref" : "UploadBucket"}
-          }
+          },
+          { "Fn::If": [
+            "HasSSLCertificate",
+            {
+              "Namespace": "aws:elasticbeanstalk:application:environment",
+              "OptionName": "SETTINGS__SSL_CONFIGURED",
+              "Value": "true"
+            },
+            { "Ref" : "AWS::NoValue" }
+          ]}
         ]
       }
     },
