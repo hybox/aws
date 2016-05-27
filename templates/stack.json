@@ -308,7 +308,7 @@
       "Type" : "AWS::CloudFormation::Stack",
       "Properties" : {
         "Parameters" : {
-          "Domain" : { "Fn::Join": [ ".", [ { "Ref": "StackName" }, { "Ref": "PublicZoneName" } ] ] },
+          "Domain" : { "Fn::Join": [ ".", [ { "Ref": "AWS::StackName" }, { "Ref": "PublicZoneName" } ] ] },
           "HostedZoneName" : { "Ref" : "PublicZoneName" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/mail.json"]] }
