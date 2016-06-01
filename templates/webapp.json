@@ -220,6 +220,16 @@
             "Value": "LoadBalanced"
           },
           {
+            "Namespace": "aws:elasticbeanstalk:command",
+            "OptionName": "DeploymentPolicy",
+            "Value": "RollingWithAdditionalBatch"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:command",
+            "OptionName": "BatchSize",
+            "Value": "33"
+          },
+          {
             "Namespace": "aws:autoscaling:updatepolicy:rollingupdate",
             "OptionName": "RollingUpdateEnabled",
             "Value": "true"
