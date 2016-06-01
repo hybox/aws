@@ -191,6 +191,11 @@
           },
           {
             "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "SSHSourceRestriction",
+            "Value" : "tcp, 22, 22, 10.0.0.0/16"
+          },
+          {
+            "Namespace" : "aws:autoscaling:launchconfiguration",
             "OptionName" : "SecurityGroups",
             "Value" : { "Fn::Join": [",", { "Ref" : "SecurityGroups" }] }
           },
