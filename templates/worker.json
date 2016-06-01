@@ -248,6 +248,11 @@
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SETTINGS__WORKER",
             "Value": "true"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:sqsd",
+            "OptionName": "WorkerQueueURL",
+            "Value": { "Ref" : "DefaultQueue"}
           }
         ]
       }
@@ -307,11 +312,6 @@
             "Namespace": "aws:elasticbeanstalk:environment",
             "OptionName": "ServiceRole",
             "Value": "aws-elasticbeanstalk-service-role"
-          },
-          {
-            "Namespace": "aws:elasticbeanstalk:sqsd",
-            "OptionName": "WorkerQueueURL",
-            "Value": { "Ref" : "DefaultQueue"}
           },
           {
             "Namespace": "aws:elasticbeanstalk:sns:topics",
