@@ -22,9 +22,5 @@
   {
     "ParameterKey": "DatabasePassword",
     "ParameterValue": "changeme"
-  },
-  {
-    "ParameterKey": "FitsPath",
-    "ParameterValue": "/opt/fits/fits-0.8.5/fits.sh"
   }
 ]

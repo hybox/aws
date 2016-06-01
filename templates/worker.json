@@ -260,11 +260,6 @@
         "OptionSettings" : [
           {
             "Namespace" : "aws:autoscaling:launchconfiguration",
-            "OptionName" : "ImageId",
-            "Value" : "ami-f38a6b9e"
-          },
-          {
-            "Namespace" : "aws:autoscaling:launchconfiguration",
             "OptionName" : "InstanceType",
             "Value" : { "Ref" : "InstanceType"}
           },
