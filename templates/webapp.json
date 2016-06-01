@@ -200,6 +200,16 @@
             "Value" : { "Fn::Join": [",", { "Ref" : "LBSecurityGroups" }] }
           },
           {
+            "Namespace" : "aws:elb:loadbalancer",
+            "OptionName" : "CrossZone",
+            "Value" : "true"
+          },
+          {
+            "Namespace" : "aws:elb:policies",
+            "OptionName" : "ConnectionDrainingEnabled",
+            "Value" : "true"
+          },
+          {
             "Namespace" : "aws:autoscaling:launchconfiguration",
             "OptionName" : "IamInstanceProfile",
             "Value" : { "Ref" : "IamInstanceProfile" }

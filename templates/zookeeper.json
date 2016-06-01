@@ -102,6 +102,10 @@
       "Properties" : {
         "Scheme" : "internal",
         "Subnets" : { "Ref" : "SubnetID" },
+        "CrossZone" : "true",
+        "ConnectionDrainingPolicy": {
+          "Enabled": true
+        },
         "SecurityGroups" : { "Ref" : "LBSecurityGroups" },
         "Listeners" : [
           {
