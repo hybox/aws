@@ -47,7 +47,7 @@
     "DockerImage" : {
       "Description" : "Docker image to run",
       "Type" : "String",
-      "Default" : "hybox/solr-ecs:latest"
+      "Default" : "hybox/solr-ecs:6"
     },
     "HostedZoneName" : {
       "Description" : "Route53 zone to create an alias in",
