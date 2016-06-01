@@ -254,22 +254,30 @@
             "OptionName": "ListenerProtocol",
             "Value": "HTTP"
           },
-          {
-            "Namespace": "aws:elb:listener:443",
-            "OptionName": "ListenerProtocol",
-            "Value": "HTTPS"
-          },
-          {
-            "Namespace": "aws:elb:listener:443",
-            "OptionName": "InstancePort",
-            "Value": "80"
-          },
           { "Fn::If": [
             "HasSSLCertificate",
             {
               "Namespace": "aws:elb:listener:443",
               "OptionName": "SSLCertificateId",
               "Value": { "Ref" : "SSLCertificateId" }
+            },
+            { "Ref" : "AWS::NoValue" }
+          ]},
+          { "Fn::If": [
+            "HasSSLCertificate",
+            {
+              "Namespace": "aws:elb:listener:443",
+              "OptionName": "InstancePort",
+              "Value": "80"
+            },
+            { "Ref" : "AWS::NoValue" }
+          ]},
+          { "Fn::If": [
+            "HasSSLCertificate",
+            {
+              "Namespace": "aws:elb:listener:443",
+              "OptionName": "ListenerProtocol",
+              "Value": "HTTPS"
             },
             { "Ref" : "AWS::NoValue" }
           ]}
