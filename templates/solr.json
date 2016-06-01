@@ -119,6 +119,9 @@
         "SecurityGroups" : { "Ref" : "LBSecurityGroups" },
         "Subnets" : { "Ref" : "SubnetID" },
         "CrossZone" : "true",
+        "ConnectionDrainingPolicy": {
+          "Enabled": true
+        },
         "Listeners" : [ {
           "LoadBalancerPort" : "80",
           "InstancePort" : "8983",

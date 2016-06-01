@@ -205,6 +205,11 @@
             "Value" : "true"
           },
           {
+            "Namespace" : "aws:elb:policies",
+            "OptionName" : "ConnectionDrainingEnabled",
+            "Value" : "true"
+          },
+          {
             "Namespace" : "aws:autoscaling:launchconfiguration",
             "OptionName" : "IamInstanceProfile",
             "Value" : { "Ref" : "IamInstanceProfile" }
