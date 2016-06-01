@@ -57,7 +57,7 @@
     "DatabaseSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-         "GroupDescription" : "Webapp security group",
+         "GroupDescription" : "RDS security group",
          "VpcId" : { "Ref" : "VPC" },
          "SecurityGroupIngress" : [
            {
@@ -73,7 +73,7 @@
     "RedisSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-         "GroupDescription" : "Webapp security group",
+         "GroupDescription" : "Redis security group",
          "VpcId" : { "Ref" : "VPC" },
          "SecurityGroupIngress" : [
            {
