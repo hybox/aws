@@ -102,6 +102,7 @@
       "Properties" : {
         "Scheme" : "internal",
         "Subnets" : { "Ref" : "SubnetID" },
+        "CrossZone" : "true",
         "SecurityGroups" : { "Ref" : "LBSecurityGroups" },
         "Listeners" : [
           {

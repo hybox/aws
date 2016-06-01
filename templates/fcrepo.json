@@ -105,6 +105,11 @@
             "Value" : { "Fn::Join": [",", { "Ref" : "LBSecurityGroups" }] }
           },
           {
+            "Namespace" : "aws:elb:loadbalancer",
+            "OptionName" : "CrossZone",
+            "Value" : "true"
+          },
+          {
             "Namespace" : "aws:ec2:vpc",
             "OptionName" : "ELBScheme",
             "Value" : "internal"

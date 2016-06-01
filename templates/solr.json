@@ -118,6 +118,7 @@
         "Scheme" : "internal",
         "SecurityGroups" : { "Ref" : "LBSecurityGroups" },
         "Subnets" : { "Ref" : "SubnetID" },
+        "CrossZone" : "true",
         "Listeners" : [ {
           "LoadBalancerPort" : "80",
           "InstancePort" : "8983",
