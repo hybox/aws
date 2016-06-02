@@ -250,6 +250,16 @@
             "Value": "true"
           },
           {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__SOLR__COLLECTION_OPTIONS__REPLICATION_FACTOR",
+            "Value": "3"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__SOLR__COLLECTION_OPTIONS__RULE",
+            "Value": "rule=shard:*,replica:<2,cores:<5~"
+          },
+          {
             "Namespace": "aws:elasticbeanstalk:sqsd",
             "OptionName": "WorkerQueueURL",
             "Value": { "Ref" : "DefaultQueue"}
