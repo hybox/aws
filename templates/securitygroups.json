@@ -123,6 +123,12 @@
              "IpProtocol": "tcp",
              "FromPort" : "80",
              "ToPort" : "80"
+           },
+           {
+             "SourceSecurityGroupId" : { "Ref" : "SolrSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80"
            }
          ],
          "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "solr-lb"] ] } } ]
