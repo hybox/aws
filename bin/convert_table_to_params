@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+table = ARGF.read
+
+puts JSON.pretty_generate table.split("\n").map { |row| row.split("\t") }.map { |(key, value)| { ParameterKey: key, ParameterValue: value } }
