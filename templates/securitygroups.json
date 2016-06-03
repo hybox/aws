@@ -89,7 +89,7 @@
     "SolrSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-         "GroupDescription" : "Solr load balancer security group",
+         "GroupDescription" : "Solr security group",
          "VpcId" : { "Ref" : "VPC" },
          "SecurityGroupIngress" : [
            {
@@ -115,11 +115,17 @@
     "SolrLbSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-         "GroupDescription" : "Solr security group",
+         "GroupDescription" : "Solr load-balancer security group",
          "VpcId" : { "Ref" : "VPC" },
          "SecurityGroupIngress" : [
            {
              "SourceSecurityGroupId" : { "Ref" : "WebappSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80"
+           },
+           {
+             "SourceSecurityGroupId" : { "Ref" : "SolrSecurityGroup" },
              "IpProtocol": "tcp",
              "FromPort" : "80",
              "ToPort" : "80"

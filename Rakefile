@@ -8,11 +8,12 @@ end
 
 task :copy_artifacts do
   if ENV['CI'] == 'true' && ENV['TRAVIS_PULL_REQUEST'] == 'false'
-    `mkdir -p build;
-     cp -R templates build;
-     cp -R params build;
-     sed -i "s/{{branch}}/#{ENV['TRAVIS_BRANCH']}/" build/templates/*.json;
-     sed -i "s/{{commit}}/#{ENV['TRAVIS_COMMIT'].slice(0, 8)}/" build/templates/*.json
+    build_dir = File.expand_path('build')
+    `mkdir -p #{build_dir};
+     cp -R templates #{build_dir};
+     cp -R params #{build_dir};
+     sed -i "s/{{branch}}/#{ENV['TRAVIS_BRANCH']}/" #{build_dir}/templates/*.json;
+     sed -i "s/{{commit}}/#{ENV['TRAVIS_COMMIT'].slice(0, 8)}/" #{build_dir}/templates/*.json
      `
   end
 end
