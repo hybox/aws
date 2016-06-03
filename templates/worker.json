@@ -257,7 +257,7 @@
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SETTINGS__SOLR__COLLECTION_OPTIONS__RULE",
-            "Value": "rule=shard:*,replica:<2,cores:<5~"
+            "Value": "shard:*,replica:<2,cores:<5~"
           },
           {
             "Namespace": "aws:elasticbeanstalk:sqsd",
