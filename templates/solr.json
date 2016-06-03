@@ -345,7 +345,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": { "Ref" : "S3Bucket" },
-          "S3Key": "lambda/current/solr_watcher.zip"
+          "S3Key": "lambda/current/solr_lambda.zip"
         },
         "Handler": "index.handler",
         "Runtime": "nodejs4.3",
