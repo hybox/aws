@@ -165,6 +165,11 @@
       "Type": "String",
       "Description": "The Amazon Resource Name (ARN) of the SSL certificate",
       "Default": ""
+    },
+    "GoogleAnalyticsId": {
+      "Type": "String",
+      "Description": "The Google Analytics id, e.g UA-111111-1",
+      "Default": ""
     }
   },
   "Conditions": {
@@ -220,7 +225,8 @@
           "BeanstalkSNSTopic" : { "Ref" : "BeanstalkSNSTopic"},
           "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] },
           "UploadBucket" : { "Ref" : "UploadBucket" },
-          "SSLCertificateId" : { "Ref" : "SSLCertificateId" }
+          "SSLCertificateId" : { "Ref" : "SSLCertificateId" },
+          "GoogleAnalyticsId" : { "Ref" : "GoogleAnalyticsId" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/webapp.json"]] }
       }

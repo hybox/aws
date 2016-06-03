@@ -98,5 +98,9 @@
    {
       "ParameterKey" : "SSLCertificateId",
       "UsePreviousValue" : true
+   },
+   {
+      "ParameterKey" : "GoogleAnalyticsId",
+      "UsePreviousValue" : true
    }
 ]
