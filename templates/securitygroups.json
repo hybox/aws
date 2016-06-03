@@ -91,14 +91,6 @@
       "Properties" : {
          "GroupDescription" : "Solr security group",
          "VpcId" : { "Ref" : "VPC" },
-         "SecurityGroupIngress" : [
-           {
-             "SourceSecurityGroupId" : { "Ref" : "SolrLbSecurityGroup" },
-             "IpProtocol": "tcp",
-             "FromPort" : "8983",
-             "ToPort" : "8983"
-           }
-         ],
          "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "solr"] ] } } ]
       }
     },
@@ -110,6 +102,16 @@
         "IpProtocol": "tcp",
         "FromPort" : "0",
         "ToPort" : "65535"
+      }
+    },
+    "SolrLbSecurityGroupIngress" : {
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupId" : { "Fn::GetAtt": ["SolrSecurityGroup", "GroupId"] },
+        "SourceSecurityGroupId" : { "Ref" : "SolrLbSecurityGroup" },
+        "IpProtocol": "tcp",
+        "FromPort" : "8983",
+        "ToPort" : "8983"
       }
     },
     "SolrLbSecurityGroup" : {
