@@ -144,6 +144,11 @@
       "Type": "String",
       "Description": "The Amazon Resource Name (ARN) of the SSL certificate",
       "Default": ""
+    },
+    "GoogleAnalyticsId": {
+      "Type": "String",
+      "Description": "The Google Analytics id, e.g UA-111111-1",
+      "Default": ""
     }
   },
   "Conditions": {
@@ -413,6 +418,11 @@
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SETTINGS__S3__UPLOAD_BUCKET",
             "Value": { "Ref" : "UploadBucket"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "SETTINGS__GOOGLE_ANALYTICS_ID",
+            "Value": { "Ref" : "GoogleAnalyticsId"}
           },
           { "Fn::If": [
             "HasSSLCertificate",
