@@ -177,6 +177,8 @@
         "MinSize" : { "Ref" : "DesiredCapacity" },
         "MaxSize" : { "Ref" : "MaxSize" },
         "DesiredCapacity" : { "Ref" : "DesiredCapacity" },
+        "HealthCheckType": "ELB",
+        "HealthCheckGracePeriod": "300",
         "Tags" : [
           {
             "Key" : "Name",

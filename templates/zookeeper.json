@@ -164,6 +164,8 @@
         "MinSize" : { "Ref" : "DesiredCapacity" },
         "MaxSize" : { "Ref" : "MaxSize" },
         "DesiredCapacity" : { "Ref" : "DesiredCapacity" },
+        "HealthCheckType": "ELB",
+        "HealthCheckGracePeriod": "300",
         "Tags" : [
           {
             "Key" : "Name",
@@ -183,7 +185,7 @@
         "AutoScalingRollingUpdate": {
           "MinInstancesInService": "2",
           "MaxBatchSize": "1",
-          "PauseTime" : "PT5M",
+          "PauseTime" : "PT10M",
           "WaitOnResourceSignals": "true"
         }
       }
