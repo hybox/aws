@@ -131,6 +131,11 @@
       "Type": "String",
       "Description": "The Google Analytics id, e.g UA-111111-1",
       "Default": ""
+    },
+    "HoneybadgerApiKey": {
+      "Type": "String",
+      "Description": "The api key for honeybadger.io",
+      "Default": ""
     }
   },
   "Metadata" : {
@@ -284,7 +289,8 @@
           "WorkerMinSize" : { "Ref" : "WorkerMinSize" },
           "WorkerMaxSize" : { "Ref" : "WorkerMaxSize" },
           "SSLCertificateId" : { "Ref" : "SSLCertificateId" },
-          "GoogleAnalyticsId" : { "Ref" : "GoogleAnalyticsId" }
+          "GoogleAnalyticsId" : { "Ref" : "GoogleAnalyticsId" },
+          "HoneybadgerApiKey" : { "Ref" : "HoneybadgerApiKey" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/application.json"]] }
       }

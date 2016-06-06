@@ -149,6 +149,11 @@
       "Type": "String",
       "Description": "The Google Analytics id, e.g UA-111111-1",
       "Default": ""
+    },
+    "HoneybadgerApiKey": {
+      "Type": "String",
+      "Description": "The api key for honeybadger.io",
+      "Default": ""
     }
   },
   "Conditions": {
@@ -423,6 +428,11 @@
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SETTINGS__GOOGLE_ANALYTICS_ID",
             "Value": { "Ref" : "GoogleAnalyticsId"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "HONEYBADGER_API_KEY",
+            "Value": { "Ref" : "HoneybadgerApiKey"}
           },
           { "Fn::If": [
             "HasSSLCertificate",
