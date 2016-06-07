@@ -150,6 +150,16 @@
             "Value": { "Ref" : "MaxSize" }
           },
           {
+            "Namespace": "aws:autoscaling:trigger",
+            "OptionName": "LowerBreachScaleIncrement",
+            "Value": "0"
+          },
+          {
+            "Namespace": "aws:autoscaling:trigger",
+            "OptionName": "UpperBreachScaleIncrement",
+            "Value": "0"
+          },
+          {
             "Namespace": "aws:elasticbeanstalk:environment",
             "OptionName": "EnvironmentType",
             "Value": "LoadBalanced"
