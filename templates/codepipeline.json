@@ -10,7 +10,7 @@
     "S3Key": {
       "Type": "String",
       "Description": "S3 Key of the deployment artifact",
-      "Default": "hybox.zip"
+      "Default": "lerna.zip"
     },
     "ApplicationName": {
       "Type": "String",
