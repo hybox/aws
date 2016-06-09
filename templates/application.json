@@ -14,13 +14,13 @@
     },
     "S3Bucket": {
       "Type": "String",
-      "Description": "S3 bucket with the hybox zip",
+      "Description": "S3 bucket with the lerna zip",
       "Default": "hybox-deployment-artifacts"
     },
     "S3Key": {
       "Type": "String",
-      "Description": "S3 key to the hybox zip",
-      "Default": "hybox.zip"
+      "Description": "S3 key to the lerna zip",
+      "Default": "lerna.zip"
     },
     "S3KeyPrefix" : {
       "Description" : "S3 prefix to deployment artifacts",

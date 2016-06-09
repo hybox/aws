@@ -20,7 +20,7 @@
     "WebappS3Key" : {
       "Description" : "S3 key to webapp deployment artifacts",
       "Type" : "String",
-      "Default": "hybox/current/hybox.zip"
+      "Default": "lerna/current/lerna.zip"
     },
     "PublicZoneName" : {
       "Description" : "Existing Route53 zone; used to create a public DNS record for the web application",
