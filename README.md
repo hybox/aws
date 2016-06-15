@@ -10,6 +10,9 @@ These AWS CloudFormation templates create a full application stack for a multite
   - a (single node) Fedora 4 server;
   - and a Rails application stack, with auto-scaling webapp and worker tiers and continuous deployment of the application code.
 
+![AWS Stack Diagram](https://cloud.githubusercontent.com/assets/111218/16077301/e8a0dc6c-32ef-11e6-80b4-e9e74c18973e.png)
+
+
 ## Creating the full stack
 
 1. Create or import an [EC2 key-pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
