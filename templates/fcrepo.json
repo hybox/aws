@@ -175,7 +175,7 @@
             "Value": "2g"
           }
         ],
-        "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.1 running Tomcat 8 Java 8"
+        "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.1.3 running Tomcat 8 Java 8"
       }
     },
     "FcrepoEnvironment": {
