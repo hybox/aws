@@ -15,7 +15,13 @@ These AWS CloudFormation templates create a full application stack for a multite
 
 ## Creating the full stack
 
-1. Create or import an [EC2 key-pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
+0. Select an AWS region, e.g.:
+
+```
+$ AWS_DEFAULT_REGION=us-east-1
+```
+
+1. Create or import an [EC2 key-pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) for that region.
 
 2. Create a [public hosted zone](http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html); the web application will automatically manage DNS entries in this zone.
 
@@ -24,13 +30,13 @@ These AWS CloudFormation templates create a full application stack for a multite
 4. Create the full application stack:
 
 ```console
-$ aws --region us-east-1 cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/my-hybox-environment.json
+$ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/my-hybox-environment.json
 ```
 
 You can also create (or update) your application from branches of the cloudformation repository:
 
 ```console
-$ aws --region us-east-1 cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/branch/branch-name/templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/my-hybox-environment.json
+$ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/branch/branch-name/templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/my-hybox-environment.json
 ```
 
 You can also deploy branches of the hybox application repository by setting the `WebappS3Key` parameter for your stack to point at the branch-specific deployment artifact (e.g. `lerna/branch/branch-name/lerna.zip`)
@@ -43,7 +49,7 @@ The AWS CloudFormation stack must be deployed into an S3 bucket for CloudFormati
 This bootstrapping is already provided for the main repositories, but if you deploy a fork of this stack, you may need to create this stack and configure continuous deployment for your forks.
 
 ```console
-$ aws --region us-east-1 cloudformation create-stack --stack-name travis --template-body file://templates/travis.json --capabilities CAPABILITY_IAM
+$ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name travis --template-body file://templates/travis.json --capabilities CAPABILITY_IAM
 ```
 
 You will need the outputs from this stack to create [deploy steps](https://docs.travis-ci.com/user/deployment/s3 ) for these repositories.
