@@ -116,7 +116,7 @@
             ],
             "Essential": "true",
             "Image": { "Ref" : "DockerImage" },
-            "Memory":"400",
+            "Memory":"3000",
             "PortMappings": [
               { "HostPort": 8983, "ContainerPort": 8983 }
             ],
