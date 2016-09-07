@@ -63,6 +63,11 @@
       "Type": "String",
       "Description": "A list of zookeeper host IP + ports",
       "Default": "127.0.0.1:2181"
+    },
+    "DataVolumePath" : {
+      "Type": "String",
+      "Description": "The path on the host container instance that is presented to the container",
+      "Default": "/var/lib/docker/vfs/dir/solr-data"
     }
   },
 
@@ -107,7 +112,7 @@
             "Name": { "Ref" : "AWS::StackName" },
             "Cpu": "500",
             "Environment" : [
-              { "Name" : "ZOOKEEPER_HOSTS", "Value" : { "Ref" : "ZookeeperHosts"} }
+              { "Name" : "ZK_HOST", "Value" : { "Ref" : "ZookeeperHosts"} }
             ],
             "Essential": "true",
             "Image": { "Ref" : "DockerImage" },
@@ -126,7 +131,7 @@
         "Volumes": [
           {
             "Host": {
-              "SourcePath": "/var/app/solr"
+              "SourcePath": { "Ref" : "DataVolumePath" }
             },
             "Name": "solr-data-vol"
           }
@@ -212,6 +217,9 @@
             "commands" : {
               "01_add_instance_to_cluster" : {
                 "command" : { "Fn::Join": [ "", [ "#!/bin/bash\n", "echo ECS_CLUSTER=", { "Ref": "ECSCluster" }, " >> /etc/ecs/ecs.config" ] ] }
+              },
+              "02_chmod_mounted_volumes" : {
+                "command" : { "Fn::Join": [ "", ["#!/bin/bash\n", "mkdir -p ", { "Ref" : "DataVolumePath"}, "\nchown -R 8983:8983 ", { "Ref" : "DataVolumePath"}]]}
               }
             },
 
