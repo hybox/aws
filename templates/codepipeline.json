@@ -131,7 +131,7 @@
         "Path": "/",
         "Policies": [
           {
-            "PolicyName": "codepipeline-service",
+            "PolicyName": { "Fn::Join" : ["-", [{ "Ref": "ApplicationName" },"codepipeline-service"]]},
             "PolicyDocument": {
               "Statement": [
                 {

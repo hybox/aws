@@ -318,7 +318,7 @@
         "ManagedPolicyArns" : ["arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"],
         "Policies": [
           {
-            "PolicyName": "exhibitor-s3",
+            "PolicyName": { "Fn::Join" : ["-", [{ "Ref": "StackName" },"exhibitor-s3"]]},
             "PolicyDocument": {
               "Statement": [
                 {

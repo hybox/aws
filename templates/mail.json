@@ -393,7 +393,7 @@
         "Path": "/",
         "ManagedPolicyArns" : ["arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"],
         "Policies": [{
-          "PolicyName": "root",
+          "PolicyName": { "Fn::Join" : ["-", [{ "Ref": "Domain" }, "mail-lambda"]]},
           "PolicyDocument": {
             "Version": "2012-10-17",
             "Statement": [{
