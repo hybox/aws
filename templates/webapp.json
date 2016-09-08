@@ -328,6 +328,11 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:managedactions",
+            "OptionName": "ManagedActionsEnabled",
+            "Value": "true"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:managedactions",
             "OptionName": "PreferredStartTime",
             "Value": "Sun:00:00"
           }
