@@ -328,7 +328,7 @@
                 }
               ]
             },
-            "PolicyName": "S3Access"
+            "PolicyName": { "Fn::Join" : ["-", [{ "Ref": "StackName" },"S3Access"]]}
           }
         ]
       }

@@ -429,7 +429,7 @@
         "Path": "/",
         "ManagedPolicyArns" : ["arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"],
         "Policies": [{
-          "PolicyName": "root",
+          "PolicyName": { "Fn::Join" : ["-", [{ "Ref": "StackName" },"workers"]]},
           "PolicyDocument": {
             "Version": "2012-10-17",
             "Statement": [{
