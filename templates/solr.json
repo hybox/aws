@@ -9,7 +9,7 @@
     },
     "S3Bucket": {
       "Type": "String",
-      "Description": "S3 bucket with the lerna zip",
+      "Description": "S3 bucket with the hyku zip",
       "Default": "hybox-deployment-artifacts"
     },
     "KeyName": {
