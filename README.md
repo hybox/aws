@@ -2,7 +2,7 @@
 
 [![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=hybox&templateURL=https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.json)
 
-These AWS CloudFormation templates create a full application stack for a multitenant-ready  [Hydra-in-a-Box](https://github.com/projecthydra-labs/lerna) application, including:
+These AWS CloudFormation templates create a full application stack for a multitenant-ready  [Hydra-in-a-Box](https://github.com/projecthydra-labs/hyku) application, including:
 
   - a dedicated [Amazon Virtual Private Cloud](https://aws.amazon.com/vpc) (VPC) for the stack components, with public and private subnets across 3 Availability Zones, and a bastion host providing SSH access for system administrators;
   - a multi-node SolrCloud cluster backed by a multi-node zookeeper ensemble;
@@ -39,7 +39,7 @@ You can also create (or update) your application from branches of the cloudforma
 $ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/branch/branch-name/templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/my-hybox-environment.json
 ```
 
-You can also deploy branches of the hybox application repository by setting the `WebappS3Key` parameter for your stack to point at the branch-specific deployment artifact (e.g. `lerna/branch/branch-name/lerna.zip`)
+You can also deploy branches of the hybox application repository by setting the `WebappS3Key` parameter for your stack to point at the branch-specific deployment artifact (e.g. `hyku/branch/branch-name/hyku.zip`)
 
 
 ## Travis deployment integration
