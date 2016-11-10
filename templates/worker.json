@@ -252,7 +252,7 @@
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SETTINGS__ACTIVE_JOB__QUEUE_ADAPTER",
-            "Value": { "Ref" : "better_active_elastic_job"}
+            "Value": "better_active_elastic_job"
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
