@@ -171,6 +171,11 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "RAILS_GROUPS",
+            "Value": "aws"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SOLR_URL",
             "Value": { "Ref" : "SolrUrl"}
           },
