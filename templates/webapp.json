@@ -381,6 +381,11 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "DISABLE_REDIS_CLUSTER",
+            "Value": "true"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "REDIS_HOST",
             "Value": { "Ref" : "RedisHost"}
           },
