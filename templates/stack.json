@@ -53,7 +53,7 @@
     },
     "SolrCloudInstanceType" : {
       "Type": "String",
-      "Default" : "t2.medium",
+      "Default" : "t2.large",
       "Description": "Instance type to launch"
     },
     "ZookeeperEnsembleSize" : {
