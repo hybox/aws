@@ -125,7 +125,7 @@
             ],
             "Essential": "true",
             "Image": { "Ref" : "DockerImage" },
-            "Memory":"3000",
+            "Memory":"5000",
             "Ulimits": [
               {
                 "Name": "nofile",
