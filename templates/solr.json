@@ -126,6 +126,13 @@
             "Essential": "true",
             "Image": { "Ref" : "DockerImage" },
             "Memory":"3000",
+            "ulimits": [
+              {
+                "name": "nofiles",
+                "softLimit": 65536,
+                "hardLimit": 65536
+              }
+            ],
             "PortMappings": [
               { "HostPort": 8983, "ContainerPort": 8983 }
             ],
