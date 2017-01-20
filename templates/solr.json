@@ -129,8 +129,8 @@
             "Ulimits": [
               {
                 "Name": "nofile",
-                "SoftLimit": 65536,
-                "HardLimit": 65536
+                "SoftLimit": 32000,
+                "HardLimit": 32000
               }
             ],
             "PortMappings": [
