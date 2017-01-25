@@ -1,7 +1,11 @@
 [
   {
     "ParameterKey": "KeyName",
-    "ParameterValue": "hybox"
+    "ParameterValue": "hybox-nw"
+  },
+  {
+    "ParameterKey": "S3KeyPrefix",
+    "ParameterValue": "branch/new-region"
   },
   {
     "ParameterKey": "S3Bucket",
