@@ -122,7 +122,7 @@
           ]]}
         },
         "Handler": "index.handler",
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "10",
         "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] }
       }
