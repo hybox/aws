@@ -219,7 +219,6 @@
       "Properties" : {
         "Parameters" : {
           "StackName" : { "Fn::Join": ["-", [{ "Ref" : "AWS::StackName"}, "solr"]] },
-          "S3Bucket" : { "Ref" : "S3Bucket" },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] },
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
