@@ -12,6 +12,10 @@
     "ParameterValue": "hybox-deployment-artifacts"
   },
   {
+    "ParameterKey": "S3BucketEB",
+    "ParameterValue": "temp-artifacts-bucket"
+  },
+  {
     "ParameterKey": "PublicZoneName",
     "ParameterValue": "hydrainabox.org."
   },

@@ -9,7 +9,12 @@
     },
     "S3Bucket": {
       "Type": "String",
-      "Description": "S3 bucket to the deployment artifacts",
+      "Description": "S3 bucket to the cfn deployment artifacts",
+      "Default": "hybox-deployment-artifacts"
+    },
+    "S3BucketEB": {
+      "Type": "String",
+      "Description": "S3 bucket to the eb deployment artifacts",
       "Default": "hybox-deployment-artifacts"
     },
     "S3KeyPrefix" : {
@@ -207,7 +212,7 @@
           "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
           "SecurityGroups" : { "Fn::Join" : [",", [{ "Fn::GetAtt" : [ "securitygroups", "Outputs.Fcrepo"] }, { "Fn::GetAtt" : [ "securitygroups", "Outputs.Default"] }]] },
           "LBSecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.FcrepoLb"] },
-          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3Bucket" : { "Ref" : "S3BucketEB" },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] },
           "InstanceType" : { "Ref" : "FcrepoInstanceType" }
         },
@@ -262,7 +267,7 @@
         "Parameters" : {
           "StackName" : { "Ref" : "AWS::StackName" },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
-          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3Bucket" : { "Ref" : "S3BucketEB" },
           "S3Key" : { "Ref" : "WebappS3Key" },
           "S3KeyPrefix" : { "Ref" : "S3KeyPrefix" },
           "BeanstalkSNSTopic" : { "Fn::GetAtt": ["slack", "Outputs.BeanstalkSNSTopic"] },
