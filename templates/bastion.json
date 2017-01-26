@@ -33,14 +33,14 @@
   },
   "Mappings" : {
     "AWSRegionToAMI" : {
-      "us-east-1"      : { "AMIID" : "ami-4868ab25" },
-      "us-west-1"      : { "AMIID" : "ami-a275b1c2" },
-      "us-west-2"      : { "AMIID" : "ami-004b0f60" },
-      "eu-west-1"      : { "AMIID" : "ami-a8dd45db" },
-      "ap-northeast-1" : { "AMIID" : "ami-2443b745" },
-      "ap-southeast-2" : { "AMIID" : "ami-53371f30" },
-      "ap-southeast-1" : { "AMIID" : "ami-a79b49c4" },
-      "eu-central-1"   : { "AMIID" : "ami-5825cd37" }
+      "us-east-1"      : { "AMIID" : "ami-dd3dd7cb" },
+      "us-west-1"      : { "AMIID" : "ami-7d54061d" },
+      "us-west-2"      : { "AMIID" : "ami-3b6fd05b" },
+      "eu-west-1"      : { "AMIID" : "ami-47ecb121" },
+      "ap-northeast-1" : { "AMIID" : "ami-78d6af1f" },
+      "ap-southeast-2" : { "AMIID" : "ami-1e47407d" },
+      "ap-southeast-1" : { "AMIID" : "ami-a0903ac3" },
+      "eu-central-1"   : { "AMIID" : "ami-7d0ec112" }
     }
   },
   "Resources" : {
