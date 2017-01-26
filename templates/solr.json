@@ -7,11 +7,6 @@
       "Type": "String",
       "Description": "Name of the ElasticBeanstalk environment"
     },
-    "S3Bucket": {
-      "Type": "String",
-      "Description": "S3 bucket with the hyku zip",
-      "Default": "hybox-deployment-artifacts"
-    },
     "KeyName": {
       "Type": "AWS::EC2::KeyPair::KeyName",
       "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances"
@@ -364,62 +359,6 @@
             "Ref": "EC2Role"
           }
         ]
-      }
-    },
-    "SolrAutoscaleReplicatorFunction": {
-      "Type": "AWS::Lambda::Function",
-      "Properties": {
-        "Code": {
-          "S3Bucket": { "Ref" : "S3Bucket" },
-          "S3Key": "lambda/current/solr_lambda.zip"
-        },
-        "Handler": "index.handler",
-        "Runtime": "nodejs4.3",
-        "Timeout": "20",
-        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
-        "VpcConfig": {
-          "SecurityGroupIds": { "Ref": "SecurityGroups" },
-          "SubnetIds": { "Ref": "SubnetID" }
-        }
-      }
-    },
-    "AutoscaleScheduleRule": {
-      "Type": "AWS::Events::Rule",
-      "Properties": {
-        "Description": "Trigger autoscaling monitoring for solrcloud",
-        "ScheduleExpression": "rate(2 minutes)",
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": { "Fn::GetAtt": ["SolrAutoscaleReplicatorFunction", "Arn"] },
-            "Id": "1",
-            "Input": { "Fn::Join": ["", ["{ \"url\": \"", "http://", { "Ref" : "ECSRecordSet" }, "/solr\"}"]] }
-          }
-        ]
-      }
-    },
-    "PermissionForEventsToInvokeLambda": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "FunctionName": { "Ref": "SolrAutoscaleReplicatorFunction" },
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": { "Fn::GetAtt": ["AutoscaleScheduleRule", "Arn"] }
-      }
-    },
-    "LambdaExecutionRole": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [{
-            "Effect": "Allow",
-            "Principal": {"Service": ["lambda.amazonaws.com"]},
-            "Action": ["sts:AssumeRole"]
-          }]
-        },
-        "Path": "/",
-        "ManagedPolicyArns" : ["arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"]
       }
     }
   },
