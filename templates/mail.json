@@ -96,6 +96,7 @@
              "    if (event.RequestType == 'Delete') {",
              "        if (ruleSet) {",
              "          ses.deleteReceiptRule({RuleSetName: ruleSet, RuleName: ruleName}).send();",
+             "          ses.deleteReceiptRuleSet({RuleSetName: ruleSet}).send();",
              "        }",
              "        response.send(event, context, response.SUCCESS);",
              "        return;",
@@ -106,6 +107,15 @@
              "    var responseData = {};",
              "    if (ruleSet) {",
              "      ",
+             "      ses.createReceiptRuleSet({",
+             "          RuleSetName: ruleSet }, function(err, data) {",
+             "          if (err) {",
+             "              responseData = { Error: 'createReceiptRuleSet call failed' };",
+             "              console.log(responseData.Error + ':\\n', err);",
+             "              response.send(event, context, response.FAILED, responseData);",
+             "              return;",
+             "           }",
+             "      });",
              "      ses.createReceiptRule({ ",
              "          RuleSetName: ruleSet,",
              "          Rule: { ",
@@ -130,7 +140,7 @@
              "};"]]}
         },
         "Handler": "index.handler",
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "10",
         "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] }
       }
@@ -190,7 +200,7 @@
             "};"]]}
         },
         "Handler": "index.handler",
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "10",
         "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] }
       }
@@ -314,7 +324,7 @@
           ]]}
         },
         "Handler": "index.handler",
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "10",
         "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] }
       }
@@ -374,7 +384,7 @@
           ]]}
         },
         "Handler": "index.handler",
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "30",
         "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] }
       }
