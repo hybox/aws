@@ -16,6 +16,10 @@
     "ParameterValue": "temp-artifacts-bucket"
   },
   {
+    "ParameterKey": "WebappS3Key",
+    "ParameterValue": "hyku.zip"
+  },
+  {
     "ParameterKey": "PublicZoneName",
     "ParameterValue": "hydrainabox.org."
   },
