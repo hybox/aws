@@ -266,7 +266,8 @@
         "Parameters" : {
           "StackName" : { "Ref" : "AWS::StackName" },
           "KeyName" : { "Fn::Join" : [",", [{ "Ref" : "KeyName" }]] },
-          "S3Bucket" : { "Ref" : "S3BucketEB" },
+          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3BucketEB" : { "Ref" : "S3BucketEB" },
           "S3Key" : { "Ref" : "WebappS3Key" },
           "S3KeyPrefix" : { "Ref" : "S3KeyPrefix" },
           "BeanstalkSNSTopic" : { "Fn::GetAtt": ["slack", "Outputs.BeanstalkSNSTopic"] },
