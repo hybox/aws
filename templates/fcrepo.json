@@ -177,7 +177,7 @@
           {
             "Namespace": "aws:elasticbeanstalk:container:tomcat:jvmoptions",
             "OptionName": "JVM Options",
-            "Value": "-Dfcrepo.modeshape.configuration=\"classpath:/config/minimal-default/repository.json\""
+            "Value": "-Dfcrepo.modeshape.configuration=\"classpath:/config/file-simple/repository.json\""
           }
         ],
         "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.2.0 running Tomcat 8 Java 8"
