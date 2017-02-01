@@ -344,9 +344,29 @@
             "Value": "LoadBalanced"
           },
           {
+            "Namespace": "aws:elasticbeanstalk:command",
+            "OptionName": "DeploymentPolicy",
+            "Value": "RollingWithAdditionalBatch"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:command",
+            "OptionName": "BatchSize",
+            "Value": "33"
+          },
+          {
+            "Namespace": "aws:autoscaling:updatepolicy:rollingupdate",
+            "OptionName": "RollingUpdateEnabled",
+            "Value": "true"
+          },
+          {
             "Namespace": "aws:elasticbeanstalk:healthreporting:system",
             "OptionName": "SystemType",
             "Value": { "Ref" : "HealthReportingSystemType" }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application",
+            "OptionName": "Application Healthcheck URL",
+            "Value": "/is_it_working"
           },
           {
             "Namespace": "aws:elasticbeanstalk:environment",
