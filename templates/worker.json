@@ -364,6 +364,11 @@
             "Value": { "Ref" : "HealthReportingSystemType" }
           },
           {
+            "Namespace": "aws:elasticbeanstalk:application",
+            "OptionName": "Application Healthcheck URL",
+            "Value": "/is_it_working"
+          },
+          {
             "Namespace": "aws:elasticbeanstalk:environment",
             "OptionName": "ServiceRole",
             "Value": "aws-elasticbeanstalk-service-role"
