@@ -116,7 +116,7 @@
             "Name": { "Ref" : "AWS::StackName" },
             "Cpu": "500",
             "Environment" : [
-              { "Name" : "ZK_HOST", "Value" : { "Ref" : "ZookeeperHosts"} }
+              { "Name" : "ZK_HOST", "Value" : "ec2-35-167-140-25.us-west-2.compute.amazonaws.com:2181,ec2-52-37-46-154.us-west-2.compute.amazonaws.com:2181,ec2-52-32-146-62.us-west-2.compute.amazonaws.com:2181" }
             ],
             "Essential": "true",
             "Image": { "Ref" : "DockerImage" },
