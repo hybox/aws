@@ -195,6 +195,12 @@
              "ToPort" : "2181"
            },
            {
+             "SourceSecurityGroupId" : { "Ref" : "SolrSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "2181",
+             "ToPort" : "2181"
+           },
+           {
              "SourceSecurityGroupId" : { "Ref" : "ZookeeperLbSecurityGroup" },
              "IpProtocol": "tcp",
              "FromPort" : "8080",
