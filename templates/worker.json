@@ -344,6 +344,21 @@
             "Value": "LoadBalanced"
           },
           {
+            "Namespace": "aws:elasticbeanstalk:command",
+            "OptionName": "DeploymentPolicy",
+            "Value": "Immutable"
+          },
+          {
+            "Namespace": "aws:autoscaling:updatepolicy:rollingupdate",
+            "OptionName": "RollingUpdateEnabled",
+            "Value": "true"
+          },
+          {
+            "Namespace": "aws:autoscaling:updatepolicy:rollingupdate",
+            "OptionName": "RollingUpdateType",
+            "Value": "Health"
+          },
+          {
             "Namespace": "aws:elasticbeanstalk:healthreporting:system",
             "OptionName": "SystemType",
             "Value": { "Ref" : "HealthReportingSystemType" }
