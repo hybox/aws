@@ -494,6 +494,11 @@
             "OptionName": "HONEYBADGER_API_KEY",
             "Value": { "Ref" : "HoneybadgerApiKey"}
           },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "LOGZIO_KEY",
+            "Value": { "Ref" : "LogzioKey"}
+          },
           { "Fn::If": [
             "HasSSLCertificate",
             {

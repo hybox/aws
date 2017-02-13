@@ -106,5 +106,9 @@
    {
       "ParameterKey" : "HoneybadgerApiKey",
       "UsePreviousValue" : true
+   },
+   {
+      "ParameterKey" : "LogzioKey",
+      "UsePreviousValue" : true
    }
 ]
