@@ -256,6 +256,11 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "LOGZIO_KEY",
+            "Value": { "Ref" : "LogzioKey"}
+          },		  
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "AWS_REGION",
             "Value": { "Ref" : "AWS::Region"}
           },
