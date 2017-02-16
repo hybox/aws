@@ -371,6 +371,11 @@
         "OptionSettings" : [
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "STACK_NAME",
+            "Value": { "Ref": "StackName"}
+          },
+		  {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SECRET_KEY_BASE",
             "Value": { "Ref" : "SecretKeyBase"}
           },
