@@ -401,7 +401,7 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
-            "OptionName": "SETTINGS__MULTITENANCY__HOST",
+            "OptionName": "SETTINGS__MULTITENANCY__ADMIN_HOST",
             "Value": { "Fn::Join": [ ".", [ { "Ref": "StackName" }, { "Ref": "HostedZoneName" } ] ] }
           },
           {
