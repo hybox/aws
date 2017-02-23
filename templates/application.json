@@ -14,6 +14,11 @@
     },
     "S3Bucket": {
       "Type": "String",
+      "Description": "S3 bucket with cloudformation templates",
+      "Default": "hybox-deployment-artifacts"
+    },
+    "S3BucketEB": {
+      "Type": "String",
       "Description": "S3 bucket with the hyku zip",
       "Default": "hybox-deployment-artifacts"
     },
@@ -194,7 +199,7 @@
         "ApplicationName" : { "Ref" : "HyboxApplication" },
         "Description" : "Hybox service version",
         "SourceBundle" : {
-          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3Bucket" : { "Ref" : "S3BucketEB" },
           "S3Key" : { "Ref" : "S3Key" }
         }
       }
@@ -353,7 +358,7 @@
           "ApplicationName" : { "Ref" : "HyboxApplication" },
           "WebappEnvironmentName" : { "Fn::GetAtt" : ["webapp", "Outputs.EnvironmentName"] },
           "WorkerEnvironmentName" : { "Fn::GetAtt" : ["workers", "Outputs.EnvironmentName"] },
-          "S3Bucket" : { "Ref" : "S3Bucket" },
+          "S3Bucket" : { "Ref" : "S3BucketEB" },
           "S3Key" : { "Ref" : "S3Key" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/codepipeline.json"]] }
