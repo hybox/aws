@@ -178,6 +178,16 @@
             "Namespace": "aws:elasticbeanstalk:container:tomcat:jvmoptions",
             "OptionName": "JVM Options",
             "Value": "-Dfcrepo.modeshape.configuration=\"classpath:/config/file-simple/repository.json\""
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application",
+            "OptionName": "Application Healthcheck URL",
+            "Value": "/"
+          },
+          {
+            "Namespace": "aws:elb:listener:80",
+            "OptionName": "ListenerProtocol",
+            "Value": "HTTP"
           }
         ],
         "SolutionStackName" : "64bit Amazon Linux 2016.03 v2.2.0 running Tomcat 8 Java 8"

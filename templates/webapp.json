@@ -280,6 +280,31 @@
             "Value": { "Ref" : "BeanstalkSNSTopic"}
           },
           {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "LowerThreshold",
+            "Value" : "30"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "MeasureName",
+            "Value" : "CPUUtilization"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "Statistic",
+            "Value" : "Maximum"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "Unit",
+            "Value" : "Percent"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "UpperThreshold",
+            "Value" : "85"
+          },
+          {
             "Namespace": "aws:elb:listener:80",
             "OptionName": "ListenerProtocol",
             "Value": "HTTP"
@@ -346,6 +371,11 @@
         "OptionSettings" : [
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "STACK_NAME",
+            "Value": { "Ref": "StackName"}
+          },
+		  {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "SECRET_KEY_BASE",
             "Value": { "Ref" : "SecretKeyBase"}
           },
@@ -401,7 +431,7 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
-            "OptionName": "SETTINGS__MULTITENANCY__HOST",
+            "OptionName": "SETTINGS__MULTITENANCY__ADMIN_HOST",
             "Value": { "Fn::Join": [ ".", [ { "Ref": "StackName" }, { "Ref": "HostedZoneName" } ] ] }
           },
           {
@@ -463,6 +493,11 @@
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "HONEYBADGER_API_KEY",
             "Value": { "Ref" : "HoneybadgerApiKey"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "LOGZIO_KEY",
+            "Value": { "Ref" : "LogzioKey"}
           },
           { "Fn::If": [
             "HasSSLCertificate",
