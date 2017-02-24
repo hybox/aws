@@ -280,6 +280,31 @@
             "Value": { "Ref" : "BeanstalkSNSTopic"}
           },
           {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "LowerThreshold",
+            "Value" : "30"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "MeasureName",
+            "Value" : "CPUUtilization"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "Statistic",
+            "Value" : "Maximum"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "Unit",
+            "Value" : "Percent"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "UpperThreshold",
+            "Value" : "85"
+          },
+          {
             "Namespace": "aws:elb:listener:80",
             "OptionName": "ListenerProtocol",
             "Value": "HTTP"

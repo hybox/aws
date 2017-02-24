@@ -131,7 +131,8 @@
 "m3.2xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge",
 "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge",
 "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge",
-"hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge"],
+"hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge",
+"m4.10xlarge", "m4.16xlarge"],
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
     "HealthReportingSystemType": {
@@ -285,9 +286,19 @@
             "Value": "shard:*,replica:<2,cores:<5~"
           },
           {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "JAVA_TOOL_OPTIONS",
+            "Value": "-Xmx128m"
+          },
+          {
             "Namespace": "aws:elasticbeanstalk:sqsd",
             "OptionName": "WorkerQueueURL",
             "Value": { "Ref" : "DefaultQueue"}
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:sqsd",
+            "OptionName": "HttpConnections",
+            "Value": "15"
           }
         ]
       }
@@ -347,6 +358,31 @@
             "Namespace": "aws:elasticbeanstalk:command",
             "OptionName": "DeploymentPolicy",
             "Value": "Immutable"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "LowerThreshold",
+            "Value" : "30"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "MeasureName",
+            "Value" : "CPUUtilization"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "Statistic",
+            "Value" : "Maximum"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "Unit",
+            "Value" : "Percent"
+          },
+          {
+            "Namespace" : "aws:autoscaling:trigger",
+            "OptionName" : "UpperThreshold",
+            "Value" : "85"
           },
           {
             "Namespace": "aws:autoscaling:updatepolicy:rollingupdate",
