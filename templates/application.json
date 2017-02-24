@@ -180,6 +180,11 @@
       "Type": "String",
       "Description": "The api key for honeybadger.io",
       "Default": ""
+    },
+    "LogzioKey": {
+      "Type": "String",
+      "Description": "The logz.io key",
+      "Default": ""
     }
   },
   "Conditions": {
@@ -237,7 +242,8 @@
           "UploadBucket" : { "Ref" : "UploadBucket" },
           "SSLCertificateId" : { "Ref" : "SSLCertificateId" },
           "GoogleAnalyticsId" : { "Ref" : "GoogleAnalyticsId" },
-          "HoneybadgerApiKey" : { "Ref" : "HoneybadgerApiKey" }
+          "HoneybadgerApiKey" : { "Ref" : "HoneybadgerApiKey" },
+          "LogzioKey" : { "Ref" : "LogzioKey" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/webapp.json"]] }
       }
@@ -274,7 +280,8 @@
           "BeanstalkSNSTopic" : { "Ref" : "BeanstalkSNSTopic"},
           "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] },
           "UploadBucket" : { "Ref" : "UploadBucket" },
-          "HoneybadgerApiKey" : { "Ref" : "HoneybadgerApiKey" }
+          "HoneybadgerApiKey" : { "Ref" : "HoneybadgerApiKey" },
+          "LogzioKey" : { "Ref" : "LogzioKey" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/worker.json"]] }
       }

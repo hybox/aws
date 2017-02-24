@@ -141,6 +141,11 @@
       "Type": "String",
       "Description": "The api key for honeybadger.io",
       "Default": ""
+    },
+    "LogzioKey": {
+      "Type": "String",
+      "Description": "The logz.io key",
+      "Default": ""
     }
   },
   "Metadata" : {
@@ -295,7 +300,8 @@
           "WorkerMaxSize" : { "Ref" : "WorkerMaxSize" },
           "SSLCertificateId" : { "Ref" : "SSLCertificateId" },
           "GoogleAnalyticsId" : { "Ref" : "GoogleAnalyticsId" },
-          "HoneybadgerApiKey" : { "Ref" : "HoneybadgerApiKey" }
+          "HoneybadgerApiKey" : { "Ref" : "HoneybadgerApiKey" },
+          "LogzioKey" : { "Ref" : "LogzioKey" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/application.json"]] }
       }

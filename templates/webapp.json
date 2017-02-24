@@ -154,6 +154,11 @@
       "Type": "String",
       "Description": "The api key for honeybadger.io",
       "Default": ""
+    },
+    "LogzioKey": {
+      "Type": "String",
+      "Description": "The logz.io key",
+      "Default": ""
     }
   },
   "Conditions": {
