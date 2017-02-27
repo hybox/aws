@@ -25,71 +25,39 @@
     },
     "DesiredCapacity": {
       "Type": "Number",
-      "Default" : "3",
       "Description": "Number of instances to launch in your ECS cluster"
     },
     "MaxSize": {
       "Type": "Number",
-      "Default" : "6",
       "Description": "Maximum number of instances that can be launched in your ECS cluster"
     },
     "InstanceType" : {
-      "Description" : "The EC2 instance type",
       "Type" : "String",
-      "Default" : "t2.micro",
-      "AllowedValues" : [ "t2.micro", "t2.small", "t2.medium", "m3.medium", "m3.large", "m3.xlarge",
-"m3.2xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge",
-"c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge",
-"i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge",
-"hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge"],
-      "ConstraintDescription" : "must be a valid EC2 instance type."
+      "Description" : "The EC2 instance type"
     },
     "DockerImage" : {
       "Description" : "Docker image to run",
-      "Type" : "String",
-      "Default" : "hybox/exhibitor:test"
+      "Type" : "String"
     },
     "HostedZoneName" : {
-      "Description" : "Route53 zone to create an alias in",
-      "Type" : "String"
+      "Type" : "String",
+      "Description" : "Route53 zone to create an alias in"
     }
   },
 
   "Mappings" : {
     "AWSRegionToAMI" : {
-      "us-east-1": {
-        "AMIID": "ami-b2df2ca4"
-      },
-      "us-east-2": {
-        "AMIID": "ami-832b0ee6"
-      },
-      "us-west-1": {
-        "AMIID": "ami-dd104dbd"
-      },
-      "us-west-2": {
-        "AMIID": "ami-022b9262"
-      },
-      "eu-west-1": {
-        "AMIID": "ami-a7f2acc1"
-      },
-      "eu-west-2": {
-        "AMIID": "ami-3fb6bc5b"
-      },
-      "eu-central-1": {
-        "AMIID": "ami-ec2be583"
-      },
-      "ap-northeast-1": {
-        "AMIID": "ami-c393d6a4"
-      },
-      "ap-southeast-1": {
-        "AMIID": "ami-a88530cb"
-      },
-      "ap-southeast-2": {
-        "AMIID": "ami-8af8ffe9"
-      },
-      "ca-central-1": {
-        "AMIID": "ami-ead5688e"
-      }
+      "us-east-1"      : { "AMIID": "ami-b2df2ca4" },
+      "us-east-2"      : { "AMIID": "ami-832b0ee6" },
+      "us-west-1"      : { "AMIID": "ami-dd104dbd" },
+      "us-west-2"      : { "AMIID": "ami-022b9262" },
+      "eu-west-1"      : { "AMIID": "ami-a7f2acc1" },
+      "eu-west-2"      : { "AMIID": "ami-3fb6bc5b" },
+      "eu-central-1"   : { "AMIID": "ami-ec2be583" },
+      "ap-northeast-1" : { "AMIID": "ami-c393d6a4" },
+      "ap-southeast-1" : { "AMIID": "ami-a88530cb" },
+      "ap-southeast-2" : { "AMIID": "ami-8af8ffe9" },
+      "ca-central-1"   : { "AMIID": "ami-ead5688e" }
     }
   },
 

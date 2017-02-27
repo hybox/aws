@@ -25,12 +25,12 @@ $ AWS_DEFAULT_REGION=us-east-1
 
 2. Create a [public hosted zone](http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html); the web application will automatically manage DNS entries in this zone.
 
-3. Copy the `params/stack.json` template to a new environment-specific file, populating the parameter values as appropriate for your environment (and, particularly, the key name and hosted zone created above; the other settings, while insecure, may suffice for development purposes). Additional parameters may be available, and are documented in `templates/stack.json`.
+3. Copy the `params/defaults.json` template to a new environment-specific file, populating the parameter values as appropriate for your environment (and, particularly, the key name and hosted zone created above; the other settings, while insecure, may suffice for development purposes). This repo ignores a local file named `params/private.json` where secret params can be set.
 
 4. Create the full application stack:
 
 ```console
-$ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/my-hybox-environment.json
+$ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/private.json
 ```
 
 You can also create (or update) your application from branches of the cloudformation repository:
@@ -41,6 +41,23 @@ $ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybo
 
 You can also deploy branches of the hybox application repository by setting the `WebappS3Key` parameter for your stack to point at the branch-specific deployment artifact (e.g. `hyku/branch/branch-name/hyku.zip`)
 
+The stack will spin up in the following order:
+
+```console
+|- stack
+   |- mail
+   |- slack
+   |- vpc
+      |- securitygroups
+          |- bastion
+          |- zookeeper
+          |- fcrepo
+          |- redis
+          |- database
+              |- application
+                  |- workers
+                  |- webapp
+```
 
 ## Travis deployment integration
 

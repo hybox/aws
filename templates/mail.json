@@ -5,12 +5,11 @@
   "Parameters" : {
     "Domain": {
       "Type": "String",
-      "Description": "Name of the ElasticBeanstalk environment",
-      "Default" : "HyboxApplication"
+      "Description": "Name of the ElasticBeanstalk environment"
     },
     "HostedZoneName" : {
-      "Description" : "Route53 zone to create an alias in",
-      "Type" : "String"
+      "Type" : "String",
+      "Description" : "Route53 zone to create an alias in"
     }
   },
   "Resources" : {

@@ -5,8 +5,7 @@
   "Parameters" : {
     "BucketName": {
       "Type": "String",
-      "Description": "S3 Bucket of the deployment artifact",
-      "Default": "hybox-deployment-artifacts"
+      "Description": "S3 Bucket of the deployment artifact"
     }
   },
   "Resources" : {
@@ -69,7 +68,7 @@
         ]
       }
     },
-    "S3AccessKey" : {   
+    "S3AccessKey" : {
       "Type": "AWS::IAM::AccessKey",
       "Properties": {
         "UserName": { "Ref" : "S3User" }

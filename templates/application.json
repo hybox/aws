@@ -5,8 +5,7 @@
   "Parameters" : {
     "StackName": {
       "Type": "String",
-      "Description": "Name of the ElasticBeanstalk environment",
-      "Default" : "HyboxApplication"
+      "Description": "Name of the ElasticBeanstalk environment"
     },
     "KeyName": {
       "Type": "AWS::EC2::KeyPair::KeyName",
@@ -14,42 +13,34 @@
     },
     "S3Bucket": {
       "Type": "String",
-      "Description": "S3 bucket with cloudformation templates",
-      "Default": "hybox-deployment-artifacts"
+      "Description": "S3 bucket with cloudformation templates"
     },
     "S3BucketEB": {
       "Type": "String",
-      "Description": "S3 bucket with the hyku zip",
-      "Default": "hybox-deployment-artifacts"
+      "Description": "S3 bucket with the hyku zip"
     },
     "S3Key": {
       "Type": "String",
-      "Description": "S3 key to the hyku zip",
-      "Default": "hyku.zip"
+      "Description": "S3 key to the hyku zip"
     },
     "S3KeyPrefix" : {
-      "Description" : "S3 prefix to deployment artifacts",
       "Type" : "String",
-      "Default": "branch/{{branch}}"
+      "Description" : "S3 prefix to deployment artifacts"
     },
     "WebappMinSize": {
       "Type": "Number",
-      "Default" : "1",
       "Description": "Minimum number of instances"
     },
     "WebappMaxSize": {
       "Type": "Number",
-      "Default" : "4",
       "Description": "Maximum number of instances"
     },
     "WorkerMinSize": {
       "Type": "Number",
-      "Default" : "1",
       "Description": "Minimum number of instances"
     },
     "WorkerMaxSize": {
       "Type": "Number",
-      "Default" : "4",
       "Description": "Maximum number of instances"
     },
     "PublicSubnets": {
@@ -69,26 +60,25 @@
       "Description": "A list of security groups, such as sg-a123fd85."
     },
     "HostedZoneName" : {
-      "Description" : "Route53 zone to create an alias in",
-      "Type" : "String"
+      "Type" : "String",
+      "Description" : "Route53 zone to create an alias in"
     },
     "SecretKeyBase" : {
-      "NoEcho": "true",
+      "Type" : "String",
       "Description" : "Secret key for Rails",
-      "Type" : "String"
+      "NoEcho": "true"
     },
     "FcrepoUrl" : {
-      "Description" : "URL to Fedora",
-      "Type" : "String"
+      "Type" : "String",
+      "Description" : "URL to Fedora"
     },
     "SolrUrl" : {
-      "Description" : "URL to Solr",
-      "Type" : "String"
+      "Type" : "String",
+      "Description" : "URL to Solr"
     },
     "ZookeeperHosts": {
       "Type": "String",
-      "Description": "A list of zookeeper host IP + ports",
-      "Default": "127.0.0.1:2181"
+      "Description": "A list of zookeeper host IP + ports"
     },
     "RedisHost": {
       "Type": "String",
@@ -96,24 +86,20 @@
     },
     "RedisPort": {
       "Type": "String",
-      "Description": "Redis Port",
-      "Default": "6379"
+      "Description": "Redis Port"
     },
     "RDSDatabaseName": {
       "Type": "String",
-      "Description": "Database name",
-      "Default": "hybox"
+      "Description": "Database name"
     },
     "RDSUsername": {
       "Type": "String",
-      "Description": "Username for Database",
-      "Default": "root"
+      "Description": "Username for Database"
     },
     "RDSPassword": {
-      "NoEcho": "true",
       "Type": "String",
       "Description": "Password for Database",
-      "Default": "changeme"
+      "NoEcho": "true"
     },
     "RDSHostname": {
       "Type": "String",
@@ -121,41 +107,27 @@
     },
     "RDSPort": {
       "Type": "String",
-      "Description": "Database Port",
-      "Default": "5432"
+      "Description": "Database Port"
     },
     "QueuePrefix": {
       "Type": "String",
-      "Description": "SQS Queue prefix",
-      "Default": "hybox"
-    },
-    "HealthReportingSystemType": {
-      "Type": "String",
-      "Description": "Health reporting system",
-      "Default": "enhanced",
-      "AllowedValues" : [ "enhanced", "basic"]
+      "Description": "SQS Queue prefix"
     },
     "WebappInstanceType" : {
-      "Description" : "The EC2 instance type",
       "Type" : "String",
-      "Default" : "t2.large",
-      "AllowedValues" : [ "t2.micro", "t2.small", "t2.medium", "t2.large", "m3.medium", "m3.large", "m3.xlarge",
-"m3.2xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge",
-"c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge",
-"i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge",
-"hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge"],
-      "ConstraintDescription" : "must be a valid EC2 instance type."
+      "Description" : "The EC2 instance type"
     },
     "WorkerInstanceType" : {
-      "Description" : "The EC2 instance type",
       "Type" : "String",
-      "Default" : "t2.medium",
-      "AllowedValues" : [ "t2.micro", "t2.small", "t2.medium", "t2.large", "m3.medium", "m3.large", "m3.xlarge",
-"m3.2xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge",
-"c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge",
-"i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge",
-"hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge"],
-      "ConstraintDescription" : "must be a valid EC2 instance type."
+      "Description" : "The EC2 instance type"
+    },
+    "WebappHealthReportingSystemType": {
+      "Type": "String",
+      "Description": "Health reporting system"
+    },
+    "WorkerHealthReportingSystemType": {
+      "Type": "String",
+      "Description": "Health reporting system"
     },
     "BeanstalkSNSTopic": {
       "Type": "String",
@@ -163,28 +135,23 @@
     },
     "ContinuousDeployment": {
       "Type": "String",
-      "Description": "Configure continuous deployment for the webapp and workers?",
-      "Default": "true"
+      "Description": "Configure continuous deployment for the webapp and workers?"
     },
     "SSLCertificateId": {
       "Type": "String",
-      "Description": "The Amazon Resource Name (ARN) of the SSL certificate",
-      "Default": ""
+      "Description": "The Amazon Resource Name (ARN) of the SSL certificate"
     },
     "GoogleAnalyticsId": {
       "Type": "String",
-      "Description": "The Google Analytics id, e.g UA-111111-1",
-      "Default": ""
+      "Description": "The Google Analytics id, e.g UA-111111-1"
     },
     "HoneybadgerApiKey": {
       "Type": "String",
-      "Description": "The api key for honeybadger.io",
-      "Default": ""
+      "Description": "The api key for honeybadger.io"
     },
     "LogzioKey": {
       "Type": "String",
-      "Description": "The logz.io key",
-      "Default": ""
+      "Description": "The logz.io key"
     }
   },
   "Conditions": {
@@ -238,6 +205,8 @@
           "QueuePrefix" : { "Ref" : "QueuePrefix" },
           "DefaultQueue" : { "Ref" : "DefaultQueue"},
           "BeanstalkSNSTopic" : { "Ref" : "BeanstalkSNSTopic"},
+          "InstanceType" : { "Ref" : "WebappInstanceType" },
+          "HealthReportingSystemType" : { "Ref" : "WebappHealthReportingSystemType" },
           "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] },
           "UploadBucket" : { "Ref" : "UploadBucket" },
           "SSLCertificateId" : { "Ref" : "SSLCertificateId" },
@@ -279,6 +248,8 @@
           "DefaultQueueName" : { "Fn::GetAtt" : ["DefaultQueue", "QueueName"] },
           "BeanstalkSNSTopic" : { "Ref" : "BeanstalkSNSTopic"},
           "IamInstanceProfile" : { "Fn::GetAtt" : ["EC2InstanceProfile", "Arn"] },
+          "InstanceType" : { "Ref" : "WorkerInstanceType" },
+          "HealthReportingSystemType" : { "Ref" : "WorkerHealthReportingSystemType" },
           "UploadBucket" : { "Ref" : "UploadBucket" },
           "HoneybadgerApiKey" : { "Ref" : "HoneybadgerApiKey" },
           "LogzioKey" : { "Ref" : "LogzioKey" }
