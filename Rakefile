@@ -18,4 +18,39 @@ task :copy_artifacts do
   end
 end
 
+task :audit_solution_stacks do
+  require 'aws-sdk'
+  require 'fuzzy_match'
+
+  find_template = ->(hash) do
+    return hash if hash['Type'] == 'AWS::ElasticBeanstalk::ConfigurationTemplate'
+    hash.each_pair do |k,v|
+      result = find_template.call(v) if v.is_a?(Hash)
+      return result unless result.nil?
+    end
+    nil
+  end
+
+  stacks = Aws::ElasticBeanstalk::Client.new.list_available_solution_stacks.solution_stacks
+  matcher = FuzzyMatch.new(stacks)
+  files = Dir['templates/*.json']
+  exit_code = 0
+
+  files.each do |file|
+    doc = JSON.parse(File.read(file))
+    template = find_template.call(doc)
+    next if template.nil?
+    solution_stack = template['Properties']['SolutionStackName']
+    next if solution_stack.nil?
+    if stacks.include?(solution_stack)
+      $stderr.puts "#{file}: Solution Stack `#{solution_stack}': OK"
+    else
+      $stderr.puts "#{file}: Solution Stack `#{solution_stack}': NOT FOUND"
+      $stderr.puts "  Did you mean `#{matcher.find(solution_stack)}'?"
+      exit_code = 1
+    end
+  end
+  exit exit_code
+end
+
 task default: [:jsonlint, :copy_artifacts]
