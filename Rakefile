@@ -34,6 +34,7 @@ task :audit_solution_stacks do
   stacks = Aws::ElasticBeanstalk::Client.new.list_available_solution_stacks.solution_stacks
   matcher = FuzzyMatch.new(stacks)
   files = Dir['templates/*.json']
+  exit_code = 0
 
   files.each do |file|
     doc = JSON.parse(File.read(file))
@@ -42,12 +43,14 @@ task :audit_solution_stacks do
     solution_stack = template['Properties']['SolutionStackName']
     next if solution_stack.nil?
     if stacks.include?(solution_stack)
-      puts "#{file}: Solution Stack `#{solution_stack}': OK"
+      $stderr.puts "#{file}: Solution Stack `#{solution_stack}': OK"
     else
-      puts "#{file}: Solution Stack `#{solution_stack}': NOT FOUND"
-      puts "  Did you mean `#{matcher.find(solution_stack)}'?"
+      $stderr.puts "#{file}: Solution Stack `#{solution_stack}': NOT FOUND"
+      $stderr.puts "  Did you mean `#{matcher.find(solution_stack)}'?"
+      exit_code = 1
     end
   end
+  exit exit_code
 end
 
 task default: [:jsonlint, :copy_artifacts]
