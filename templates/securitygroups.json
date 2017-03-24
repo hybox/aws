@@ -117,7 +117,7 @@
     "SolrLbSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-         "GroupDescription" : "Solr load-balancer security group",
+         "GroupDescription" : "Solr load balancer security group",
          "VpcId" : { "Ref" : "VPC" },
          "SecurityGroupIngress" : [
            {
@@ -139,7 +139,7 @@
     "FedoraSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-         "GroupDescription" : "Fedora load balancer security group",
+         "GroupDescription" : "Fedora security group",
          "VpcId" : { "Ref" : "VPC" },
          "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "fcrepo"] ] } } ]
       }
@@ -147,7 +147,7 @@
     "FedoraLbSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-         "GroupDescription" : "Fedora security group",
+         "GroupDescription" : "Fedora load balancer security group",
          "VpcId" : { "Ref" : "VPC" },
          "SecurityGroupIngress" : [
            {
