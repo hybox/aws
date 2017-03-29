@@ -70,6 +70,22 @@
          "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "db"] ] } } ]
       }
     },
+    "FcrepoDatabaseSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+         "GroupDescription" : "Fedora RDS security group",
+         "VpcId" : { "Ref" : "VPC" },
+         "SecurityGroupIngress" : [
+           {
+             "SourceSecurityGroupId" : { "Ref" : "FedoraSecurityGroup" },
+             "IpProtocol": "tcp",
+             "FromPort" : "5432",
+             "ToPort" : "5432"
+           }
+         ],
+         "Tags" : [ { "Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "StackName" }, "fcrepodb"] ] } } ]
+      }
+    },
     "RedisSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
@@ -265,6 +281,10 @@
     "Database" : {
       "Description": "Security Group ID for the database security group",
       "Value": { "Ref" : "DatabaseSecurityGroup" }
+    },
+    "FcrepoDatabase" : {
+      "Description": "Security Group ID for the database security group",
+      "Value": { "Ref" : "FcrepoDatabaseSecurityGroup" }
     },
     "Redis" : {
       "Description": "Security Group ID for the redis security group",

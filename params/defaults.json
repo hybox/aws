@@ -44,6 +44,26 @@
     "ParameterValue": "true"
   },
   {
+    "ParameterKey": "FcrepoDatabaseUsername",
+    "ParameterValue": "ebroot"
+  },
+  {
+    "ParameterKey": "FcrepoDatabasePassword",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "FcrepoDatabaseName",
+    "ParameterValue": "fcrepo"
+  },
+  {
+    "ParameterKey": "FcrepoDatabaseStorageSize",
+    "ParameterValue": "5"
+  },
+  {
+    "ParameterKey": "FcrepoDatabaseMultiAZ",
+    "ParameterValue": "true"
+  },
+  {
     "ParameterKey": "SecretKeyBase",
     "ParameterValue": ""
   },
@@ -141,6 +161,10 @@
   },
   {
     "ParameterKey": "DatabaseInstanceType",
+    "ParameterValue": "db.t2.medium"
+  },
+  {
+    "ParameterKey": "FcrepoDatabaseInstanceType",
     "ParameterValue": "db.t2.medium"
   },
   {
