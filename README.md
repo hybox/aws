@@ -51,12 +51,14 @@ The stack will spin up in the following order:
       |- securitygroups
           |- bastion
           |- zookeeper
-          |- fcrepo
+              |- solr
           |- redis
-          |- database
+          |- fcrepo
+          |- postgres
               |- application
-                  |- workers
-                  |- webapp
+                  |- codepipeline
+                      |- workers
+                      |- webapp
 ```
 
 ## Travis deployment integration

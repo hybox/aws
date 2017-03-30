@@ -59,19 +59,19 @@
     },
     "S3FedoraFilename" : {
       "Type": "String",
-      "Description": "Instance type to launch"
+      "Description": "S3 key to the Fcrepo war"
     },
     "FcrepoMinSize" : {
       "Type": "String",
-      "Description": "Instance type to launch"
+      "Description": "Minimum number of Fedora instances to launch"
     },
     "FcrepoMaxSize" : {
       "Type": "String",
-      "Description": "Instance type to launch"
+      "Description": "Maximum number of Fedora instances to launch"
     },
     "SolrCloudSize" : {
       "Type": "Number",
-      "Description": "Number of instances to launch"
+      "Description": "Number of Solr instances to launch"
     },
     "SolrCloudInstanceType" : {
       "Type": "String",
