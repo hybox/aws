@@ -1,0 +1,178 @@
+[
+  {
+    "ParameterKey": "KeyName",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "S3Bucket",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "S3BucketEB",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "S3KeyPrefix",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "WebappS3Key",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "PublicZoneName",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "DatabaseUsername",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "DatabasePassword",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "DatabaseName",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "DatabaseStorageSize",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "DatabaseMultiAZ",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "SecretKeyBase",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "FcrepoInstanceType",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "S3FedoraFilename",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "FcrepoMinSize",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "FcrepoMaxSize",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "SolrCloudSize",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "SolrCloudInstanceType",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "SolrCloudMaxSize",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "SolrCloudDockerImage",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "SolrCloudDataVolumePath",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "ZookeeperEnsembleSize",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "ZookeeperEnsembleInstanceType",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "ZookeeperEnsembleMaxSize",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "ZookeeperDockerImage",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "WorkerInstanceType",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "WorkerMinSize",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "WorkerMaxSize",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "WebappInstanceType",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "WebappMinSize",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "WebappMaxSize",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "WebappHealthReportingSystemType",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "WorkerHealthReportingSystemType",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "RedisInstanceType",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "BastionInstanceType",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "DatabaseInstanceType",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "SlackWebhookToken",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "SlackWebhookChannel",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "ContinuousDeployment",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "QueuePrefix",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "SSLCertificateId",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "GoogleAnalyticsId",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "HoneybadgerApiKey",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "LogzioKey",
+    "UsePreviousValue" : true
+  }
+]

@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
   "Description" : "Hydra-in-a-Box postgresql database stack using RDS",
-  
+
   "Parameters" : {
     "SubnetID": {
       "Type": "List<AWS::EC2::Subnet::Id>",
@@ -9,37 +9,32 @@
     },
     "DatabaseName": {
       "Type": "String",
-      "Description": "Name of the database",
-      "Default": "hybox"
+      "Description": "Name of the database"
     },
     "MasterUsername": {
       "Type": "String",
-      "Description": "Database Root Username",
-      "Default": "ebroot"
+      "Description": "Database Root Username"
     },
     "DBInstanceClass": {
       "Type": "String",
-      "Default" : "db.t2.medium",
       "Description": "Instance size"
     },
     "MasterUserPassword": {
-      "NoEcho": "true",
       "Type": "String",
-      "Description": "Password for the DB Root User"
+      "Description": "Password for the DB Root User",
+      "NoEcho": "true"
     },
     "SecurityGroups": {
       "Type": "CommaDelimitedList",
       "Description": "A list of security group ids, such as sg-a123fd85"
     },
     "AllocatedStorage" : {
-      "Description" : "Size of DB in Gigs",
       "Type" : "String",
-      "Default": "5"
+      "Description" : "Size of DB in Gigs"
     },
     "MultiAZDatabase" : {
-      "Description" : "Launch the database in multiple availability zones",
       "Type" : "String",
-      "Default": "true"
+      "Description" : "Launch the database in multiple availability zones"
     }
   },
   "Resources": {

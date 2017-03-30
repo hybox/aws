@@ -9,8 +9,7 @@
     },
     "S3Key": {
       "Type": "String",
-      "Description": "S3 Key of the deployment artifact",
-      "Default": "hyku.zip"
+      "Description": "S3 Key of the deployment artifact"
     },
     "ApplicationName": {
       "Type": "String",

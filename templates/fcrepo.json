@@ -17,22 +17,18 @@
     },
     "S3Bucket": {
       "Type": "String",
-      "Description": "S3 bucket with the Fcrepo war",
-      "Default": "hybox-deployment-artifacts"
+      "Description": "S3 bucket with the Fcrepo war"
     },
     "S3Key": {
       "Type": "String",
-      "Description": "S3 key to the Fcrepo war",
-      "Default": "fcrepo-webapp-4.7.1.war"
+      "Description": "S3 key to the Fcrepo war"
     },
     "MinSize": {
       "Type": "Number",
-      "Default" : "1",
       "Description": "Minimum number of instances"
     },
     "MaxSize": {
       "Type": "Number",
-      "Default" : "2",
       "Description": "Maximum number of instances"
     },
     "SecurityGroups": {
@@ -48,15 +44,8 @@
       "Type" : "String"
     },
     "InstanceType" : {
-      "Description" : "The EC2 instance type",
       "Type" : "String",
-      "Default" : "t2.large",
-      "AllowedValues" : [ "t2.micro", "t2.small", "t2.medium", "t2.large", "m3.medium", "m3.large", "m3.xlarge",
-"m3.2xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge",
-"c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge",
-"i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge",
-"hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge"],
-      "ConstraintDescription" : "must be a valid EC2 instance type."
+      "Description" : "The EC2 instance type"
     }
   },
   "Resources" : {

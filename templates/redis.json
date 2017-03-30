@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
   "Description" : "Hydra-in-a-Box redis stack using ElastiCache",
-  
+
   "Parameters" : {
     "SecurityGroups": {
       "Type": "CommaDelimitedList",
@@ -12,10 +12,8 @@
       "Description": "List of an existing subnet IDs to use for the load balancer and auto scaling group"
     },
     "InstanceType" : {
-      "Description" : "The cache instance type",
       "Type" : "String",
-      "Default" : "cache.m1.small",
-      "ConstraintDescription" : "must be a valid EC2 cache instance type."
+      "Description" : "The cache instance type"
     }
   },
   "Resources": {

@@ -6,13 +6,11 @@
     "SlackWebhookToken": {
       "Type": "String",
       "Description": "Slack generated token for Incoming Webhook",
-      "Default": "",
       "NoEcho": "true"
     },
     "SlackWebhookChannel": {
       "Type": "String",
-      "Description": "Slack channel for posting notifications",
-      "Default": ""
+      "Description": "Slack channel for posting notifications"
     }
   },
   "Conditions": {

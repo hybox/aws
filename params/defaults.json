@@ -1,0 +1,178 @@
+[
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "hybox"
+  },
+  {
+    "ParameterKey": "S3Bucket",
+    "ParameterValue": "hybox-deployment-artifacts"
+  },
+  {
+    "ParameterKey": "S3BucketEB",
+    "ParameterValue": "hybox-deployment-artifacts"
+  },
+  {
+    "ParameterKey": "S3KeyPrefix",
+    "ParameterValue": "branch/branchname_here"
+  },
+  {
+    "ParameterKey": "WebappS3Key",
+    "ParameterValue": "hyku/current/hyku.zip"
+  },
+  {
+    "ParameterKey": "PublicZoneName",
+    "ParameterValue": "hydrainabox.org."
+  },
+  {
+    "ParameterKey": "DatabaseUsername",
+    "ParameterValue": "ebroot"
+  },
+  {
+    "ParameterKey": "DatabasePassword",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "DatabaseName",
+    "ParameterValue": "hybox"
+  },
+  {
+    "ParameterKey": "DatabaseStorageSize",
+    "ParameterValue": "5"
+  },
+  {
+    "ParameterKey": "DatabaseMultiAZ",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "SecretKeyBase",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "FcrepoInstanceType",
+    "ParameterValue": "t2.large"
+  },
+  {
+    "ParameterKey": "S3FedoraFilename",
+    "ParameterValue": "fcrepo-webapp-4.7.1.war"
+  },
+  {
+    "ParameterKey": "FcrepoMinSize",
+    "ParameterValue": "1"
+  },
+  {
+    "ParameterKey": "FcrepoMaxSize",
+    "ParameterValue": "2"
+  },
+  {
+    "ParameterKey": "SolrCloudInstanceType",
+    "ParameterValue": "t2.large"
+  },
+  {
+    "ParameterKey": "SolrCloudSize",
+    "ParameterValue": "3"
+  },
+  {
+    "ParameterKey": "SolrCloudMaxSize",
+    "ParameterValue": "6"
+  },
+  {
+    "ParameterKey": "SolrCloudDockerImage",
+    "ParameterValue": "hybox/solr-ecs:6"
+  },
+  {
+    "ParameterKey": "SolrCloudDataVolumePath",
+    "ParameterValue": "/var/lib/docker/vfs/dir/solr-data"
+  },
+  {
+    "ParameterKey": "ZookeeperEnsembleInstanceType",
+    "ParameterValue": "t2.micro"
+  },
+  {
+    "ParameterKey": "ZookeeperEnsembleSize",
+    "ParameterValue": "3"
+  },
+  {
+    "ParameterKey": "ZookeeperEnsembleMaxSize",
+    "ParameterValue": "4"
+  },
+  {
+    "ParameterKey": "ZookeeperDockerImage",
+    "ParameterValue": "hybox/exhibitor:test"
+  },
+  {
+    "ParameterKey": "WorkerInstanceType",
+    "ParameterValue": "t2.medium"
+  },
+  {
+    "ParameterKey": "WorkerMinSize",
+    "ParameterValue": "1"
+  },
+  {
+    "ParameterKey": "WorkerMaxSize",
+    "ParameterValue": "4"
+  },
+  {
+    "ParameterKey": "WebappInstanceType",
+    "ParameterValue": "t2.large"
+  },
+  {
+    "ParameterKey": "WebappMinSize",
+    "ParameterValue": "1"
+  },
+  {
+    "ParameterKey": "WebappMaxSize",
+    "ParameterValue": "4"
+  },
+  {
+    "ParameterKey": "WebappHealthReportingSystemType",
+    "ParameterValue": "enhanced"
+  },
+  {
+    "ParameterKey": "WorkerHealthReportingSystemType",
+    "ParameterValue": "enhanced"
+  },
+  {
+    "ParameterKey": "RedisInstanceType",
+    "ParameterValue": "cache.m1.small"
+  },
+  {
+    "ParameterKey": "BastionInstanceType",
+    "ParameterValue": "t2.nano"
+  },
+  {
+    "ParameterKey": "DatabaseInstanceType",
+    "ParameterValue": "db.t2.medium"
+  },
+  {
+    "ParameterKey": "SlackWebhookToken",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "SlackWebhookChannel",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "ContinuousDeployment",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "QueuePrefix",
+    "ParameterValue": "hybox"
+  },
+  {
+    "ParameterKey": "SSLCertificateId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "GoogleAnalyticsId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "HoneybadgerApiKey",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "LogzioKey",
+    "ParameterValue": ""
+  }
+]
