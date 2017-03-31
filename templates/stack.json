@@ -48,6 +48,27 @@
       "Type" : "String",
       "Description" : "Launch the database in multiple availability zones"
     },
+    "FcrepoDatabaseUsername": {
+      "Type": "String",
+      "Description": "Database Root Username"
+    },
+    "FcrepoDatabasePassword": {
+      "Type": "String",
+      "Description": "Password for the DB Root User",
+      "NoEcho": "true"
+    },
+    "FcrepoDatabaseName": {
+      "Type": "String",
+      "Description": "Name of the database"
+    },
+    "FcrepoDatabaseStorageSize" : {
+      "Type" : "String",
+      "Description" : "Size of DB in Gigs"
+    },
+    "FcrepoDatabaseMultiAZ" : {
+      "Type" : "String",
+      "Description" : "Launch the database in multiple availability zones"
+    },
     "SecretKeyBase" : {
       "Type" : "String",
       "Description" : "Secret key for Rails",
@@ -151,6 +172,10 @@
       "Type": "String",
       "Description": "Instance type to launch"
     },
+    "FcrepoDatabaseInstanceType" : {
+      "Type": "String",
+      "Description": "Instance type to launch"
+    },
     "SlackWebhookToken": {
       "Type": "String",
       "Description": "Slack generated token for Incoming Webhook",
@@ -198,7 +223,11 @@
         },
         {
           "Label" : { "default" : "Resources"},
-          "Parameters" : ["WorkerInstanceType", "WorkerMinSize", "WorkerMaxSize", "WebappInstanceType", "WebappMinSize", "WebappMaxSize", "DatabaseInstanceType", "RedisInstanceType", "FcrepoInstanceType", "SolrCloudSize", "SolrCloudInstanceType", "ZookeeperEnsembleSize", "ZookeeperEnsembleInstanceType"]
+          "Parameters" : ["WorkerInstanceType", "WorkerMinSize", "WorkerMaxSize", "WebappInstanceType", "WebappMinSize", "WebappMaxSize", "DatabaseInstanceType", "FcrepoDatabaseInstanceType", "RedisInstanceType", "FcrepoInstanceType", "SolrCloudSize", "SolrCloudInstanceType", "ZookeeperEnsembleSize", "ZookeeperEnsembleInstanceType"]
+        },
+        {
+          "Label" : { "default" : "Fedora Repository Configuration" },
+          "Parameters" : [ "FcrepoDatabaseUsername", "FcrepoDatabasePassword" ]
         },
         {
           "Label" : { "default" : "Application Configuration" },
@@ -261,7 +290,12 @@
           "MinSize" : { "Ref" : "FcrepoMinSize" },
           "MaxSize" : { "Ref" : "FcrepoMaxSize" },
           "HostedZoneName" : { "Fn::GetAtt" : ["vpc", "Outputs.HostedZoneName"] },
-          "InstanceType" : { "Ref" : "FcrepoInstanceType" }
+          "InstanceType" : { "Ref" : "FcrepoInstanceType" },
+          "RDSDatabaseName" : { "Fn::GetAtt" : ["fcrepodb", "Outputs.DatabaseName"] },
+          "RDSHostname" : { "Fn::GetAtt" : ["fcrepodb", "Outputs.EndpointAddress"] },
+          "RDSPort" : { "Fn::GetAtt" : ["fcrepodb", "Outputs.EndpointPort"] },
+          "RDSUsername" : { "Ref" : "FcrepoDatabaseUsername" },
+          "RDSPassword" : { "Ref" : "FcrepoDatabasePassword" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/fcrepo.json"]] }
       }
@@ -309,6 +343,22 @@
           "AllocatedStorage" : { "Ref" : "DatabaseStorageSize" },
           "MultiAZDatabase" : { "Ref" : "DatabaseMultiAZ" },
           "DBInstanceClass" : { "Ref" : "DatabaseInstanceType" }
+        },
+        "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/postgres.json"]] }
+      }
+    },
+    "fcrepodb" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Parameters" : {
+          "SubnetID" : { "Fn::GetAtt" : ["vpc", "Outputs.PrivateSubnets"] },
+          "SecurityGroups" : { "Fn::GetAtt" : [ "securitygroups", "Outputs.FcrepoDatabase"] },
+          "MasterUsername" : { "Ref" : "FcrepoDatabaseUsername" },
+          "MasterUserPassword" : { "Ref" : "FcrepoDatabasePassword" },
+          "DatabaseName" : { "Ref" : "FcrepoDatabaseName" },
+          "AllocatedStorage" : { "Ref" : "FcrepoDatabaseStorageSize" },
+          "MultiAZDatabase" : { "Ref" : "FcrepoDatabaseMultiAZ" },
+          "DBInstanceClass" : { "Ref" : "FcrepoDatabaseInstanceType" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/postgres.json"]] }
       }

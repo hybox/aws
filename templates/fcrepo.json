@@ -46,6 +46,27 @@
     "InstanceType" : {
       "Type" : "String",
       "Description" : "The EC2 instance type"
+    },
+    "RDSDatabaseName": {
+      "Type": "String",
+      "Description": "Database name"
+    },
+    "RDSUsername": {
+      "Type": "String",
+      "Description": "Username for Database"
+    },
+    "RDSPassword": {
+      "Type": "String",
+      "Description": "Password for Database",
+      "NoEcho": "true"
+    },
+    "RDSHostname": {
+      "Type": "String",
+      "Description": "Hostname for RDS Database"
+    },
+    "RDSPort": {
+      "Type": "String",
+      "Description": "Database Port"
     }
   },
   "Resources" : {
@@ -166,12 +187,19 @@
           {
             "Namespace": "aws:elasticbeanstalk:container:tomcat:jvmoptions",
             "OptionName": "JVM Options",
-            "Value": "-Dfcrepo.modeshape.configuration=\"classpath:/config/file-simple/repository.json\""
+            "Value": { "Fn::Join": ["", [
+                "-Duser.dir=\"/var/lib/fcrepo\"",
+                " -Dfcrepo.postgresql.host=\"", { "Ref" : "RDSHostname" }, "\"",
+                " -Dfcrepo.postgresql.port=\"", { "Ref" : "RDSPort" }, "\"",
+                " -Dfcrepo.postgresql.username=\"", { "Ref" : "RDSUsername" }, "\"",
+                " -Dfcrepo.postgresql.password=\"", { "Ref" : "RDSPassword" }, "\"",
+                " -Dfcrepo.modeshape.configuration=\"classpath:/config/jdbc-postgresql/repository.json\""
+              ]]}
           },
           {
             "Namespace": "aws:elasticbeanstalk:application",
             "OptionName": "Application Healthcheck URL",
-            "Value": "/"
+            "Value": "/rest"
           },
           {
             "Namespace": "aws:elb:listener:80",
