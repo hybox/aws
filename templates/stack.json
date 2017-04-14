@@ -69,6 +69,22 @@
       "Type" : "String",
       "Description" : "Launch the database in multiple availability zones"
     },
+    "FcrepoHomePath" : {
+      "Type" : "String",
+      "Description" : "Fcrepo home directory path"
+    },
+    "FcrepoS3AccessKey" : {
+      "Type" : "String",
+      "Description" : "Access Key Id for IAM user with access to Fcrepo bucket"
+    },
+    "FcrepoS3SecretKey" : {
+      "Type" : "String",
+      "Description" : "Secret Access Key for IAM user with access to Fcrepo bucket"
+    },
+    "FcrepoS3BucketName" : {
+      "Type" : "String",
+      "Description" : "Name of S3 bucket for Fedora binary content"
+    },
     "SecretKeyBase" : {
       "Type" : "String",
       "Description" : "Secret key for Rails",
@@ -227,7 +243,7 @@
         },
         {
           "Label" : { "default" : "Fedora Repository Configuration" },
-          "Parameters" : [ "FcrepoDatabaseUsername", "FcrepoDatabasePassword" ]
+          "Parameters" : [ "FcrepoDatabaseUsername", "FcrepoDatabasePassword", "FcrepoHomePath", "FcrepoS3AccessKey", "FcrepoS3SecretKey", "FcrepoS3BucketName" ]
         },
         {
           "Label" : { "default" : "Application Configuration" },
@@ -295,7 +311,11 @@
           "RDSHostname" : { "Fn::GetAtt" : ["fcrepodb", "Outputs.EndpointAddress"] },
           "RDSPort" : { "Fn::GetAtt" : ["fcrepodb", "Outputs.EndpointPort"] },
           "RDSUsername" : { "Ref" : "FcrepoDatabaseUsername" },
-          "RDSPassword" : { "Ref" : "FcrepoDatabasePassword" }
+          "RDSPassword" : { "Ref" : "FcrepoDatabasePassword" },
+          "HomePath" : { "Ref" : "FcrepoHomePath" },
+          "BinaryStoreS3AccessKey" : { "Ref" : "FcrepoS3AccessKey" },
+          "BinaryStoreS3SecretKey" : { "Ref" : "FcrepoS3SecretKey" },
+          "BinaryStoreS3Bucket" : { "Ref" : "FcrepoS3BucketName" }
         },
         "TemplateURL" : { "Fn::Join" : ["", ["https://s3.amazonaws.com/", { "Ref" : "S3Bucket" }, "/cloudformation/", { "Ref" : "S3KeyPrefix"}, "/templates/fcrepo.json"]] }
       }

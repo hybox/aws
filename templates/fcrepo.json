@@ -67,6 +67,22 @@
     "RDSPort": {
       "Type": "String",
       "Description": "Database Port"
+    },
+    "HomePath": {
+      "Type": "String",
+      "Description": "Fedora home directory"
+    },
+    "BinaryStoreS3AccessKey": {
+      "Type": "String",
+      "Description": "Access Key Id providing access to binary store S3 bucket"
+    },
+    "BinaryStoreS3SecretKey": {
+      "Type": "String",
+      "Description": "Secret Access Key providing access to binary store S3 bucket"
+    },
+    "BinaryStoreS3Bucket": {
+      "Type": "String",
+      "Description": "Binary store S3 bucket"
     }
   },
   "Resources" : {
@@ -188,12 +204,15 @@
             "Namespace": "aws:elasticbeanstalk:container:tomcat:jvmoptions",
             "OptionName": "JVM Options",
             "Value": { "Fn::Join": ["", [
-                "-Duser.dir=\"/var/lib/fcrepo\"",
+                "-Dfcrepo.home=\"", { "Ref" : "HomePath" }, "\"",
                 " -Dfcrepo.postgresql.host=\"", { "Ref" : "RDSHostname" }, "\"",
                 " -Dfcrepo.postgresql.port=\"", { "Ref" : "RDSPort" }, "\"",
                 " -Dfcrepo.postgresql.username=\"", { "Ref" : "RDSUsername" }, "\"",
                 " -Dfcrepo.postgresql.password=\"", { "Ref" : "RDSPassword" }, "\"",
-                " -Dfcrepo.modeshape.configuration=\"classpath:/config/jdbc-postgresql/repository.json\""
+                " -Daws.accessKeyId=\"", { "Ref" : "BinaryStoreS3AccessKey" }, "\"",
+                " -Daws.secretKey=\"", { "Ref" : "BinaryStoreS3SecretKey" }, "\"",
+                " -Daws.bucket=\"", { "Ref" : "BinaryStoreS3Bucket" }, "\"",
+                " -Dfcrepo.modeshape.configuration=\"classpath:/config/jdbc-postgresql-s3/repository.json\""
               ]]}
           },
           {
