@@ -70,7 +70,7 @@
     },
     "HomePath": {
       "Type": "String",
-      "Description": "Fedora home directory"
+      "Description": "Fedora home directory path"
     },
     "BinaryStoreS3AccessKey": {
       "Type": "String",
@@ -212,6 +212,7 @@
                 " -Daws.accessKeyId=\"", { "Ref" : "BinaryStoreS3AccessKey" }, "\"",
                 " -Daws.secretKey=\"", { "Ref" : "BinaryStoreS3SecretKey" }, "\"",
                 " -Daws.bucket=\"", { "Ref" : "BinaryStoreS3Bucket" }, "\"",
+                " -Dfcrepo.streaming.parallel=true",
                 " -Dfcrepo.modeshape.configuration=\"classpath:/config/jdbc-postgresql-s3/repository.json\""
               ]]}
           },
