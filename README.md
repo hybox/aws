@@ -32,7 +32,7 @@ $ AWS_DEFAULT_REGION=us-east-1
 5. Copy the `params/defaults.json` template to a new environment-specific file, populating the parameter values as appropriate for your environment. This repo ignores a local file named `params/private.json` where secret params can be set. Make sure to set values for at least these parameters (the default settings, while insecure, will work for the other parameters, and should suffice for development purposes):
    - `KeyName`: the name of the key-pair created in step 1
    - `PublicZoneName`: the name of the hosted zone created in step 2 (with a trailing period)
-   - `DatabasePassword` and `FcrepoDatabasePassword`: password for Hyku and Fedora DatabaseStorageSize
+   - `DatabasePassword` and `FcrepoDatabasePassword`: password for Hyku and Fedora databases
    - `FcrepoS3BucketName`: the name of the S3 bucket created in step 3
    - `FcrepoS3AccessKey` and `FcrepoS3SecretKey`: API credentials for user created in step 4
    - `SecretKeyBase`: rails key generation base
