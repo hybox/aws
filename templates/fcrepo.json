@@ -78,7 +78,8 @@
     },
     "BinaryStoreS3SecretKey": {
       "Type": "String",
-      "Description": "Secret Access Key providing access to binary store S3 bucket"
+      "Description": "Secret Access Key providing access to binary store S3 bucket",
+      "NoEcho": "true"
     },
     "BinaryStoreS3Bucket": {
       "Type": "String",

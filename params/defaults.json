@@ -65,7 +65,7 @@
   },
   {
     "ParameterKey": "FcrepoHomePath",
-    "ParameterValue": "/var/lib/tomcat8/fcrepo"
+    "ParameterValue": "/var/lib/fcrepo"
   },
   {
     "ParameterKey": "FcrepoS3AccessKey",
