@@ -25,9 +25,19 @@ $ AWS_DEFAULT_REGION=us-east-1
 
 2. Create a [public hosted zone](http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html); the web application will automatically manage DNS entries in this zone.
 
-3. Copy the `params/defaults.json` template to a new environment-specific file, populating the parameter values as appropriate for your environment (and, particularly, the key name and hosted zone created above; the other settings, while insecure, may suffice for development purposes). This repo ignores a local file named `params/private.json` where secret params can be set.
+3. Create an [S3 bucket](http://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html) to be used for the persistent storage of binary content.
 
-4. Create the full application stack:
+4. Create an [IAM user](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html) and [give that user permission](https://aws.amazon.com/blogs/security/writing-iam-policies-how-to-grant-access-to-an-amazon-s3-bucket/) to access the S3 bucket created in the previous step. Make sure to capture the new user's API access credentials.
+
+5. Copy the `params/defaults.json` template to a new environment-specific file, populating the parameter values as appropriate for your environment. This repo ignores a local file named `params/private.json` where secret params can be set. Make sure to set values for at least these parameters (the default settings, while insecure, will work for the other parameters, and should suffice for development purposes):
+   - `KeyName`: the name of the key-pair created in step 1
+   - `PublicZoneName`: the name of the hosted zone created in step 2 (with a trailing period)
+   - `DatabasePassword` and `FcrepoDatabasePassword`: password for Hyku and Fedora DatabaseStorageSize
+   - `FcrepoS3BucketName`: the name of the S3 bucket created in step 3
+   - `FcrepoS3AccessKey` and `FcrepoS3SecretKey`: API credentials for user created in step 4
+   - `SecretKeyBase`: rails key generation base
+
+6. Create the full application stack:
 
 ```console
 $ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/private.json
