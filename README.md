@@ -63,12 +63,14 @@ The stack will spin up in the following order:
           |- zookeeper
               |- solr
           |- redis
-          |- fcrepo
           |- postgres
-              |- application
-                  |- codepipeline
+          |- postgres-fedora
+              |- fcrepo
+                  |- application
                       |- workers
                       |- webapp
+                          |- codepipeline
+
 ```
 
 ## Travis deployment integration
