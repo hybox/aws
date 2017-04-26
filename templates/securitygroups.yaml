@@ -1,0 +1,234 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Hyku security groups and ingress permissions
+Parameters:
+  StackName:
+    Type: String
+    Description: Name of the ElasticBeanstalk environment
+  VPC:
+    Type: AWS::EC2::VPC::Id
+    Description: A VPC ID, such as vpc-a123baa3
+Resources:
+  DefaultSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Default security group
+      VpcId: !Ref 'VPC'
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref 'BastionSecurityGroup'
+          IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-default'
+  BastionSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Bastion security group
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-bastion'
+  WebappSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Webapp security group
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-webapp'
+  WebappLbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Webapp load balancer security group
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-webapp-lb'
+  DatabaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: RDS security group
+      VpcId: !Ref 'VPC'
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref 'WebappSecurityGroup'
+          IpProtocol: tcp
+          FromPort: '5432'
+          ToPort: '5432'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-db'
+  FcrepoDatabaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Fedora RDS security group
+      VpcId: !Ref 'VPC'
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref 'FedoraSecurityGroup'
+          IpProtocol: tcp
+          FromPort: '5432'
+          ToPort: '5432'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-fcrepodb'
+  RedisSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Redis security group
+      VpcId: !Ref 'VPC'
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref 'WebappSecurityGroup'
+          IpProtocol: tcp
+          FromPort: '6379'
+          ToPort: '6379'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-redis'
+  SolrSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Solr security group
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-solr'
+  SolrSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !GetAtt [SolrSecurityGroup, GroupId]
+      SourceSecurityGroupId: !Ref 'SolrSecurityGroup'
+      IpProtocol: tcp
+      FromPort: '0'
+      ToPort: '65535'
+  SolrLbSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !GetAtt [SolrSecurityGroup, GroupId]
+      SourceSecurityGroupId: !Ref 'SolrLbSecurityGroup'
+      IpProtocol: tcp
+      FromPort: '8983'
+      ToPort: '8983'
+  SolrLbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Solr load balancer security group
+      VpcId: !Ref 'VPC'
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref 'WebappSecurityGroup'
+          IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+        - SourceSecurityGroupId: !Ref 'SolrSecurityGroup'
+          IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-solr-lb'
+  FedoraSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Fedora security group
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-fcrepo'
+  FedoraLbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Fedora load balancer security group
+      VpcId: !Ref 'VPC'
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref 'WebappSecurityGroup'
+          IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-fcrepo-lb'
+  ZookeeperLbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Zookeeper load balancer security group
+      VpcId: !Ref 'VPC'
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref 'SolrSecurityGroup'
+          IpProtocol: tcp
+          FromPort: '2181'
+          ToPort: '2181'
+        - SourceSecurityGroupId: !Ref 'WebappSecurityGroup'
+          IpProtocol: tcp
+          FromPort: '2181'
+          ToPort: '2181'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-zookeeper-lb'
+  ZookeeperSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Zookeeper security group
+      VpcId: !Ref 'VPC'
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref 'ZookeeperLbSecurityGroup'
+          IpProtocol: tcp
+          FromPort: '2181'
+          ToPort: '2181'
+        - SourceSecurityGroupId: !Ref 'SolrSecurityGroup'
+          IpProtocol: tcp
+          FromPort: '2181'
+          ToPort: '2181'
+        - SourceSecurityGroupId: !Ref 'ZookeeperLbSecurityGroup'
+          IpProtocol: tcp
+          FromPort: '8080'
+          ToPort: '8080'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-zookeeper'
+  ZookeeperSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !GetAtt [ZookeeperSecurityGroup, GroupId]
+      SourceSecurityGroupId: !Ref 'ZookeeperSecurityGroup'
+      IpProtocol: tcp
+      FromPort: '0'
+      ToPort: '65535'
+Outputs:
+  Default:
+    Description: Security Group ID for the default security group
+    Value: !Ref 'DefaultSecurityGroup'
+  Bastion:
+    Description: Security Group ID for the bastion security group
+    Value: !Ref 'BastionSecurityGroup'
+  Webapp:
+    Description: Security Group ID for the webapp security group
+    Value: !Ref 'WebappSecurityGroup'
+  WebappLb:
+    Description: Security Group ID for the webapp load balancer security group
+    Value: !Ref 'WebappLbSecurityGroup'
+  Fcrepo:
+    Description: Security Group ID for the fcrepo security group
+    Value: !Ref 'FedoraSecurityGroup'
+  FcrepoLb:
+    Description: Security Group ID for the fcrepo load balancersecurity group
+    Value: !Ref 'FedoraLbSecurityGroup'
+  Solr:
+    Description: Security Group ID for the solr security group
+    Value: !Ref 'SolrSecurityGroup'
+  SolrLb:
+    Description: Security Group ID for the solr load balancer security group
+    Value: !Ref 'SolrLbSecurityGroup'
+  Zookeeper:
+    Description: Security Group ID for the zookeeper security group
+    Value: !Ref 'ZookeeperSecurityGroup'
+  ZookeeperLb:
+    Description: Security Group ID for the zookeeper load balancer security group
+    Value: !Ref 'ZookeeperLbSecurityGroup'
+  Database:
+    Description: Security Group ID for the database security group
+    Value: !Ref 'DatabaseSecurityGroup'
+  FcrepoDatabase:
+    Description: Security Group ID for the database security group
+    Value: !Ref 'FcrepoDatabaseSecurityGroup'
+  Redis:
+    Description: Security Group ID for the redis security group
+    Value: !Ref 'RedisSecurityGroup'

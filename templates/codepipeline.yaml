@@ -1,0 +1,111 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Hyku CodePipeline continuous deploy for the webapp
+Parameters:
+  S3Bucket:
+    Type: String
+    Description: S3 Bucket of the deployment artifact
+  S3Key:
+    Type: String
+    Description: S3 Key of the deployment artifact
+  ApplicationName:
+    Type: String
+    Description: ElasticBeanstalk Application Name
+  WebappEnvironmentName:
+    Type: String
+    Description: ElasticBeanstalk Application Environment
+  WorkerEnvironmentName:
+    Type: String
+    Description: ElasticBeanstalk Application Environment
+Resources:
+  ArtifactStoreBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+  codepipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      RoleArn: !GetAtt [CPRole, Arn]
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceAction
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: '1'
+                Provider: S3
+              OutputArtifacts:
+                - Name: SourceOutput
+              Configuration:
+                S3Bucket: !Ref 'S3Bucket'
+                S3ObjectKey: !Ref 'S3Key'
+              RunOrder: 1
+        - Name: Release
+          Actions:
+            - Name: ReleaseWebapp
+              InputArtifacts:
+                - Name: SourceOutput
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: ElasticBeanstalk
+              Configuration:
+                ApplicationName: !Ref 'ApplicationName'
+                EnvironmentName: !Ref 'WebappEnvironmentName'
+              RunOrder: 1
+            - Name: ReleaseWorkers
+              InputArtifacts:
+                - Name: SourceOutput
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: ElasticBeanstalk
+              Configuration:
+                ApplicationName: !Ref 'ApplicationName'
+                EnvironmentName: !Ref 'WorkerEnvironmentName'
+              RunOrder: 2
+      ArtifactStore:
+        Type: S3
+        Location: !Ref 'ArtifactStoreBucket'
+  CPRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [codepipeline.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      Path: /
+      Policies:
+        - PolicyName: !Sub ${ApplicationName}-codepipeline-service
+          PolicyDocument:
+            Statement:
+              - Action: ['s3:GetObject', 's3:GetObjectVersion', 's3:GetBucketVersioning']
+                Resource: '*'
+                Effect: Allow
+              - Action: ['s3:PutObject']
+                Resource: ['arn:aws:s3:::codepipeline*', 'arn:aws:s3:::elasticbeanstalk*']
+                Effect: Allow
+              - Action: ['codecommit:CancelUploadArchive', 'codecommit:GetBranch', 'codecommit:GetCommit',
+                  'codecommit:GetUploadArchiveStatus', 'codecommit:UploadArchive']
+                Resource: '*'
+                Effect: Allow
+              - Action: ['codedeploy:CreateDeployment', 'codedeploy:GetApplicationRevision',
+                  'codedeploy:GetDeployment', 'codedeploy:GetDeploymentConfig', 'codedeploy:RegisterApplicationRevision']
+                Resource: '*'
+                Effect: Allow
+              - Action: ['elasticbeanstalk:*', 'ec2:*', 'elasticloadbalancing:*', 'autoscaling:*',
+                  'cloudwatch:*', 's3:*', 'sns:*', 'cloudformation:*', 'rds:*', 'sqs:*',
+                  'ecs:*', 'iam:PassRole']
+                Resource: '*'
+                Effect: Allow
+              - Action: ['lambda:InvokeFunction', 'lambda:ListFunctions']
+                Resource: '*'
+                Effect: Allow
+            Version: '2012-10-17'

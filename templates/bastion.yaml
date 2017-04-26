@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Hyku bastion host stack
+Parameters:
+  StackName:
+    Type: String
+    Description: Name of the ElasticBeanstalk environment
+  SubnetID:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: List of an existing subnet IDs to use for the load balancer and auto
+      scaling group
+  SecurityGroups:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: A list of security groups, such as sg-a123fd85.
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the ECS instances
+  InstanceType:
+    Type: String
+    Description: The EC2 instance type
+Mappings:
+  AWSRegionToAMI:
+    us-east-1:
+      AMIID: ami-dd3dd7cb
+    us-west-1:
+      AMIID: ami-7d54061d
+    us-west-2:
+      AMIID: ami-3b6fd05b
+    eu-west-1:
+      AMIID: ami-47ecb121
+    ap-northeast-1:
+      AMIID: ami-78d6af1f
+    ap-southeast-2:
+      AMIID: ami-1e47407d
+    ap-southeast-1:
+      AMIID: ami-a0903ac3
+    eu-central-1:
+      AMIID: ami-7d0ec112
+Resources:
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier: !Ref 'SubnetID'
+      LaunchConfigurationName: !Ref 'ContainerInstances'
+      MinSize: '1'
+      MaxSize: '2'
+      DesiredCapacity: '1'
+      Tags:
+      - Key: Name
+        Value: !Ref 'StackName'
+        PropagateAtLaunch: true
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT15M
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MinInstancesInService: '2'
+        MaxBatchSize: '1'
+        PauseTime: PT5M
+        WaitOnResourceSignals: 'true'
+  ContainerInstances:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Metadata:
+      AWS::CloudFormation::Init:
+        config:
+          files:
+            /etc/cfn/cfn-hup.conf:
+              content: !Sub |
+                [main]
+                  stack=${AWS::StackId}
+                  region=${AWS::Region}
+              mode: '000400'
+              owner: root
+              group: root
+            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
+              content: !Sub |
+                [cfn-auto-reloader-hook]
+                  triggers=post.update
+                  path=Resources.ContainerInstances.Metadata.AWS::CloudFormation::Init
+                  action=/opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource ContainerInstances --region ${AWS::Region}
+                  runas=root
+          services:
+            sysvinit:
+              cfn-hup:
+                enabled: 'true'
+                ensureRunning: 'true'
+                files: [/etc/cfn/cfn-hup.conf, /etc/cfn/hooks.d/cfn-auto-reloader.conf]
+    Properties:
+      AssociatePublicIpAddress: 'true'
+      KeyName: !Ref 'KeyName'
+      ImageId: !FindInMap [AWSRegionToAMI, !Ref 'AWS::Region', AMIID]
+      InstanceType: !Ref 'InstanceType'
+      SecurityGroups: !Ref 'SecurityGroups'
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          yum install -y aws-cfn-bootstrap
+          /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource ContainerInstances --region ${AWS::Region}
+          /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}

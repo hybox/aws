@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Hyku redis stack using ElastiCache
+Parameters:
+  SecurityGroups:
+    Type: CommaDelimitedList
+    Description: A list of security group ids, such as sg-a123fd85
+  SubnetID:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: List of an existing subnet IDs to use for the load balancer and auto
+      scaling group
+  InstanceType:
+    Type: String
+    Description: The cache instance type
+Resources:
+  RedisCluster:
+    Type: AWS::ElastiCache::CacheCluster
+    Properties:
+      CacheNodeType: !Ref 'InstanceType'
+      CacheSubnetGroupName: !Ref 'SubnetGroup'
+      VpcSecurityGroupIds: !Ref 'SecurityGroups'
+      Engine: redis
+      NumCacheNodes: '1'
+  SubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      Description: Cache Subnet Group
+      SubnetIds: !Ref 'SubnetID'
+Outputs:
+  EndpointAddress:
+    Description: The Redis endpoint address
+    Value: !GetAtt [RedisCluster, RedisEndpoint.Address]
+  EndpointPort:
+    Description: The Redis endpoint port
+    Value: !GetAtt [RedisCluster, RedisEndpoint.Port]

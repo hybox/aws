@@ -1,0 +1,383 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Hyku mail stack
+Parameters:
+  Domain:
+    Type: String
+    Description: Name of the Route53 RecordSet
+  HostedZoneName:
+    Type: String
+    Description: Route53 zone to create an alias in
+Resources:
+  RecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: !Ref 'Domain'
+      HostedZoneName: !Ref 'HostedZoneName'
+      Type: MX
+      TTL: '6000'
+      ResourceRecords:
+        - !Sub '10 inbound-smtp.${AWS::Region}.amazonaws.com'
+
+  # the following reources are various lambda functions and custom cfn types
+  # to enable the SES domain to be verified on stack creation.
+
+  # S3 Bucket for emails as per the ses.createReceiptRule below
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Status: Enabled
+            ExpirationInDays: 1
+            NoncurrentVersionExpirationInDays: 1
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref 'S3Bucket'
+      PolicyDocument:
+        Statement:
+          - Sid: GiveSESPermissionToWriteEmail
+            Effect: Allow
+            Principal:
+              Service: [ses.amazonaws.com]
+            Action: ['s3:PutObject']
+            Resource: !Sub 'arn:aws:s3:::${S3Bucket}/*'
+            Condition:
+              StringEquals:
+                aws:Referer: !Ref 'AWS::AccountId'
+
+  # Iam Role for the lambda functions below
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [lambda.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      Path: /
+      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth']
+      Policies:
+        - PolicyName: !Sub '${Domain}-mail-lambda'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: ['logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents']
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action: ['ses:*']
+                Resource: '*'
+              - Effect: Allow
+                Action: ['route53:*']
+                Resource: ['*']
+
+  # verifies the HostedZone exists and returns the ID
+  HostedZone:
+    Type: Custom::HostedZone
+    Properties:
+      ServiceToken: !GetAtt [HostedZoneOutputs, Arn]
+      HostedZoneName: !Ref 'HostedZoneName'
+  HostedZoneOutputs:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          var response = require('cfn-response');
+          exports.handler = function(event, context) {
+            console.log('REQUEST RECEIVED:\n', JSON.stringify(event));
+
+            if (event.RequestType == 'Delete') {
+                response.send(event, context, response.SUCCESS);
+                return;
+            }
+
+            var routeZoneName = event.ResourceProperties.HostedZoneName;
+            var responseData = {};
+
+            if (routeZoneName) {
+              var aws = require('aws-sdk');
+              var route53 = new aws.Route53();
+
+              route53.listHostedZonesByName({ DNSName: routeZoneName, MaxItems: '1'}, function(err, data) {
+                if (err) {
+                   responseData = { Error: 'listHostedZonesByName call failed' };
+                   console.log(responseData.Error + ':\n', err);
+                   response.send(event, context, response.FAILED, responseData);
+                   return;
+                }
+
+                if (data.HostedZones.length === 0) {
+                   responseData = { Error: 'listHostedZonesByName: unable to find hosted zone' };
+                   console.log(responseData.Error + ':\n', err);
+                   response.send(event, context, response.FAILED, responseData);
+                   return;
+                }
+
+                var routeZoneId = data.HostedZones[0].Id;
+                responseData = { Id: routeZoneId };
+                response.send(event, context, response.SUCCESS, responseData);
+              });
+            } else {
+              responseData = {Error: 'Route zone name not specified'};
+              console.log(responseData.Error);
+              response.send(event, context, response.FAILED, responseData);
+            }
+          };
+      Handler: index.handler
+      Runtime: nodejs4.3
+      Timeout: '10'
+      Role: !GetAtt [LambdaExecutionRole, Arn]
+
+  # creates and deletes ses ReceiptRule and ReceiptRuleSet
+  SesRuleSet:
+    Type: Custom::SesRuleSetOutputs
+    Properties:
+      ServiceToken: !GetAtt [SesRuleSetOutputs, Arn]
+      RuleSet: default-rule-set
+      RuleName: !Ref 'AWS::StackName'
+      Domain: !Ref 'Domain'
+      ObjectKeyPrefix: email
+      BucketName: !Ref 'S3Bucket'
+  SesRuleSetOutputs:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          var response = require('cfn-response');
+          exports.handler = function(event, context) {
+              console.log('REQUEST RECEIVED:\n', JSON.stringify(event));
+              var ruleName = event.ResourceProperties.RuleName;
+              var ruleSet = event.ResourceProperties.RuleSet;
+              var aws = require('aws-sdk');
+              var ses  = new aws.SES();
+              if (event.RequestType == 'Delete') {
+                  if (ruleSet) {
+                    ses.deleteReceiptRule({RuleSetName: ruleSet, RuleName: ruleName}).send();
+                    ses.deleteReceiptRuleSet({RuleSetName: ruleSet}).send();
+                  }
+                  response.send(event, context, response.SUCCESS);
+                  return;
+              }
+              var domain = event.ResourceProperties.Domain.replace(/\.$/, '');
+              var objectKeyPrefix = event.ResourceProperties.ObjectKeyPrefix;
+              var bucketName = event.ResourceProperties.BucketName;
+              var responseData = {};
+              if (ruleSet) {
+
+                ses.createReceiptRuleSet({
+                    RuleSetName: ruleSet }, function(err, data) {
+                    if (err) {
+                        responseData = { Error: 'createReceiptRuleSet call failed' };
+                        console.log(responseData.Error + ':\n', err);
+                        response.send(event, context, response.FAILED, responseData);
+                        return;
+                     }
+                });
+                ses.createReceiptRule({
+                    RuleSetName: ruleSet,
+                    Rule: {
+                       Name: ruleName,
+                       Enabled: true,
+                       Recipients: [domain],
+                       ScanEnabled: true,
+                       Actions: [{S3Action: { ObjectKeyPrefix: objectKeyPrefix, BucketName: bucketName }}]}}, function(err, data) {
+                  if (err) {
+                     responseData = { Error: 'createReceiptRule call failed' };
+                     console.log(responseData.Error + ':\n', err);
+                     response.send(event, context, response.FAILED, responseData);
+                     return;
+                  };
+                  response.send(event, context, response.SUCCESS, responseData);
+                });
+             } else {
+               responseData = {Error: 'Domain not specified'};
+               console.log(responseData.Error);
+               response.send(event, context, response.FAILED, responseData);
+             }
+          };
+      Handler: index.handler
+      Runtime: nodejs4.3
+      Timeout: '10'
+      Role: !GetAtt [LambdaExecutionRole, Arn]
+
+  # enables Dkim
+  EnableDomainDkim:
+    Type: Custom::EnableDomainDkim
+    Properties:
+      ServiceToken: !GetAtt [EnableDomainDkimOutputs, Arn]
+      HostedZoneId: !GetAtt [HostedZone, Id]
+      Domain: !Ref 'Domain'
+  EnableDomainDkimOutputs:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          var response = require('cfn-response');
+
+          function logError(response, event, context, err, responseData) {
+             console.log(responseData.Error + ':\n', err);
+             response.send(event, context, response.FAILED, responseData);
+          }
+
+          exports.handler = function(event, context) {
+            console.log('REQUEST RECEIVED:\n', JSON.stringify(event));
+
+            if (event.RequestType == 'Delete') {
+                response.send(event, context, response.SUCCESS);
+                return;
+            }
+
+            var routeZoneId = event.ResourceProperties.HostedZoneId;
+            var responseData = {};
+
+            if (routeZoneId) {
+              var domain = event.ResourceProperties.Domain.replace(/\.$/, '');
+
+              if (domain) {
+                var aws = require('aws-sdk');
+                var route53 = new aws.Route53();
+                var ses  = new aws.SES();
+
+                ses.verifyDomainIdentity({Domain: domain}, function(err, data) {
+                  if (err) {
+                    return logError(response, event, context, err, { Error: 'verifyDomainIdentity call failed' });
+                  }
+
+                  route53.changeResourceRecordSets({
+                    ChangeBatch: {
+                      Changes: [
+                        {
+                          Action: 'UPSERT',
+                          ResourceRecordSet: {
+                            Name: "_amazonses." + domain,
+                            Type: 'TXT',
+                            ResourceRecords: [
+                              {
+                                Value: '"' + data.VerificationToken + '"'
+                              }
+                            ],
+                            TTL: 9000
+                          }
+                        }
+                      ],
+                      Comment: 'Adding Domain Identity token'
+                    },
+                    HostedZoneId: routeZoneId
+                  }, function(err, data) {
+                      if (err) {
+                        return logError(response, event, context, err, { Error: 'changeResourceRecordSets call failed' });
+                      }
+
+                      ses.verifyDomainDkim({Domain: domain}, function(err, data) {
+                        if (err) {
+                          return logError(response, event, context, err, { Error: 'verifyDomainDkim call failed' });
+                        }
+
+                        var changes = data.DkimTokens.map(function(v) {
+                          return {
+                            Action: 'UPSERT',
+                            ResourceRecordSet: {
+                              Name: v + "._domainkey." + domain,
+                              Type: 'CNAME',
+                              ResourceRecords: [
+                                {
+                                  Value: v + ".dkim.amazonses.com"
+                                }
+                              ],
+                              TTL: 9000
+                            }
+                          };
+                        });
+
+                        route53.changeResourceRecordSets({
+                          ChangeBatch: {
+                            Changes: changes,
+                            Comment: 'Adding DKIM tokens'
+                          },
+                          HostedZoneId: routeZoneId
+                          }, function(err, data) {
+                            if (err) {
+                              return logError(response, event, context, err, { Error: 'changeResourceRecordSets call failed' });
+                            }
+                             response.send(event, context, response.SUCCESS, responseData);
+                         });
+                      });
+                  });
+                });
+              } else {
+                responseData = {Error: 'Domain not specified'};
+                console.log(responseData.Error);
+                response.send(event, context, response.FAILED, responseData);
+              }
+            } else {
+              responseData = {Error: 'HostedZoneId not specified'};
+              console.log(responseData.Error);
+              response.send(event, context, response.FAILED, responseData);
+            }
+          };
+      Handler: index.handler
+      Runtime: nodejs4.3
+      Timeout: '10'
+      Role: !GetAtt [LambdaExecutionRole, Arn]
+
+  # enables Dkim identity
+  SetIdentityDkimEnabled:
+    Type: Custom::SetIdentityDkimEnabled
+    DependsOn: EnableDomainDkim
+    Properties:
+      ServiceToken: !GetAtt [SetIdentityDkimEnabledOutputs, Arn]
+      Domain: !Ref 'Domain'
+  SetIdentityDkimEnabledOutputs:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          var response = require('cfn-response');
+
+          function logError(response, event, context, err, responseData) {
+             console.log(responseData.Error + ':\n', err);
+             response.send(event, context, response.FAILED, responseData);
+          }
+
+          exports.handler = function(event, context) {
+            console.log('REQUEST RECEIVED:\n', JSON.stringify(event));
+
+            if (event.RequestType == 'Delete') {
+                response.send(event, context, response.SUCCESS);
+                return;
+            }
+
+            var domain = event.ResourceProperties.Domain.replace(/\.$/, '');
+            var responseData = {};
+
+            if (domain) {
+                var aws = require('aws-sdk');
+                var ses  = new aws.SES();
+
+                var done = false;
+                var timerId = setInterval(function() {
+                  ses.setIdentityDkimEnabled({ DkimEnabled: true, Identity: domain}, function(err, data) {
+                  if (err) {
+                    console.log(responseData.Error + ':\n', err);
+                  } else {
+                    clearInterval(timerId);
+                    response.send(event, context, response.SUCCESS, responseData);
+                  }
+                });
+                }, 5000);
+              } else {
+                responseData = {Error: 'Domain not specified'};
+                console.log(responseData.Error);
+                response.send(event, context, response.FAILED, responseData);
+              }
+          };
+      Handler: index.handler
+      Runtime: nodejs4.3
+      Timeout: '30'
+      Role: !GetAtt [LambdaExecutionRole, Arn]
