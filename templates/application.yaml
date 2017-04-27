@@ -1,0 +1,270 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Hyku application stack
+Parameters:
+  StackName:
+    Type: String
+    Description: Name of the ElasticBeanstalk environment
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the ECS instances
+  S3Bucket:
+    Type: String
+    Description: S3 bucket with cloudformation templates
+  S3BucketEB:
+    Type: String
+    Description: S3 bucket with the hyku zip
+  S3Key:
+    Type: String
+    Description: S3 key to the hyku zip
+  S3KeyPrefix:
+    Type: String
+    Description: S3 prefix to deployment artifacts
+  WebappMinSize:
+    Type: Number
+    Description: Minimum number of instances
+  WebappMaxSize:
+    Type: Number
+    Description: Maximum number of instances
+  WorkerMinSize:
+    Type: Number
+    Description: Minimum number of instances
+  WorkerMaxSize:
+    Type: Number
+    Description: Maximum number of instances
+  PublicSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: List of an existing subnet IDs to use for the load balancer
+  PrivateSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: List of an existing subnet IDs to use for the auto scaling group
+  SecurityGroups:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: A list of security groups, such as sg-a123fd85.
+  LBSecurityGroups:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: A list of security groups, such as sg-a123fd85.
+  HostedZoneName:
+    Type: String
+    Description: Route53 zone to create an alias in
+  SecretKeyBase:
+    Type: String
+    Description: Secret key for Rails
+    NoEcho: 'true'
+  FcrepoUrl:
+    Type: String
+    Description: URL to Fedora
+  SolrUrl:
+    Type: String
+    Description: URL to Solr
+  ZookeeperHosts:
+    Type: String
+    Description: A list of zookeeper host IP + ports
+  RedisHost:
+    Type: String
+    Description: URL to Redis
+  RedisPort:
+    Type: String
+    Description: Redis Port
+  RDSDatabaseName:
+    Type: String
+    Description: Database name
+  RDSUsername:
+    Type: String
+    Description: Username for Database
+  RDSPassword:
+    Type: String
+    Description: Password for Database
+    NoEcho: 'true'
+  RDSHostname:
+    Type: String
+    Description: Hostname for RDS Database
+  RDSPort:
+    Type: String
+    Description: Database Port
+  QueuePrefix:
+    Type: String
+    Description: SQS Queue prefix
+  WebappInstanceType:
+    Type: String
+    Description: The EC2 instance type
+  WorkerInstanceType:
+    Type: String
+    Description: The EC2 instance type
+  WebappHealthReportingSystemType:
+    Type: String
+    Description: Health reporting system
+  WorkerHealthReportingSystemType:
+    Type: String
+    Description: Health reporting system
+  BeanstalkSNSTopic:
+    Type: String
+    Description: SNS Topic for Beanstalk application to write change events to
+  ContinuousDeployment:
+    Type: String
+    Description: Configure continuous deployment for the webapp and workers?
+  SSLCertificateId:
+    Type: String
+    Description: The Amazon Resource Name (ARN) of the SSL certificate
+  GoogleAnalyticsId:
+    Type: String
+    Description: The Google Analytics id, e.g UA-111111-1
+  HoneybadgerApiKey:
+    Type: String
+    Description: The api key for honeybadger.io
+  LogzioKey:
+    Type: String
+    Description: The logz.io key
+Conditions:
+  CreateContinuousDeployment: !Equals [!Ref 'ContinuousDeployment', 'true']
+Resources:
+  HyboxApplication:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      ApplicationName: !Ref 'StackName'
+      Description: Hybox service
+  HyboxApplicationVersion:
+    Type: AWS::ElasticBeanstalk::ApplicationVersion
+    Properties:
+      ApplicationName: !Ref 'HyboxApplication'
+      Description: Hybox service version
+      SourceBundle:
+        S3Bucket: !Ref 'S3BucketEB'
+        S3Key: !Ref 'S3Key'
+  webapp:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref 'StackName'
+        ApplicationName: !Ref 'HyboxApplication'
+        VersionLabel: !Ref 'HyboxApplicationVersion'
+        KeyName: !Join [',', [!Ref 'KeyName']]
+        MinSize: !Ref 'WebappMinSize'
+        MaxSize: !Ref 'WebappMaxSize'
+        PublicSubnets: !Join [',', !Ref 'PublicSubnets']
+        PrivateSubnets: !Join [',', !Ref 'PrivateSubnets']
+        SecurityGroups: !Join [',', !Ref 'SecurityGroups']
+        LBSecurityGroups: !Join [',', !Ref 'LBSecurityGroups']
+        HostedZoneName: !Ref 'HostedZoneName'
+        SecretKeyBase: !Ref 'SecretKeyBase'
+        FcrepoUrl: !Ref 'FcrepoUrl'
+        SolrUrl: !Ref 'SolrUrl'
+        ZookeeperHosts: !Ref 'ZookeeperHosts'
+        RedisHost: !Ref 'RedisHost'
+        RedisPort: !Ref 'RedisPort'
+        RDSDatabaseName: !Ref 'RDSDatabaseName'
+        RDSUsername: !Ref 'RDSUsername'
+        RDSPassword: !Ref 'RDSPassword'
+        RDSHostname: !Ref 'RDSHostname'
+        RDSPort: !Ref 'RDSPort'
+        QueuePrefix: !Ref 'QueuePrefix'
+        DefaultQueue: !Ref 'DefaultQueue'
+        BeanstalkSNSTopic: !Ref 'BeanstalkSNSTopic'
+        InstanceType: !Ref 'WebappInstanceType'
+        HealthReportingSystemType: !Ref 'WebappHealthReportingSystemType'
+        IamInstanceProfile: !GetAtt [EC2InstanceProfile, Arn]
+        UploadBucket: !Ref 'UploadBucket'
+        SSLCertificateId: !Ref 'SSLCertificateId'
+        GoogleAnalyticsId: !Ref 'GoogleAnalyticsId'
+        HoneybadgerApiKey: !Ref 'HoneybadgerApiKey'
+        LogzioKey: !Ref 'LogzioKey'
+      TemplateURL: !Sub https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/webapp.yaml
+  workers:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref 'StackName'
+        ApplicationName: !Ref 'HyboxApplication'
+        VersionLabel: !Ref 'HyboxApplicationVersion'
+        KeyName: !Join [',', [!Ref 'KeyName']]
+        MinSize: !Ref 'WorkerMinSize'
+        MaxSize: !Ref 'WorkerMaxSize'
+        PrivateSubnets: !Join [',', !Ref 'PrivateSubnets']
+        SecurityGroups: !Join [',', !Ref 'SecurityGroups']
+        HostedZoneName: !Ref 'HostedZoneName'
+        SecretKeyBase: !Ref 'SecretKeyBase'
+        FcrepoUrl: !Ref 'FcrepoUrl'
+        SolrUrl: !Ref 'SolrUrl'
+        ZookeeperHosts: !Ref 'ZookeeperHosts'
+        RedisHost: !Ref 'RedisHost'
+        RedisPort: !Ref 'RedisPort'
+        RDSDatabaseName: !Ref 'RDSDatabaseName'
+        RDSUsername: !Ref 'RDSUsername'
+        RDSPassword: !Ref 'RDSPassword'
+        RDSHostname: !Ref 'RDSHostname'
+        RDSPort: !Ref 'RDSPort'
+        QueuePrefix: !Ref 'QueuePrefix'
+        DefaultQueue: !Ref 'DefaultQueue'
+        DefaultQueueName: !GetAtt [DefaultQueue, QueueName]
+        BeanstalkSNSTopic: !Ref 'BeanstalkSNSTopic'
+        IamInstanceProfile: !GetAtt [EC2InstanceProfile, Arn]
+        InstanceType: !Ref 'WorkerInstanceType'
+        HealthReportingSystemType: !Ref 'WorkerHealthReportingSystemType'
+        UploadBucket: !Ref 'UploadBucket'
+        HoneybadgerApiKey: !Ref 'HoneybadgerApiKey'
+        LogzioKey: !Ref 'LogzioKey'
+      TemplateURL: !Sub https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/worker.yaml
+  DefaultQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 3600
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt [DefaultDeadLetterQueue, Arn]
+        maxReceiveCount: 5
+  DefaultDeadLetterQueue:
+    Type: AWS::SQS::Queue
+  EC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: [ec2.amazonaws.com]
+          Action: ['sts:AssumeRole']
+      Path: /
+      ManagedPolicyArns: ['arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier', 'arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier']
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action: s3:*
+            Effect: Allow
+            Resource: !Sub arn:aws:s3:::${UploadBucket}/*
+        PolicyName: !Sub ${StackName}-S3Access
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles: [!Ref 'EC2Role']
+  codepipeline:
+    Type: AWS::CloudFormation::Stack
+    Condition: CreateContinuousDeployment
+    Properties:
+      Parameters:
+        ApplicationName: !Ref 'HyboxApplication'
+        WebappEnvironmentName: !GetAtt [webapp, Outputs.EnvironmentName]
+        WorkerEnvironmentName: !GetAtt [workers, Outputs.EnvironmentName]
+        S3Bucket: !Ref 'S3BucketEB'
+        S3Key: !Ref 'S3Key'
+      TemplateURL: !Sub https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/codepipeline.yaml
+  UploadBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+Outputs:
+  ApplicationName:
+    Value: !Ref HyboxApplication
+  VersionLabel:
+    Value: !Ref HyboxApplicationVersion
+  DefaultQueue:
+    Value: !Ref DefaultQueue
+  DefaultQueueName:
+    Value: !GetAtt [DefaultQueue, QueueName]
+  IamInstanceProfile:
+    Value: !GetAtt [EC2InstanceProfile, Arn]
+  UploadBucket:
+    Value: !Ref UploadBucket
+  URL:
+    Description: URL of the AWS Elastic Beanstalk Environment
+    Value: !GetAtt [webapp, Outputs.URL]
