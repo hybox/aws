@@ -23,11 +23,11 @@ $ AWS_DEFAULT_REGION=us-east-1
 
 1. Create or import an [EC2 key-pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) for that region.
 
-2. Create a [public hosted zone](http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html); the web application will automatically manage DNS entries in this zone.
+2. Create a [public hosted zone in Route53](http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html); the web application will automatically manage DNS entries in this zone. A registered domain name is needed to pair with the Route53 hosted zone. You can [use Route53 to register a new domain](http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or [use Route53 to manage an existing domain](http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/MigratingDNS.html).
 
 3. Create an [S3 bucket](http://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html) to be used for the persistent storage of binary content.
 
-4. Create an [IAM user](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html) and [give that user permission](https://aws.amazon.com/blogs/security/writing-iam-policies-how-to-grant-access-to-an-amazon-s3-bucket/) to access the S3 bucket created in the previous step. Make sure to capture the new user's API access credentials.
+4. Create an [IAM user](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html) and [give that user permission](https://aws.amazon.com/blogs/security/writing-iam-policies-how-to-grant-access-to-an-amazon-s3-bucket/) to access the S3 bucket created in the previous step. In this case, setting user permissions by attaching an inline policy is recommended. Make sure to capture the new user's API access credentials.
 
 5. Copy the `params/defaults.json` template to a new environment-specific file, populating the parameter values as appropriate for your environment. This repo ignores a local file named `params/private.json` where secret params can be set. Make sure to set values for at least these parameters (the default settings, while insecure, will work for the other parameters, and should suffice for development purposes):
    - `KeyName`: the name of the key-pair created in step 1
@@ -40,13 +40,15 @@ $ AWS_DEFAULT_REGION=us-east-1
 6. Create the full application stack:
 
 ```console
-$ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/private.json
+$ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.yaml --capabilities CAPABILITY_IAM --parameters file://params/private.json
 ```
+
+You may want to include the --disable-rollback parameter in this call. By default, if the stack fails to create, a rollback will be performed to tear down the entire stack, making it more difficult to discern the cause of the failure. Using --disable-rollback will allow the stack to remain even in the event of a failure.
 
 You can also create (or update) your application from branches of the cloudformation repository:
 
 ```console
-$ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/branch/branch-name/templates/stack.json --capabilities CAPABILITY_IAM --parameters file://params/my-hybox-environment.json
+$ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/branch/branch-name/templates/stack.yaml --capabilities CAPABILITY_IAM --parameters file://params/private.json
 ```
 
 You can also deploy branches of the hybox application repository by setting the `WebappS3Key` parameter for your stack to point at the branch-specific deployment artifact (e.g. `hyku/branch/branch-name/hyku.zip`)
