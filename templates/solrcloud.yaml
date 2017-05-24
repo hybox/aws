@@ -1,0 +1,135 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Hyku solrcloud stack
+Parameters:
+  StackName:
+    Type: String
+    Description: Name of the ElasticBeanstalk environment
+  S3Bucket:
+    Type: String
+    Description: S3 bucket to the cfn deployment artifacts
+  S3KeyPrefix:
+    Type: String
+    Description: S3 prefix to deployment artifacts
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the ECS instances
+  SubnetID:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: List of an existing subnet IDs to use for the auto scaling group
+  HostedZoneName:
+    Type: String
+    Description: Route53 zone to create an alias in
+  HostedZoneID:
+    Type: String
+    Description: Route53 zone to create an alias in
+  ZookeeperEnsembleSize:
+    Type: Number
+    Description: Desired number of instances
+  ZookeeperEnsembleMaxSize:
+    Type: Number
+    Description: Maximum number zk of instances
+  ZookeeperSecurityGroups:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: A list of security groups, such as sg-a123fd85.
+  ZookeeperLBSecurityGroups:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: A list of security groups, such as sg-a123fd85.
+  ZookeeperHealthReportingSystemType:
+    Type: String
+    Description: Health reporting system
+  ZookeeperS3Bucket:
+    Type: String
+    Description: Bucket with ZK source bundle
+  ZookeeperS3Key:
+    Type: String
+    Description: Key for ZK source bundle
+  ZookeeperInstanceType:
+    Type: String
+    Description: The EC2 instance type
+  ZookeeperDNSRecordName:
+    Type: String
+    Description: Route53 record for zookeeper round robin
+  SolrCloudSize:
+    Type: Number
+    Description: Desired number solr of instances
+  SolrCloudMaxSize:
+    Type: Number
+    Description: Maximum number solr of instances
+  SolrSecurityGroups:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: A list of security groups, such as sg-a123fd85.
+  SolrLBSecurityGroups:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: A list of security groups, such as sg-a123fd85.
+  SolrHealthReportingSystemType:
+    Type: String
+    Description: Health reporting system
+  SolrS3Bucket:
+    Type: String
+    Description: Bucket with ZK source bundle
+  SolrS3Key:
+    Type: String
+    Description: Key for ZK source bundle
+  SolrCloudInstanceType:
+    Type: String
+    Description: The EC2 instance type
+Resources:
+  SolrCloudApplication:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      ApplicationName: !Sub ${StackName}-solrcloud
+      Description: SolrCloud service
+  zookeeper:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref 'StackName'
+        ApplicationName: !Ref 'SolrCloudApplication'
+        KeyName: !Join [',', [!Ref 'KeyName']]
+        MinSize: !Ref 'ZookeeperEnsembleSize'
+        MaxSize: !Ref 'ZookeeperEnsembleMaxSize'
+        InstanceType: !Ref 'ZookeeperInstanceType'
+        HealthReportingSystemType: !Ref 'ZookeeperHealthReportingSystemType'
+        S3Bucket: !Ref 'ZookeeperS3Bucket'
+        S3Key: !Ref 'ZookeeperS3Key'
+        SubnetID: !Join [',', !Ref 'SubnetID']
+        SecurityGroups: !Join [',', !Ref 'ZookeeperSecurityGroups']
+        LBSecurityGroups: !Join [',', !Ref 'ZookeeperLBSecurityGroups']
+        HostedZoneName: !Ref 'HostedZoneName'
+      TemplateURL: !Sub https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/zookeeper.yaml
+  zookeeperdns:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        ZookeeperEnvironmentName: !GetAtt [zookeeper, Outputs.ZookeeperEnvironmentName]
+        ZookeeperRecordName: !Sub ${ZookeeperDNSRecordName}.${HostedZoneName}
+        ZookeeperHostedZoneID: !Ref 'HostedZoneID'
+        SubnetID: !Join [',', !Ref 'SubnetID']
+        SecurityGroups: !Join [',', !Ref 'ZookeeperSecurityGroups']
+      TemplateURL: !Sub https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/zookeeper-dns.yaml
+  solr:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref 'StackName'
+        ApplicationName: !Ref 'SolrCloudApplication'
+        KeyName: !Join [',', [!Ref 'KeyName']]
+        MinSize: !Ref 'SolrCloudSize'
+        MaxSize: !Ref 'SolrCloudMaxSize'
+        InstanceType: !Ref 'SolrCloudInstanceType'
+        HealthReportingSystemType: !Ref 'SolrHealthReportingSystemType'
+        S3Bucket: !Ref 'SolrS3Bucket'
+        S3Key: !Ref 'SolrS3Key'
+        SubnetID: !Join [',', !Ref 'SubnetID']
+        SecurityGroups: !Join [',', !Ref 'SolrSecurityGroups']
+        LBSecurityGroups: !Join [',', !Ref 'SolrLBSecurityGroups']
+        ZookeeperHostURL: !GetAtt [zookeeperdns, Outputs.ZookeeperRecordName]
+        HostedZoneName: !Ref 'HostedZoneName'
+      TemplateURL: !Sub https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/solr.yaml
+Outputs:
+  SolrURL:
+    Value: !GetAtt [solr, Outputs.URL]
+  ExhibitorURL:
+    Value: !GetAtt [zookeeper, Outputs.Exhibitor]
+  ZookeeperURL:
+    Value: !GetAtt [zookeeper, Outputs.EndpointAddress]

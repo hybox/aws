@@ -89,13 +89,12 @@ Parameters:
   SolrCloudMaxSize:
     Type: Number
     Description: Maximum number of instances that can be launched in your ECS cluster
-  SolrCloudDockerImage:
+  SolrHealthReportingSystemType:
     Type: String
-    Description: Docker image to run
-  SolrCloudDataVolumePath:
+    Description: Health reporting for Solr stack
+  SolrS3Key:
     Type: String
-    Description: The path on the host container instance that is presented to the
-      container
+    Description: S3 key for solr source bundle
   ZookeeperEnsembleSize:
     Type: Number
     Description: Number of instances to launch
@@ -105,7 +104,13 @@ Parameters:
   ZookeeperEnsembleMaxSize:
     Type: String
     Description: Max number of zks
-  ZookeeperDockerImage:
+  ZookeeperHealthReportingSystemType:
+    Type: String
+    Description: Health reporting for zookeeper stack
+  ZookeeperS3Key:
+    Type: String
+    Description: S3 key for zookeeper source bundle
+  ZookeeperDNSRecordName:
     Type: String
     Description: Docker Image for zks
   WorkerInstanceType:
@@ -209,22 +214,37 @@ Resources:
         StackName: !Ref 'AWS::StackName'
         VPC: !GetAtt [vpc, Outputs.VPCID]
       TemplateURL: !Sub 'https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/securitygroups.yaml'
-  zookeeper:
+  solrcloud:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
-        StackName: !Sub ${AWS::StackName}-zookeeper
+        StackName: !Ref 'AWS::StackName'
+        S3Bucket: !Ref 'S3Bucket'
+        S3KeyPrefix: !Ref 'S3KeyPrefix'
         KeyName: !Join [',', [!Ref 'KeyName']]
         SubnetID: !GetAtt [vpc, Outputs.PrivateSubnets]
-        SecurityGroups: !Join [',', [!GetAtt [securitygroups, Outputs.Zookeeper],
-            !GetAtt [securitygroups, Outputs.Default]]]
-        LBSecurityGroups: !GetAtt [securitygroups, Outputs.ZookeeperLb]
         HostedZoneName: !GetAtt [vpc, Outputs.HostedZoneName]
-        DesiredCapacity: !Ref 'ZookeeperEnsembleSize'
-        MaxSize: !Ref 'ZookeeperEnsembleMaxSize'
-        DockerImage: !Ref 'ZookeeperDockerImage'
-        InstanceType: !Ref 'ZookeeperEnsembleInstanceType'
-      TemplateURL: !Sub 'https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/zookeeper.yaml'
+        HostedZoneID: !GetAtt [vpc, Outputs.HostedZoneID]
+        ZookeeperEnsembleSize: !Ref 'ZookeeperEnsembleSize'
+        ZookeeperEnsembleMaxSize: !Ref 'ZookeeperEnsembleMaxSize'
+        ZookeeperSecurityGroups: !Join [',', [!GetAtt [securitygroups, Outputs.Zookeeper],
+            !GetAtt [securitygroups, Outputs.Default]]]
+        ZookeeperLBSecurityGroups: !GetAtt [securitygroups, Outputs.ZookeeperLb]
+        ZookeeperHealthReportingSystemType: !Ref 'ZookeeperHealthReportingSystemType'
+        ZookeeperS3Bucket: !Ref 'S3BucketEB'
+        ZookeeperS3Key: !Ref 'ZookeeperS3Key'
+        ZookeeperInstanceType: !Ref 'ZookeeperEnsembleInstanceType'
+        ZookeeperDNSRecordName: !Ref 'ZookeeperDNSRecordName'
+        SolrCloudSize: !Ref 'SolrCloudSize'
+        SolrCloudMaxSize: !Ref 'SolrCloudMaxSize'
+        SolrSecurityGroups: !Join [',', [!GetAtt [securitygroups, Outputs.Solr], !GetAtt [
+            securitygroups, Outputs.Default]]]
+        SolrLBSecurityGroups: !GetAtt [securitygroups, Outputs.SolrLb]
+        SolrHealthReportingSystemType: !Ref 'SolrHealthReportingSystemType'
+        SolrS3Bucket: !Ref 'S3BucketEB'
+        SolrS3Key: !Ref 'SolrS3Key'
+        SolrCloudInstanceType: !Ref 'SolrCloudInstanceType'
+      TemplateURL: !Sub 'https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/solrcloud.yaml'
   fcrepo:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -250,24 +270,6 @@ Resources:
         BinaryStoreS3SecretKey: !Ref 'FcrepoS3SecretKey'
         BinaryStoreS3Bucket: !Ref 'FcrepoS3BucketName'
       TemplateURL: !Sub 'https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/fcrepo.yaml'
-  solr:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        StackName: !Sub ${AWS::StackName}-solr
-        KeyName: !Join [',', [!Ref 'KeyName']]
-        HostedZoneName: !GetAtt [vpc, Outputs.HostedZoneName]
-        SubnetID: !GetAtt [vpc, Outputs.PrivateSubnets]
-        SecurityGroups: !Join [',', [!GetAtt [securitygroups, Outputs.Solr], !GetAtt [
-              securitygroups, Outputs.Default]]]
-        LBSecurityGroups: !GetAtt [securitygroups, Outputs.SolrLb]
-        ZookeeperHosts: !GetAtt [zookeeper, Outputs.EndpointAddress]
-        DesiredCapacity: !Ref 'SolrCloudSize'
-        MaxSize: !Ref 'SolrCloudMaxSize'
-        DockerImage: !Ref 'SolrCloudDockerImage'
-        DataVolumePath: !Ref 'SolrCloudDataVolumePath'
-        InstanceType: !Ref 'SolrCloudInstanceType'
-      TemplateURL: !Sub 'https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/solr.yaml'
   redis:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -322,8 +324,8 @@ Resources:
         HostedZoneName: !Ref 'PublicZoneName'
         SecretKeyBase: !Ref 'SecretKeyBase'
         FcrepoUrl: !GetAtt [fcrepo, Outputs.URL]
-        SolrUrl: !GetAtt [solr, Outputs.URL]
-        ZookeeperHosts: !Sub ${zookeeper.Outputs.EndpointAddress}/configs
+        SolrUrl: !GetAtt [solrcloud, Outputs.SolrURL]
+        ZookeeperHosts: !Sub ${solrcloud.Outputs.ZookeeperURL}/configs
         RedisHost: !GetAtt [redis, Outputs.EndpointAddress]
         RedisPort: !GetAtt [redis, Outputs.EndpointPort]
         RDSDatabaseName: !GetAtt [database, Outputs.DatabaseName]

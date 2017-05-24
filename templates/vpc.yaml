@@ -199,3 +199,5 @@ Outputs:
     Value: !Sub '${PublicSubnetA}, ${PublicSubnetB}, ${PublicSubnetC}'
   HostedZoneName:
     Value: !Ref 'HostedZoneName'
+  HostedZoneID:
+    Value: !Ref 'DNS'

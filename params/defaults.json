@@ -109,15 +109,15 @@
   },
   {
     "ParameterKey": "SolrCloudMaxSize",
-    "ParameterValue": "6"
+    "ParameterValue": "3"
   },
   {
-    "ParameterKey": "SolrCloudDockerImage",
-    "ParameterValue": "hybox/solr-ecs:6"
+    "ParameterKey": "SolrHealthReportingSystemType",
+    "ParameterValue": "enhanced"
   },
   {
-    "ParameterKey": "SolrCloudDataVolumePath",
-    "ParameterValue": "/var/lib/docker/vfs/dir/solr-data"
+    "ParameterKey": "SolrS3Key",
+    "ParameterValue": ""
   },
   {
     "ParameterKey": "ZookeeperEnsembleInstanceType",
@@ -129,11 +129,19 @@
   },
   {
     "ParameterKey": "ZookeeperEnsembleMaxSize",
-    "ParameterValue": "4"
+    "ParameterValue": "3"
   },
   {
-    "ParameterKey": "ZookeeperDockerImage",
-    "ParameterValue": "hybox/exhibitor:test"
+    "ParameterKey": "ZookeeperHealthReportingSystemType",
+    "ParameterValue": "enhanced"
+  },
+  {
+    "ParameterKey": "ZookeeperS3Key",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "ZookeeperDNSRecordName",
+    "ParameterValue": "zookeeper-ips"
   },
   {
     "ParameterKey": "WorkerInstanceType",

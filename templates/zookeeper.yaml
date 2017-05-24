@@ -1,210 +1,58 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Hyku Zookeeper stack for SolrCloud using ECS
+Description: Hyku zookeeper stack
 Parameters:
   StackName:
     Type: String
     Description: Name of the ElasticBeanstalk environment
+  ApplicationName:
+    Type: String
+    Description: Name of the Zookeeper environment
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
-    Description: Name of an existing EC2 KeyPair to enable SSH access to the ECS instances
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the EB instances
+  MinSize:
+    Type: Number
+    Description: Minimum number of instances
+  MaxSize:
+    Type: Number
+    Description: Maximum number of instances
+  InstanceType:
+    Type: String
+    Description: The EC2 instance type
+  HealthReportingSystemType:
+    Type: String
+    Description: Health reporting system
+  S3Bucket:
+    Type: String
+    Description: Bucket with ZK source bundle
+  S3Key:
+    Type: String
+    Description: Key for ZK source bundle
   SubnetID:
     Type: List<AWS::EC2::Subnet::Id>
     Description: List of an existing subnet IDs to use for the load balancer and auto
       scaling group
   SecurityGroups:
     Type: List<AWS::EC2::SecurityGroup::Id>
-    Description: A list of security groups, such as sg-a123fd85.
+    Description: A list of security groups, such as sg-a123fd85
   LBSecurityGroups:
     Type: List<AWS::EC2::SecurityGroup::Id>
-    Description: A list of security groups, such as sg-a123fd85.
-  DesiredCapacity:
-    Type: Number
-    Description: Number of instances to launch in your ECS cluster
-  MaxSize:
-    Type: Number
-    Description: Maximum number of instances that can be launched in your ECS cluster
-  InstanceType:
-    Type: String
-    Description: The EC2 instance type
-  DockerImage:
-    Description: Docker image to run
-    Type: String
+    Description: A list of security groups, such as sg-a123fd85
   HostedZoneName:
     Type: String
     Description: Route53 zone to create an alias in
-Mappings:
-  AWSRegionToAMI:
-    us-east-1:
-      AMIID: ami-b2df2ca4
-    us-east-2:
-      AMIID: ami-832b0ee6
-    us-west-1:
-      AMIID: ami-dd104dbd
-    us-west-2:
-      AMIID: ami-022b9262
-    eu-west-1:
-      AMIID: ami-a7f2acc1
-    eu-west-2:
-      AMIID: ami-3fb6bc5b
-    eu-central-1:
-      AMIID: ami-ec2be583
-    ap-northeast-1:
-      AMIID: ami-c393d6a4
-    ap-southeast-1:
-      AMIID: ami-a88530cb
-    ap-southeast-2:
-      AMIID: ami-8af8ffe9
-    ca-central-1:
-      AMIID: ami-ead5688e
 Resources:
-  ECSCluster:
-    Type: AWS::ECS::Cluster
-  taskdefinition:
-    Type: AWS::ECS::TaskDefinition
-    Properties:
-      ContainerDefinitions:
-        - Name: !Ref 'AWS::StackName'
-          Cpu: '10'
-          Command:
-            - !Sub '-c s3 --s3region ${AWS::Region} --s3config ${S3Bucket}:${AWS::StackName}'
-          Essential: 'true'
-          Image: !Ref 'DockerImage'
-          Memory: '400'
-          PortMappings:
-            - HostPort: 2181
-              ContainerPort: 2181
-            - HostPort: 2888
-              ContainerPort: 2888
-            - HostPort: 3888
-              ContainerPort: 3888
-            - HostPort: 8080
-              ContainerPort: 8080
-  S3Bucket:
+  ZKSharedConfigsBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
-  EcsElasticLoadBalancer:
-    Type: AWS::ElasticLoadBalancing::LoadBalancer
     Properties:
-      Scheme: internal
-      Subnets: !Ref 'SubnetID'
-      CrossZone: 'true'
-      ConnectionDrainingPolicy:
-        Enabled: true
-      SecurityGroups: !Ref 'LBSecurityGroups'
-      Listeners:
-        - LoadBalancerPort: '2181'
-          InstancePort: '2181'
-          Protocol: TCP
-        - LoadBalancerPort: '80'
-          InstancePort: '8080'
-          Protocol: HTTP
-      HealthCheck:
-        Target: HTTP:8080/exhibitor/v1/cluster/state
-        HealthyThreshold: '2'
-        UnhealthyThreshold: '10'
-        Interval: '30'
-        Timeout: '5'
-  ECSRecordSet:
-    Type: AWS::Route53::RecordSet
+      VersioningConfiguration:
+        Status: Enabled
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
     Properties:
-      Name: !Sub zookeeper.${HostedZoneName}
-      HostedZoneName: !Ref 'HostedZoneName'
-      Type: A
-      AliasTarget:
-        HostedZoneId: !GetAtt [EcsElasticLoadBalancer, CanonicalHostedZoneNameID]
-        DNSName: !GetAtt [EcsElasticLoadBalancer, DNSName]
-  ECSAutoScalingGroup:
-    Type: AWS::AutoScaling::AutoScalingGroup
-    Properties:
-      VPCZoneIdentifier: !Ref 'SubnetID'
-      LaunchConfigurationName: !Ref 'ContainerInstances'
-      MinSize: !Ref 'DesiredCapacity'
-      MaxSize: !Ref 'MaxSize'
-      DesiredCapacity: !Ref 'DesiredCapacity'
-      HealthCheckType: ELB
-      HealthCheckGracePeriod: '300'
-      Tags:
-        - Key: Name
-          Value: !Ref 'StackName'
-          PropagateAtLaunch: true
-    CreationPolicy:
-      ResourceSignal:
-        Timeout: PT15M
-    UpdatePolicy:
-      AutoScalingRollingUpdate:
-        MinInstancesInService: '2'
-        MaxBatchSize: '1'
-        PauseTime: PT10M
-        WaitOnResourceSignals: 'true'
-  ContainerInstances:
-    Type: AWS::AutoScaling::LaunchConfiguration
-    Metadata:
-      AWS::CloudFormation::Init:
-        config:
-          commands:
-            01_add_instance_to_cluster:
-              command: !Sub |
-                #!/bin/bash
-                echo ECS_CLUSTER=${ECSCluster} >> /etc/ecs/ecs.config
-          files:
-            /etc/cfn/cfn-hup.conf:
-              content: !Sub |
-                [main]
-                  stack=${AWS::StackId}
-                  region=${AWS::Region}
-              mode: '000400'
-              owner: root
-              group: root
-            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
-              content: !Sub |
-                [cfn-auto-reloader-hook]
-                  triggers=post.update
-                  path=Resources.ContainerInstances.Metadata.AWS::CloudFormation::Init
-                  action=/opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource ContainerInstances --region ${AWS::Region}
-                  runas=root
-          services:
-            sysvinit:
-              cfn-hup:
-                enabled: 'true'
-                ensureRunning: 'true'
-                files: [/etc/cfn/cfn-hup.conf, /etc/cfn/hooks.d/cfn-auto-reloader.conf]
-    Properties:
-      ImageId: !FindInMap [AWSRegionToAMI, !Ref 'AWS::Region', AMIID]
-      InstanceType: !Ref 'InstanceType'
-      IamInstanceProfile: !Ref 'EC2InstanceProfile'
-      KeyName: !Ref 'KeyName'
-      SecurityGroups: !Ref 'SecurityGroups'
-      AssociatePublicIpAddress: 'true'
-      UserData:
-        Fn::Base64:
-          !Sub |
-            #!/bin/bash -xe
-            yum install -y aws-cfn-bootstrap
-            /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource ContainerInstances --region ${AWS::Region}
-            /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource ECSAutoScalingGroup --region ${AWS::Region}
-  service:
-    Type: AWS::ECS::Service
-    DependsOn: [ECSAutoScalingGroup]
-    Properties:
-      Cluster: !Ref 'ECSCluster'
-      DesiredCount: !Ref 'DesiredCapacity'
-      LoadBalancers:
-        - ContainerName: !Ref 'AWS::StackName'
-          ContainerPort: '2181'
-          LoadBalancerName: !Ref 'EcsElasticLoadBalancer'
-      Role: !Ref 'ECSServiceRole'
-      TaskDefinition: !Ref 'taskdefinition'
-  ECSServiceRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: [ecs.amazonaws.com]
-            Action: ['sts:AssumeRole']
       Path: /
-      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole']
+      Roles: [!Ref 'EC2Role']
   EC2Role:
     Type: AWS::IAM::Role
     Properties:
@@ -215,26 +63,162 @@ Resources:
               Service: [ec2.amazonaws.com]
             Action: ['sts:AssumeRole']
       Path: /
-      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role']
       Policies:
-        - PolicyName: !Sub ${StackName}-exhibitor-s3
-          PolicyDocument:
+        - PolicyDocument:
             Statement:
-              - Action: ['s3:AbortMultipartUpload', 's3:DeleteObject', 's3:GetBucketAcl',
-                  's3:GetBucketPolicy', 's3:GetObject', 's3:GetObjectAcl', 's3:ListBucket',
-                  's3:ListBucketMultipartUploads', 's3:ListMultipartUploadParts', 's3:PutObject',
-                  's3:PutObjectAcl']
+              - Action: s3:*
                 Effect: Allow
                 Resource:
-                  - !Sub arn:aws:s3:::${S3Bucket}/*
-                  - !Sub arn:aws:s3:::${S3Bucket}
-  EC2InstanceProfile:
-    Type: AWS::IAM::InstanceProfile
+                  - !Sub 'arn:aws:s3:::${ZKSharedConfigsBucket}/*'
+                  - !Sub 'arn:aws:s3:::${ZKSharedConfigsBucket}'
+          PolicyName: !Sub ${StackName}-ZKS3Access
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier
+  ZKApplicationVersion:
+    Type: AWS::ElasticBeanstalk::ApplicationVersion
     Properties:
-      Path: /
-      Roles: [!Ref 'EC2Role']
+      ApplicationName: !Ref 'ApplicationName'
+      Description: Zookeeper service version
+      SourceBundle:
+        S3Bucket: !Ref 'S3Bucket'
+        S3Key: !Ref 'S3Key'
+  ZookeeperEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      ApplicationName: !Ref 'ApplicationName'
+      Description: Zookeeper EB Environment
+      EnvironmentName: !Sub ${StackName}-zookeeper
+      TemplateName: !Ref 'ZookeeperConfigurationTemplate'
+      VersionLabel: !Ref 'ZKApplicationVersion'
+      OptionSettings:
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: S3_BUCKET
+          Value: !Ref 'ZKSharedConfigsBucket'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: S3_PREFIX
+          Value: zookeeper
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AWS_REGION
+          Value: !Ref 'AWS::Region'
+  ZookeeperConfigurationTemplate:
+    Type: AWS::ElasticBeanstalk::ConfigurationTemplate
+    Properties:
+      ApplicationName: !Ref 'ApplicationName'
+      Description: Zookeeper configuration template
+      OptionSettings:
+        - Namespace: aws:autoscaling:asg
+          OptionName: MinSize
+          Value: !Ref 'MinSize'
+        - Namespace: aws:autoscaling:asg
+          OptionName: MaxSize
+          Value: !Ref 'MaxSize'
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: InstanceType
+          Value: !Ref 'InstanceType'
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: EC2KeyName
+          Value: !Ref 'KeyName'
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: IamInstanceProfile
+          Value: !Ref 'EC2InstanceProfile'
+        - Namespace: aws:ec2:vpc
+          OptionName: ELBScheme
+          Value: internal
+        - Namespace: aws:ec2:vpc
+          OptionName: Subnets
+          Value: !Join [',', !Ref 'SubnetID']
+        - Namespace: aws:ec2:vpc
+          OptionName: ELBSubnets
+          Value: !Join [',', !Ref 'SubnetID']
+        - Namespace: aws:elb:listener:80
+          OptionName: ListenerProtocol
+          Value: HTTP
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: SSHSourceRestriction
+          Value: tcp, 22, 22, 10.0.0.0/16
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: SecurityGroups
+          Value: !Join [',', !Ref 'SecurityGroups']
+        - Namespace: aws:elb:loadbalancer
+          OptionName: SecurityGroups
+          Value: !Join [',', !Ref 'LBSecurityGroups']
+        - Namespace: aws:elb:loadbalancer
+          OptionName: CrossZone
+          Value: 'true'
+        - Namespace: aws:elb:listener:2181
+          OptionName: ListenerProtocol
+          Value: TCP
+        - Namespace: aws:elb:policies
+          OptionName: ConnectionDrainingEnabled
+          Value: 'true'
+        - Namespace: aws:autoscaling:trigger
+          OptionName: MeasureName
+          Value: CPUUtilization
+        - Namespace: aws:autoscaling:trigger
+          OptionName: Statistic
+          Value: Maximum
+        - Namespace: aws:autoscaling:trigger
+          OptionName: Unit
+          Value: Percent
+        - Namespace: aws:autoscaling:trigger
+          OptionName: LowerThreshold
+          Value: '10'
+        - Namespace: aws:autoscaling:trigger
+          OptionName: UpperThreshold
+          Value: '90'
+        - Namespace: aws:autoscaling:updatepolicy:rollingupdate
+          OptionName: RollingUpdateEnabled
+          Value: 'true'
+        - Namespace: aws:autoscaling:updatepolicy:rollingupdate
+          OptionName: RollingUpdateType
+          Value: Health
+        - Namespace: aws:autoscaling:updatepolicy:rollingupdate
+          OptionName: MaxBatchSize
+          Value: '1'
+        - Namespace: aws:autoscaling:updatepolicy:rollingupdate
+          OptionName: MinInstancesInService
+          Value: '2'
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: EnvironmentType
+          Value: LoadBalanced
+        - Namespace: aws:elasticbeanstalk:command
+          OptionName: DeploymentPolicy
+          Value: RollingWithAdditionalBatch
+        - Namespace: aws:elasticbeanstalk:command
+          OptionName: BatchSizeType
+          Value: Fixed
+        - Namespace: aws:elasticbeanstalk:command
+          OptionName: BatchSize
+          Value: '1'
+        - Namespace: aws:elasticbeanstalk:healthreporting:system
+          OptionName: SystemType
+          Value: !Ref 'HealthReportingSystemType'
+        - Namespace: aws:elasticbeanstalk:application
+          OptionName: Application Healthcheck URL
+          Value: /exhibitor/v1/ui/index.html
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: ServiceRole
+          Value: aws-elasticbeanstalk-service-role
+        - Namespace: aws:elasticbeanstalk:managedactions
+          OptionName: ManagedActionsEnabled
+          Value: 'false'
+      SolutionStackName: 64bit Amazon Linux 2017.03 v2.6.0 running Docker 1.12.6
+  EBRecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: !Sub 'zookeeper.${HostedZoneName}'
+      HostedZoneName: !Ref 'HostedZoneName'
+      Type: CNAME
+      TTL: '900'
+      ResourceRecords:
+      - !GetAtt [ZookeeperEnvironment, EndpointURL]
 Outputs:
+  ZookeeperEnvironmentName:
+    Description: Environment Name for zookeeper stack
+    Value: !Ref ZookeeperEnvironment
   EndpointAddress:
-    Value: !Sub ${ECSRecordSet}:2181
-  ui:
-    Value: !Sub http://${ECSRecordSet}/exhibitor/v1/ui/index.html
+    Description: URL for connecting straight to zookeeper service
+    Value: !Sub ${EBRecordSet}:2181
+  Exhibitor:
+    Description: URL of the exhibitor UI
+    Value: !Sub http://${EBRecordSet}/exhibitor/v1/ui/index.html
