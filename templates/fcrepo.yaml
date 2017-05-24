@@ -154,7 +154,7 @@ Resources:
       - Namespace: aws:elb:listener:80
         OptionName: ListenerProtocol
         Value: HTTP
-      SolutionStackName: 64bit Amazon Linux 2016.09 v2.5.5 running Tomcat 8 Java 8
+      SolutionStackName: 64bit Amazon Linux 2017.03 v2.6.0 running Tomcat 8 Java 8
   FcrepoEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
     Properties:
