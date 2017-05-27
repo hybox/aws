@@ -65,7 +65,7 @@
   },
   {
     "ParameterKey": "FcrepoHomePath",
-    "ParameterValue": "/usr/share/tomcat8/fcrepo4-data"
+    "ParameterValue": "/var/lib/fcrepo"
   },
   {
     "ParameterKey": "FcrepoS3AccessKey",
@@ -89,7 +89,7 @@
   },
   {
     "ParameterKey": "S3FedoraFilename",
-    "ParameterValue": "fcrepo-webapp-4.7.1.war"
+    "ParameterValue": "fcrepo-webapp-4.8.0-SNAPSHOT.war"
   },
   {
     "ParameterKey": "FcrepoMinSize",
@@ -117,7 +117,7 @@
   },
   {
     "ParameterKey": "SolrS3Key",
-    "ParameterValue": ""
+    "ParameterValue": "solr.zip"
   },
   {
     "ParameterKey": "ZookeeperEnsembleInstanceType",
@@ -137,7 +137,7 @@
   },
   {
     "ParameterKey": "ZookeeperS3Key",
-    "ParameterValue": ""
+    "ParameterValue": "zookeeper.zip"
   },
   {
     "ParameterKey": "ZookeeperDNSRecordName",
