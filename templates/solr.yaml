@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Hyku solrcloud stack
+Description: Hyku solr stack
 Parameters:
   StackName:
     Type: String
@@ -24,10 +24,10 @@ Parameters:
     Description: Health reporting system
   S3Bucket:
     Type: String
-    Description: Bucket with ZK source bundle
+    Description: Bucket with Solr source bundle
   S3Key:
     Type: String
-    Description: Key for ZK source bundle
+    Description: Key for Solr source bundle
   SubnetID:
     Type: List<AWS::EC2::Subnet::Id>
     Description: List of an existing subnet IDs to use for the load balancer and auto
