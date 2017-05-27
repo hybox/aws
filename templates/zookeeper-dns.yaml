@@ -17,11 +17,14 @@ Parameters:
     Type: List<AWS::EC2::SecurityGroup::Id>
     Description: Private subnets for zk stack
 Resources:
+  # Provides AutoScalingGroupName for the zookeeper Environment
+  # Refer by using: !GetAtt [BeanstalkStack, AutoScalingGroupName]
   BeanstalkStack:
     Type: Custom::BeanstalkStack
     Properties:
       ServiceToken: !GetAtt [BeanstalkStackOutputs, Arn]
       EnvironmentName: !Ref ZookeeperEnvironmentName
+  # Returns Auto Scaling Group Name for a given Beanstalk Environment Name
   BeanstalkStackOutputs:
     Type: AWS::Lambda::Function
     Properties:
@@ -114,11 +117,15 @@ Resources:
       FunctionName: !GetAtt [UpsertRoute53Record, Arn]
       Action: lambda:InvokeFunction
       Principal: events.amazonaws.com
+  # Initializes UpsertRoute53Record lambda function so it runs at stack creation time
   InitializeUpsertLambda:
     Type: Custom::InitializeUpsertLambda
     Properties:
       ServiceToken: !GetAtt [UpsertRoute53Record, Arn]
       ZookeeperASGName: !GetAtt [BeanstalkStack, AutoScalingGroupName]
+  # Creates/Deletes a round robin DNS entry for the zookeeper hosts
+  # Is updated by a CloudWatch Rule tied to the Auto Scaling Group
+  # for the zookeeper Beanstalk Environment
   UpsertRoute53Record:
     Type: AWS::Lambda::Function
     Properties:
