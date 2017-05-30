@@ -29,15 +29,44 @@ $ AWS_DEFAULT_REGION=us-east-1
 
 4. Create an [IAM user](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html) and [give that user permission](https://aws.amazon.com/blogs/security/writing-iam-policies-how-to-grant-access-to-an-amazon-s3-bucket/) to access the S3 bucket created in the previous step. In this case, setting user permissions by attaching an inline policy is recommended. Make sure to capture the new user's API access credentials.
 
-5. Copy the `params/defaults.json` template to a new environment-specific file, populating the parameter values as appropriate for your environment. This repo ignores a local file named `params/private.json` where secret params can be set. Make sure to set values for at least these parameters (the default settings, while insecure, will work for the other parameters, and should suffice for development purposes):
+5. (Optional) If creating the stack in a region other than us-east-1, create an additional S3 bucket the desired region with public read only permissions. This will be used to hold source bundles for Elastic Beanstalk environments. In total, the bucket needs files for solr, zookeeper, fedora, and hyku. To create the needed files:
+
+Solr:
+```console
+cd assets/solr
+zip -r solr.zip .
+```
+Zookeeper:
+```console
+cd assets/zookeeper
+zip -r zookeeper.zip .
+```
+Hyku:
+```console
+wget -O hyku.zip https://github.com/samvera-labs/hyku/archive/master.zip
+```
+Fedora:
+```console
+cd assets/fcrepo
+wget https://hybox-deployment-artifacts.s3.amazonaws.com/fcrepo-webapp-4.8.0-SNAPSHOT.war
+zip -r fcrepo.zip .
+```
+Upload the archive files to your regional S3 bucket. The bucket and the file names will be referenced in a params file described below.
+
+6. Copy the `params/defaults.json` template to a new environment-specific file, populating the parameter values as appropriate for your environment. This repo ignores local files placed in the `params/private/` directory and is where secret params can be set. Make sure to set values for at least these parameters (the default settings, while insecure, will work for the other parameters, and should suffice for development purposes):
    - `KeyName`: the name of the key-pair created in step 1
    - `PublicZoneName`: the name of the hosted zone created in step 2 (with a trailing period)
    - `DatabasePassword` and `FcrepoDatabasePassword`: password for Hyku and Fedora databases
    - `FcrepoS3BucketName`: the name of the S3 bucket created in step 3
    - `FcrepoS3AccessKey` and `FcrepoS3SecretKey`: API credentials for user created in step 4
    - `SecretKeyBase`: rails key generation base
+   - `S3BucketEB`: name of the S3 bucket that contains the Beanstalk source bundles described in step 5
+   - `WebappS3Key`: name of the hyku zip file created in step 5
+   - `SolrS3Key`: name of the solr zip file created in step 5
+   - `ZookeeperS3Key`: name of the zookeeper zip file created in step 5
+   - `S3FedoraFilename`: name of the fcrepo zip file created in step 5
 
-6. Create the full application stack:
+7. Create the full application stack:
 
 ```console
 $ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.yaml --capabilities CAPABILITY_IAM --parameters file://params/private.json
