@@ -96,6 +96,12 @@ Parameters:
   GoogleAnalyticsId:
     Type: String
     Description: The Google Analytics id, e.g UA-111111-1
+  ContactEmail:
+    Type: String
+    Description: Default email address for contact form
+  GeonamesUsername:
+    Type: String
+    Description: The registered Geonames account name
   HoneybadgerApiKey:
     Type: String
     Description: The api key for honeybadger.io
@@ -324,6 +330,15 @@ Resources:
       - Namespace: aws:elasticbeanstalk:application:environment
         OptionName: SETTINGS__GOOGLE_ANALYTICS_ID
         Value: !Ref 'GoogleAnalyticsId'
+      - Namespace: aws:elasticbeanstalk:application:environment
+        OptionName: SETTINGS__CONTACT_EMAIL
+        Value: !Ref 'ContactEmail'
+      - Namespace: aws:elasticbeanstalk:application:environment
+        OptionName: SETTINGS__GEONAMES_USERNAME
+        Value: !Ref 'GeonamesUsername'
+      - Namespace: aws:elasticbeanstalk:application:environment
+        OptionName: HONEYBADGER_ENV
+        Value: !Ref 'StackName'
       - Namespace: aws:elasticbeanstalk:application:environment
         OptionName: HONEYBADGER_API_KEY
         Value: !Ref 'HoneybadgerApiKey'

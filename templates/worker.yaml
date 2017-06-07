@@ -161,6 +161,9 @@ Resources:
           OptionName: SETTINGS__S3__UPLOAD_BUCKET
           Value: !Ref 'UploadBucket'
         - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: HONEYBADGER_ENV
+          Value: !Ref 'StackName'
+        - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: HONEYBADGER_API_KEY
           Value: !Ref 'HoneybadgerApiKey'
         - Namespace: aws:elasticbeanstalk:application:environment

@@ -168,6 +168,14 @@
     "UsePreviousValue" : true
   },
   {
+    "ParameterKey": "ContactEmail",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "GeonamesUsername",
+    "UsePreviousValue" : true
+  },
+  {
     "ParameterKey": "HoneybadgerApiKey",
     "UsePreviousValue" : true
   },
