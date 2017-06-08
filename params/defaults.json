@@ -216,6 +216,14 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "ContactEmail",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "GeonamesUsername",
+    "ParameterValue": "jcoyne"
+  },
+  {
     "ParameterKey": "HoneybadgerApiKey",
     "ParameterValue": ""
   },
