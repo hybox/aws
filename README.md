@@ -104,6 +104,8 @@ The stack will spin up in the following order:
 
 ```
 
+8. (Optional) If you set the `ContactEmail` parameter, which enables messages from the contact form to be sent to a specified email address, you will also need to verify that email address in SES. Go to the [SES console](https://console.aws.amazon.com/ses/home) (make sure to select the correct region) select _Email Addresses_ then the _Verify a new email address_ button. You will need to click a link from an email that is sent to complete the verification process.
+
 ## Travis deployment integration
 
 The AWS CloudFormation stack must be deployed into an S3 bucket for CloudFormation to correctly resolve sub-stack references. The `templates/travis.json` stack will bootstrap the necessary buckets, IAM user, and access keys to support continuous deployment from both this CloudFormation repository and the Hydra-in-a-Box application repository.
