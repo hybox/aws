@@ -47,9 +47,7 @@ wget -O hyku.zip https://github.com/samvera-labs/hyku/archive/master.zip
 ```
 Fedora:
 ```console
-cd assets/fcrepo
-wget https://hybox-deployment-artifacts.s3.amazonaws.com/fcrepo-webapp-4.8.0-SNAPSHOT.war
-zip -r fcrepo.zip .
+wget https://hybox-deployment-artifacts.s3.amazonaws.com/fcrepo-webapp-ext-4.8.0-SNAPSHOT.war
 ```
 Upload the archive files to your regional S3 bucket. The bucket and the file names will be referenced in a params file described below.
 
@@ -69,10 +67,10 @@ Upload the archive files to your regional S3 bucket. The bucket and the file nam
 7. Create the full application stack:
 
 ```console
-$ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.yaml --capabilities CAPABILITY_IAM --parameters file://params/private.json
+$ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --disable-rollback --stack-name hybox --template-body https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.yaml --capabilities CAPABILITY_IAM --parameters file://params/private.json
 ```
 
-You may want to include the --disable-rollback parameter in this call. By default, if the stack fails to create, a rollback will be performed to tear down the entire stack, making it more difficult to discern the cause of the failure. Using --disable-rollback will allow the stack to remain even in the event of a failure.
+The --disable-rollback parameter in this call prevents the entire stack from being torn down if an error occurs during the build process. Without this option, if the stack fails to create, a rollback will be performed to tear down the entire stack, making it more difficult to discern the cause of the failure.
 
 You can also create (or update) your application from branches of the cloudformation repository:
 
