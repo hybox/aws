@@ -1,12 +1,12 @@
 # aws
 
-[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=hybox&templateURL=https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.json)
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=hybox&templateURL=https://s3.amazonaws.com/hybox-deployment-artifacts/cloudformation/current/templates/stack.yaml)
 
-These AWS CloudFormation templates create a full application stack for a multitenant-ready  [Hydra-in-a-Box](https://github.com/projecthydra-labs/hyku) application, including:
+These AWS CloudFormation templates create a full application stack for a multitenant-ready  [Hyku](https://github.com/projecthydra-labs/hyku) application, including:
 
   - a dedicated [Amazon Virtual Private Cloud](https://aws.amazon.com/vpc) (VPC) for the stack components, with public and private subnets across 3 Availability Zones, and a bastion host providing SSH access for system administrators;
   - a multi-node SolrCloud cluster backed by a multi-node zookeeper ensemble;
-  - a PostgreSQL database with a multi-availability zone hot spare;
+  - two PostgreSQL databases, each with a multi-availability zone hot spare, one for the Hyku webapp, and one for Fedora;
   - a (single node) Fedora 4 server;
   - and a Rails application stack, with auto-scaling webapp and worker tiers and continuous deployment of the application code.
 
@@ -103,6 +103,16 @@ The stack will spin up in the following order:
 ```
 
 8. (Optional) If you set the `ContactEmail` parameter, which enables messages from the contact form to be sent to a specified email address, you will also need to verify that email address in SES. Go to the [SES console](https://console.aws.amazon.com/ses/home) (make sure to select the correct region) select _Email Addresses_ then the _Verify a new email address_ button. You will need to click a link from an email that is sent to complete the verification process.
+
+9. (Optional) Enable HTTPS support
+    - Create the certificate: Use the AWS Certificate Manager to create an SSL certificate for the domain configured in Route53 (in step 2 above). To complete the certificate creation, a verification email will be sent to the address [defined by the domain registration](https://whois.icann.org/en). If you already have a certificate for this domain, [use the command line AWS tool to add it to IAM.](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/configuring-https-ssl-upload.html)
+    - Turn on HTTPS: 
+        - Select the Hyku webapp application in the Elastic Beanstalk console
+        - Choose the _Configuration_ section and select the gear icon for the _Load Balancer_ section
+        - Select the new SSL cert in the _SSL certificate ID_ drop-down box
+        - Set secure listener port to 443
+        - Verify the protocol box (below the secure listener port) is set to HTTPS
+        - Select Apply at the bottom of the page.
 
 ## Travis deployment integration
 
