@@ -168,6 +168,14 @@
     "UsePreviousValue" : true
   },
   {
+    "ParameterKey": "EnableOpenSignup",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "AccountInvitationFromEmail",
+    "UsePreviousValue" : true
+  },
+  {
     "ParameterKey": "ContactEmail",
     "UsePreviousValue" : true
   },

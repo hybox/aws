@@ -216,6 +216,14 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "EnableOpenSignup",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "AccountInvitationFromEmail",
+    "ParameterValue": "hyku-invitations@example.com"
+  },
+  {
     "ParameterKey": "ContactEmail",
     "ParameterValue": ""
   },
