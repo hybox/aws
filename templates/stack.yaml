@@ -170,9 +170,15 @@ Parameters:
   GoogleAnalyticsId:
     Type: String
     Description: The Google Analytics id, e.g UA-111111-1
+  EnableOpenSignup:
+    Type: String
+    Description: True to allow open self-signup, false to disable
+  AccountInvitationFromEmail:
+    Type: String
+    Description: Email address from which account invitations are sent
   ContactEmail:
     Type: String
-    Description: Default email address for contact form
+    Description: Email address to which contact form messages are sent
   GeonamesUsername:
     Type: String
     Description: The registered Geonames account name
@@ -350,6 +356,8 @@ Resources:
         SSLCertificateId: !Ref 'SSLCertificateId'
         ContinuousDeployment: !Ref 'ContinuousDeployment'
         GoogleAnalyticsId: !Ref 'GoogleAnalyticsId'
+        EnableOpenSignup: !Ref 'EnableOpenSignup'
+        AccountInvitationFromEmail: !Ref 'AccountInvitationFromEmail'
         ContactEmail: !Ref 'ContactEmail'
         GeonamesUsername: !Ref 'GeonamesUsername'
         HoneybadgerApiKey: !Ref 'HoneybadgerApiKey'
