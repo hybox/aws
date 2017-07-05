@@ -188,6 +188,10 @@
     "UsePreviousValue" : true
   },
   {
+    "ParameterKey": "HoneybadgerEnv",
+    "UsePreviousValue" : true
+  },
+  {
     "ParameterKey": "LogzioKey",
     "UsePreviousValue" : true
   }

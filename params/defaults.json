@@ -236,6 +236,10 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "HoneybadgerEnv",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "LogzioKey",
     "ParameterValue": ""
   }

@@ -123,6 +123,9 @@ Parameters:
   HoneybadgerApiKey:
     Type: String
     Description: The api key for honeybadger.io
+  HoneybadgerEnv:
+    Type: String
+    Description: The deploy environment for honeybadger.io
   LogzioKey:
     Type: String
     Description: The logz.io key
@@ -182,6 +185,7 @@ Resources:
         ContactEmail: !Ref 'ContactEmail'
         GeonamesUsername: !Ref 'GeonamesUsername'
         HoneybadgerApiKey: !Ref 'HoneybadgerApiKey'
+        HoneybadgerEnv: !Ref 'HoneybadgerEnv'
         LogzioKey: !Ref 'LogzioKey'
       TemplateURL: !Sub https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/webapp.yaml
   workers:
@@ -217,6 +221,7 @@ Resources:
         HealthReportingSystemType: !Ref 'WorkerHealthReportingSystemType'
         UploadBucket: !Ref 'UploadBucket'
         HoneybadgerApiKey: !Ref 'HoneybadgerApiKey'
+        HoneybadgerEnv: !Ref 'HoneybadgerEnv'
         LogzioKey: !Ref 'LogzioKey'
       TemplateURL: !Sub https://s3.amazonaws.com/${S3Bucket}/cloudformation/${S3KeyPrefix}/templates/worker.yaml
   DefaultQueue:

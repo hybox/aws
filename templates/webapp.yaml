@@ -111,6 +111,9 @@ Parameters:
   HoneybadgerApiKey:
     Type: String
     Description: The api key for honeybadger.io
+  HoneybadgerEnv:
+    Type: String
+    Description: The deploy environment for honeybadger.io
   LogzioKey:
     Type: String
     Description: The logz.io key
@@ -350,7 +353,7 @@ Resources:
         Value: !Ref 'GeonamesUsername'
       - Namespace: aws:elasticbeanstalk:application:environment
         OptionName: HONEYBADGER_ENV
-        Value: !Ref 'StackName'
+        Value: !Ref 'HoneybadgerEnv'
       - Namespace: aws:elasticbeanstalk:application:environment
         OptionName: HONEYBADGER_API_KEY
         Value: !Ref 'HoneybadgerApiKey'
