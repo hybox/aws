@@ -106,13 +106,22 @@ The stack will spin up in the following order:
 
 9. (Optional) Enable HTTPS support
     - Create the certificate: Use the AWS Certificate Manager to create an SSL certificate for the domain configured in Route53 (in step 2 above). To complete the certificate creation, a verification email will be sent to the address [defined by the domain registration](https://whois.icann.org/en). If you already have a certificate for this domain, [use the command line AWS tool to add it to IAM.](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/configuring-https-ssl-upload.html)
-    - Turn on HTTPS: 
-        - Select the Hyku webapp application in the Elastic Beanstalk console
-        - Choose the _Configuration_ section and select the gear icon for the _Load Balancer_ section
-        - Select the new SSL cert in the _SSL certificate ID_ drop-down box
-        - Set secure listener port to 443
-        - Verify the protocol box (below the secure listener port) is set to HTTPS
-        - Select Apply at the bottom of the page.
+    - Turn on HTTPS, using the Console
+        - Enable HTTPS
+            - Select the Hyku webapp application in the Elastic Beanstalk console
+            - Choose the _Configuration_ section and select the gear icon for the _Load Balancer_ section
+            - Select the new SSL cert in the _SSL certificate ID_ drop-down box
+            - Set secure listener port to 443
+            - Verify the protocol box (below the secure listener port) is set to HTTPS
+            - Select Apply at the bottom of the page.
+        - Force HTTP to HTTPS
+            - Back in the _Configuration_ section in the Elastic Beanstalk console, select the gear icon for the _Software Configuration_ section
+            - Under _Environment Properties_ add a property named `SETTINGS__SSL_CONFIGURED` with a value of `true`
+            - Select Apply at the bottom of the page.
+    - Turn on HTTPS, using the command line (an alternative to the Console directions above)
+        - In the AWS Certificate Manager, select your certificate and capture its ARN value
+        - In your CloudFormation parameters file, set the `SSLCertificateId` parameter to the certificate ARN
+        - Perform an `update-stack` with CloudFormation (this can be done using the same command noted above for `create-stack`, but without the --disable-rollback option.)
 
 ## Travis deployment integration
 

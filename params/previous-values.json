@@ -44,6 +44,42 @@
     "UsePreviousValue" : true
   },
   {
+    "ParameterKey": "FcrepoDatabaseUsername",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "FcrepoDatabasePassword",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "FcrepoDatabaseName",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "FcrepoDatabaseStorageSize",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "FcrepoDatabaseMultiAZ",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "FcrepoHomePath",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "FcrepoS3AccessKey",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "FcrepoS3SecretKey",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "FcrepoS3BucketName",
+    "UsePreviousValue" : true
+  },
+  {
     "ParameterKey": "SecretKeyBase",
     "UsePreviousValue" : true
   },
@@ -64,11 +100,11 @@
     "UsePreviousValue" : true
   },
   {
-    "ParameterKey": "SolrCloudSize",
+    "ParameterKey": "SolrCloudInstanceType",
     "UsePreviousValue" : true
   },
   {
-    "ParameterKey": "SolrCloudInstanceType",
+    "ParameterKey": "SolrCloudSize",
     "UsePreviousValue" : true
   },
   {
@@ -76,15 +112,11 @@
     "UsePreviousValue" : true
   },
   {
-    "ParameterKey": "SolrCloudDockerImage",
+    "ParameterKey": "SolrHealthReportingSystemType",
     "UsePreviousValue" : true
   },
   {
-    "ParameterKey": "SolrCloudDataVolumePath",
-    "UsePreviousValue" : true
-  },
-  {
-    "ParameterKey": "ZookeeperEnsembleSize",
+    "ParameterKey": "SolrS3Key",
     "UsePreviousValue" : true
   },
   {
@@ -92,11 +124,23 @@
     "UsePreviousValue" : true
   },
   {
+    "ParameterKey": "ZookeeperEnsembleSize",
+    "UsePreviousValue" : true
+  },
+  {
     "ParameterKey": "ZookeeperEnsembleMaxSize",
     "UsePreviousValue" : true
   },
   {
-    "ParameterKey": "ZookeeperDockerImage",
+    "ParameterKey": "ZookeeperHealthReportingSystemType",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "ZookeeperS3Key",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "ZookeeperDNSRecordName",
     "UsePreviousValue" : true
   },
   {
@@ -141,6 +185,10 @@
   },
   {
     "ParameterKey": "DatabaseInstanceType",
+    "UsePreviousValue" : true
+  },
+  {
+    "ParameterKey": "FcrepoDatabaseInstanceType",
     "UsePreviousValue" : true
   },
   {
