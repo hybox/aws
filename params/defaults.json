@@ -220,6 +220,10 @@
     "ParameterValue": "true"
   },
   {
+    "ParameterKey": "DisableOpenTenantCreation",
+    "ParameterValue": "false"
+  },
+  {
     "ParameterKey": "AccountInvitationFromEmail",
     "ParameterValue": "hyku-invitations@example.com"
   },

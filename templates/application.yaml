@@ -111,6 +111,9 @@ Parameters:
   EnableOpenSignup:
     Type: String
     Description: True to allow open self-signup, false to disable
+  DisableOpenTenantCreation:
+    Type: String
+    Description: True to restrict tenant creation to admins, false to open creation to any registered users
   AccountInvitationFromEmail:
     Type: String
     Description: Email address from which account invitations are sent
@@ -178,6 +181,7 @@ Resources:
         SSLCertificateId: !Ref 'SSLCertificateId'
         GoogleAnalyticsId: !Ref 'GoogleAnalyticsId'
         EnableOpenSignup: !Ref 'EnableOpenSignup'
+        DisableOpenTenantCreation: !Ref 'DisableOpenTenantCreation'
         AccountInvitationFromEmail: !Ref 'AccountInvitationFromEmail'
         ContactEmail: !Ref 'ContactEmail'
         GeonamesUsername: !Ref 'GeonamesUsername'

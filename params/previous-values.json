@@ -220,6 +220,10 @@
     "UsePreviousValue" : true
   },
   {
+    "ParameterKey": "DisableOpenTenantCreation",
+    "UsePreviousValue": "true"
+  },
+  {
     "ParameterKey": "AccountInvitationFromEmail",
     "UsePreviousValue" : true
   },
