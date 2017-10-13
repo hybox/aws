@@ -99,6 +99,9 @@ Parameters:
   EnableOpenSignup:
     Type: String
     Description: True to allow open self-signup, false to disable
+  DisableOpenTenantCreation:
+    Type: String
+    Description: True to restrict tenant creation to admins, false to open creation to any registered users
   AccountInvitationFromEmail:
     Type: String
     Description: Email address from which account invitations are sent
@@ -303,6 +306,9 @@ Resources:
       - Namespace: aws:elasticbeanstalk:application:environment
         OptionName: SETTINGS__MULTITENANCY__ADMIN_HOST
         Value: !Sub ${StackName}.${HostedZoneName}
+      - Namespace: aws:elasticbeanstalk:application:environment
+        OptionName: SETTINGS__MULTITENANCY__ADMIN_ONLY_TENANT_CREATION
+        Value: !Ref 'DisableOpenTenantCreation'
       - Namespace: aws:elasticbeanstalk:application:environment
         OptionName: RDS_DB_NAME
         Value: !Ref 'RDSDatabaseName'
