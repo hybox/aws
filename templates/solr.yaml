@@ -188,7 +188,7 @@ Resources:
         - Namespace: aws:elb:listener:80
           OptionName: InstancePort
           Value: '8983'
-      SolutionStackName: 64bit Amazon Linux 2017.03 v2.6.0 running Multi-container Docker 1.12.6 (Generic)
+      SolutionStackName: 64bit Amazon Linux 2017.03 v2.7.5 running Multi-container Docker 17.03.2-ce (Generic)
   EBRecordSet:
     Type: AWS::Route53::RecordSet
     Properties:

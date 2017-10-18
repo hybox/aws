@@ -202,7 +202,7 @@ Resources:
         - Namespace: aws:elasticbeanstalk:managedactions
           OptionName: ManagedActionsEnabled
           Value: 'false'
-      SolutionStackName: 64bit Amazon Linux 2017.03 v2.6.0 running Docker 1.12.6
+      SolutionStackName: 64bit Amazon Linux 2017.03 v2.7.4 running Docker 17.03.2-ce
   EBRecordSet:
     Type: AWS::Route53::RecordSet
     Properties:
