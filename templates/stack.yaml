@@ -36,6 +36,10 @@ Parameters:
   DatabaseMultiAZ:
     Type: String
     Description: Launch the database in multiple availability zones
+  BeanstalkHealthReportingSystemType:
+    Type: String
+    Description: Health reporting type for beanstalk apps
+    AllowedValues: [enhanced, basic]
   FcrepoDatabaseUsername:
     Type: String
     Description: Database Root Username
@@ -89,9 +93,6 @@ Parameters:
   SolrCloudMaxSize:
     Type: Number
     Description: Maximum number of instances that can be launched in your ECS cluster
-  SolrHealthReportingSystemType:
-    Type: String
-    Description: Health reporting for Solr stack
   SolrS3Key:
     Type: String
     Description: S3 key for solr source bundle
@@ -104,9 +105,6 @@ Parameters:
   ZookeeperEnsembleMaxSize:
     Type: String
     Description: Max number of zks
-  ZookeeperHealthReportingSystemType:
-    Type: String
-    Description: Health reporting for zookeeper stack
   ZookeeperS3Key:
     Type: String
     Description: S3 key for zookeeper source bundle
@@ -131,14 +129,6 @@ Parameters:
   WebappMaxSize:
     Type: Number
     Description: Maximum number of instances to launch
-  WebappHealthReportingSystemType:
-    Type: String
-    Description: Health reporting system
-    AllowedValues: [enhanced, basic]
-  WorkerHealthReportingSystemType:
-    Type: String
-    Description: Health reporting system
-    AllowedValues: [enhanced, basic]
   RedisInstanceType:
     Type: String
     Description: Instance type to launch
@@ -245,7 +235,7 @@ Resources:
         ZookeeperSecurityGroups: !Join [',', [!GetAtt [securitygroups, Outputs.Zookeeper],
             !GetAtt [securitygroups, Outputs.Default]]]
         ZookeeperLBSecurityGroups: !GetAtt [securitygroups, Outputs.ZookeeperLb]
-        ZookeeperHealthReportingSystemType: !Ref 'ZookeeperHealthReportingSystemType'
+        ZookeeperHealthReportingSystemType: !Ref 'BeanstalkHealthReportingSystemType'
         ZookeeperS3Bucket: !Ref 'S3BucketEB'
         ZookeeperS3Key: !Ref 'ZookeeperS3Key'
         ZookeeperInstanceType: !Ref 'ZookeeperEnsembleInstanceType'
@@ -255,7 +245,7 @@ Resources:
         SolrSecurityGroups: !Join [',', [!GetAtt [securitygroups, Outputs.Solr], !GetAtt [
             securitygroups, Outputs.Default]]]
         SolrLBSecurityGroups: !GetAtt [securitygroups, Outputs.SolrLb]
-        SolrHealthReportingSystemType: !Ref 'SolrHealthReportingSystemType'
+        SolrHealthReportingSystemType: !Ref 'BeanstalkHealthReportingSystemType'
         SolrS3Bucket: !Ref 'S3BucketEB'
         SolrS3Key: !Ref 'SolrS3Key'
         SolrCloudInstanceType: !Ref 'SolrCloudInstanceType'
@@ -354,8 +344,8 @@ Resources:
         WorkerInstanceType: !Ref 'WorkerInstanceType'
         WorkerMinSize: !Ref 'WorkerMinSize'
         WorkerMaxSize: !Ref 'WorkerMaxSize'
-        WebappHealthReportingSystemType: !Ref 'WebappHealthReportingSystemType'
-        WorkerHealthReportingSystemType: !Ref 'WorkerHealthReportingSystemType'
+        WebappHealthReportingSystemType: !Ref 'BeanstalkHealthReportingSystemType'
+        WorkerHealthReportingSystemType: !Ref 'BeanstalkHealthReportingSystemType'
         SSLCertificateId: !Ref 'SSLCertificateId'
         ContinuousDeployment: !Ref 'ContinuousDeployment'
         GoogleAnalyticsId: !Ref 'GoogleAnalyticsId'

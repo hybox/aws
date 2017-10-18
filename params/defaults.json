@@ -44,6 +44,10 @@
     "ParameterValue": "true"
   },
   {
+    "ParameterKey": "BeanstalkHealthReportingSystemType",
+    "ParameterValue": "enhanced"
+  },
+  {
     "ParameterKey": "FcrepoDatabaseUsername",
     "ParameterValue": "ebroot"
   },
@@ -112,10 +116,6 @@
     "ParameterValue": "3"
   },
   {
-    "ParameterKey": "SolrHealthReportingSystemType",
-    "ParameterValue": "enhanced"
-  },
-  {
     "ParameterKey": "SolrS3Key",
     "ParameterValue": "solr.zip"
   },
@@ -130,10 +130,6 @@
   {
     "ParameterKey": "ZookeeperEnsembleMaxSize",
     "ParameterValue": "3"
-  },
-  {
-    "ParameterKey": "ZookeeperHealthReportingSystemType",
-    "ParameterValue": "enhanced"
   },
   {
     "ParameterKey": "ZookeeperS3Key",
@@ -166,14 +162,6 @@
   {
     "ParameterKey": "WebappMaxSize",
     "ParameterValue": "4"
-  },
-  {
-    "ParameterKey": "WebappHealthReportingSystemType",
-    "ParameterValue": "enhanced"
-  },
-  {
-    "ParameterKey": "WorkerHealthReportingSystemType",
-    "ParameterValue": "enhanced"
   },
   {
     "ParameterKey": "RedisInstanceType",

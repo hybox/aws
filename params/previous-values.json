@@ -44,6 +44,10 @@
     "UsePreviousValue" : true
   },
   {
+    "ParameterKey": "BeanstalkHealthReportingSystemType",
+    "UsePreviousValue" : true
+  },
+  {
     "ParameterKey": "FcrepoDatabaseUsername",
     "UsePreviousValue" : true
   },
@@ -112,10 +116,6 @@
     "UsePreviousValue" : true
   },
   {
-    "ParameterKey": "SolrHealthReportingSystemType",
-    "UsePreviousValue" : true
-  },
-  {
     "ParameterKey": "SolrS3Key",
     "UsePreviousValue" : true
   },
@@ -129,10 +129,6 @@
   },
   {
     "ParameterKey": "ZookeeperEnsembleMaxSize",
-    "UsePreviousValue" : true
-  },
-  {
-    "ParameterKey": "ZookeeperHealthReportingSystemType",
     "UsePreviousValue" : true
   },
   {
@@ -165,14 +161,6 @@
   },
   {
     "ParameterKey": "WebappMaxSize",
-    "UsePreviousValue" : true
-  },
-  {
-    "ParameterKey": "WebappHealthReportingSystemType",
-    "UsePreviousValue" : true
-  },
-  {
-    "ParameterKey": "WorkerHealthReportingSystemType",
     "UsePreviousValue" : true
   },
   {
