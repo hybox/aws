@@ -134,3 +134,7 @@ $ aws --region $AWS_DEFAULT_REGION cloudformation create-stack --stack-name trav
 ```
 
 You will need the outputs from this stack to create [deploy steps](https://docs.travis-ci.com/user/deployment/s3 ) for these repositories.
+
+## Cost
+
+Based on AWS bills for accounts running this stack throughout 2017, the cost of running Hyku using the configuration defined in these templates is roughly $800-$900 per month. Variation will depend on configured instance minimums and usage/load.
