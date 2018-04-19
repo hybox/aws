@@ -66,18 +66,18 @@ Resources:
             /etc/cfn/cfn-hup.conf:
               content: !Sub |
                 [main]
-                  stack=${AWS::StackId}
-                  region=${AWS::Region}
+                stack=${AWS::StackId}
+                region=${AWS::Region}
               mode: '000400'
               owner: root
               group: root
             /etc/cfn/hooks.d/cfn-auto-reloader.conf:
               content: !Sub |
                 [cfn-auto-reloader-hook]
-                  triggers=post.update
-                  path=Resources.ContainerInstances.Metadata.AWS::CloudFormation::Init
-                  action=/opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource ContainerInstances --region ${AWS::Region}
-                  runas=root
+                triggers=post.update
+                path=Resources.ContainerInstances.Metadata.AWS::CloudFormation::Init
+                action=/opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource ContainerInstances --region ${AWS::Region}
+                runas=root
           services:
             sysvinit:
               cfn-hup:
