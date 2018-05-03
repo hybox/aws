@@ -257,7 +257,7 @@ Resources:
         - Namespace: aws:elasticbeanstalk:managedactions
           OptionName: PreferredStartTime
           Value: Sun:00:00
-      SolutionStackName: 64bit Amazon Linux 2017.03 v2.5.0 running Ruby 2.3 (Puma)
+      SolutionStackName: 64bit Amazon Linux 2017.09 v2.7.2 running Ruby 2.3 (Puma)
   WebappEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
     Properties:
